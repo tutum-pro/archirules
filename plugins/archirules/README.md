@@ -13,6 +13,7 @@ Metoda prowadzenia projektu wytwórczego IT jako zestaw skilli dla Claude Code.
 | `/archirules:oq` | zarejestrowanie albo zamknięcie pytania otwartego |
 | `/archirules:fazy` | otwarcie fazy z kryterium akceptacji, zamknięcie z dowodem |
 | `/archirules:audyt` | audyt kompletności i prawdziwości rejestrów |
+| `/archirules:language` | przełączenie języka dokumentacji projektu, całościowo |
 | `/archirules:weryfikacja` | dyscyplina dowodu: udowodnij, że bramka pada |
 
 ## Narzędzia

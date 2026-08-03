@@ -38,7 +38,7 @@ W projekcie:
 
 - [`RULES.md`](plugins/archirules/RULES.md) — reguły, wersja kanoniczna (PL)
 - [`RULES.en.md`](plugins/archirules/RULES.en.md) — tłumaczenie (EN)
-- `plugins/archirules/skills/` — sześć skilli
+- `plugins/archirules/skills/` — siedem skilli
 - `plugins/archirules/templates/` — szablony PL i EN
 - `plugins/archirules/scripts/` — kontroler zgodności strukturalnej wraz z samotestem
   dowodzącym, że potrafi paść

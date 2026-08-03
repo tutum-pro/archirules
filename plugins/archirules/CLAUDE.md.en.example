@@ -1,0 +1,22 @@
+<!-- Fragment to paste into the project's CLAUDE.md.
+     Makes the method apply without being asked for in every session. -->
+
+## How this project is run
+
+This project follows **archirules**. The rules live in `RULES.md` in the `archirules` plugin;
+the registers live in `docs/architecture/`.
+
+**Documentation language: English.** Switch with `/archirules:language`.
+
+In force without being reminded:
+
+- **A doubt becomes a question entry**, not an on-the-spot decision (`/archirules:oq`).
+- **A decision becomes a record** with "Considered and rejected" and **"Costs, knowingly
+  accepted"** (`/archirules:adr`).
+- **A phase gets its acceptance criterion written before the work** (`/archirules:fazy`).
+- **A new gate needs proof that it fails** (`/archirules:weryfikacja`).
+- **Refuse rather than guess.** An unsupported construct stops the work loudly, citing the
+  specification or the decision it violates.
+- **Verify, do not assert.** The output of a command instead of a claim; the test suite twice
+  in a row.
+- **Correct a record that stopped being true inside the record** — never delete quietly.

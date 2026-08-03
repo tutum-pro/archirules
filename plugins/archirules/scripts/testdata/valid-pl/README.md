@@ -7,3 +7,5 @@
 ## Wymagania obowiązujące
 
 Brak.
+
+Patrz [rejestr faz](fazy-realizacji.md).

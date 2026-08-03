@@ -60,6 +60,11 @@ for lang in pl en; do
   printf '| [0002](decisions/ADR-0002-none.md) | Not there | Accepted |\n' >> "$d/README.md"
   expect "index disagreeing with decisions/ is caught" 1 "$d"
 
+  d=$(copy_of "link-$lang" "$set")
+  if [ "$lang" = pl ]; then sed -i.bak 's/(fazy-realizacji.md)/(nie-ma-takiego.md)/' "$d/README.md"
+  else sed -i.bak 's/(phases.md)/(no-such-file.md)/' "$d/README.md"; fi
+  expect "a link pointing nowhere is caught" 1 "$d"
+
   d=$(copy_of "verif-$lang" "$set")
   rm -f "$d"/rejestr-weryfikacji.md "$d"/verification.md
   expect "missing verification register is caught" 1 "$d"

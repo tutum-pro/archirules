@@ -37,7 +37,7 @@ In a project:
 
 - [`RULES.md`](plugins/archirules/RULES.md) — the rules, canonical version (PL)
 - [`RULES.en.md`](plugins/archirules/RULES.en.md) — translation (EN)
-- `plugins/archirules/skills/` — six skills
+- `plugins/archirules/skills/` — seven skills
 - `plugins/archirules/templates/` — templates, PL and EN
 - `plugins/archirules/scripts/` — structural conformance checker, with a self-test proving it
   can fail

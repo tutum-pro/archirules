@@ -7,3 +7,5 @@
 ## Binding requirements
 
 None.
+
+See the [phase register](phases.md).

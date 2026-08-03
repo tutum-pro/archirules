@@ -6,6 +6,8 @@
 Ten projekt jest prowadzony zgodnie z **archirules**. Reguły: `RULES.md` we wtyczce
 `archirules`; rejestry w `docs/architecture/`.
 
+**Język dokumentacji: polski.** Przełączenie: `/archirules:language`.
+
 Obowiązuje bez przypominania:
 
 - **Wątpliwość → wpis OQ**, nie decyzja w locie (`/archirules:oq`).

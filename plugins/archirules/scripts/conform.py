@@ -136,7 +136,22 @@ def main():
                 f"OQ-{match.group(1)}: **Status:** is not directly under the heading",
             )
 
-    # 5. Phase register.
+    # 5. Internal links must resolve. A rename that leaves references behind is the
+    #    normal way a documentation set breaks, and switching a project's language
+    #    renames files by design.
+    for path in glob.glob(f"{directory}/**/*.md", recursive=True):
+        text = open(path, encoding="utf-8").read()
+        base = os.path.dirname(path)
+        for target in re.findall(r"\]\(([^)]+)\)", text):
+            target = target.split("#", 1)[0].strip()
+            if not target or target.startswith(("http://", "https://", "mailto:")):
+                continue
+            check(
+                os.path.exists(os.path.join(base, target)),
+                f"{os.path.relpath(path, directory)}: link points nowhere: {target}",
+            )
+
+    # 6. Phase register.
     if phases:
         register = open(f"{directory}/{phases}", encoding="utf-8").read()
         check(marker["legend"] in register, "phase register: no legend")
