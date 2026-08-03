@@ -54,7 +54,25 @@ Zwłaszcza bezpieczeństwo i operacje: klucze w historii, repozytoria bez kopii,
 w manifestach, konfiguracja istniejąca tylko na jednej maszynie. Sprawdź **stan faktyczny**
 (`git ls-remote`, `git branch`, obecność obiektu), nie wspomnienie o nim.
 
-## 7. Zgodność strukturalna — i pułapka, którą ona zastawia
+## 7. Zgodność strukturalna — uruchom kontroler, nie pisz go od nowa
+
+```
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/conform.py docs/architecture
+```
+
+Sprawdza artefakty, sekcje każdego ADR-a, zgodność indeksu z liczbą plików, numerację
+i kształt wpisów OQ oraz rejestr faz. Rozpoznaje wariant polski i angielski po `README.md`.
+Kod wyjścia 1 przy jakimkolwiek naruszeniu, więc nadaje się do bramki CI.
+
+**Zanim mu uwierzysz**, uruchom dowód, że potrafi paść:
+
+```
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/selftest.sh
+```
+
+Psuje kopię poprawnego zestawu na sześć sposobów i wymaga wykrycia każdego.
+
+### Dlaczego kontroler wygląda tak, a nie inaczej
 
 Sprawdzenie, czy każdy ADR ma wymagane sekcje, jest kuszące do zautomatyzowania i **bardzo
 łatwe do zepsucia**. Cztery kolejne wersje takiego kontrolera dały wyniki fałszywe, każda
@@ -67,7 +85,7 @@ z innego powodu:
 | wzorzec regularny z pustą alternatywą | narzędzie zwróciło błąd na stderr, skrypt wypisał „czysto" |
 | `for x in $zmienna` w **zsh** | brak podziału na słowa → jeden obieg zamiast jedenastu |
 
-Stąd trzy zasady dla tego punktu:
+Stąd trzy zasady, wbudowane już w `conform.py`:
 
 1. **Dopasowuj prefiksy, nie pełne brzmienia.** `**Koszt` zamiast `**Koszty, przyjęte
    świadomie.**`. Wariant językowy nie jest niezgodnością.

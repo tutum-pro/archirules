@@ -19,4 +19,4 @@ Decisions that bind **every** new piece of work, not only their own area.
 ## Other documents
 
 - [Open questions](open-questions.md) — what we do not know yet and what it blocks
-- [Phase register](fazy-realizacji.md) — what is done, what is next
+- [Phase register](phases.md) — what is done, what is next
