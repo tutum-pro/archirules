@@ -1,5 +1,5 @@
 ---
-name: fazy
+name: phases
 description: Manage the phase register — open a phase with its acceptance criterion, or close one with evidence. Use before starting a work phase and when reporting it complete.
 ---
 

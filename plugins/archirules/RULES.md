@@ -202,7 +202,7 @@ miejscu.**
 3. **Gdy podejmiesz decyzję** — ADR z kosztami i odrzuconymi opcjami.
 4. **Gdy zbudujesz bramkę** — udowodnij, że pada.
 5. **Gdy zamykasz fazę** — dowód, nie deklaracja; dwa przebiegi.
-6. **Okresowo** — audyt kompletności (`/archirules:audyt`).
+6. **Okresowo** — audyt kompletności (`/archirules:audit`).
 
 ---
 

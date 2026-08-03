@@ -13,8 +13,8 @@ Obowiązuje bez przypominania:
 - **Wątpliwość → wpis OQ**, nie decyzja w locie (`/archirules:oq`).
 - **Decyzja → ADR** z sekcjami „Rozważone i odrzucone" oraz **„Koszty, przyjęte świadomie"**
   (`/archirules:adr`).
-- **Faza → kryterium akceptacji zapisane przed pracą** (`/archirules:fazy`).
-- **Nowa bramka → dowód, że pada** (`/archirules:weryfikacja`).
+- **Faza → kryterium akceptacji zapisane przed pracą** (`/archirules:phases`).
+- **Nowa bramka → dowód, że pada** (`/archirules:verification`).
 - **Odmawiaj, zamiast zgadywać.** Konstrukcja nieobsługiwana zatrzymuje pracę głośno,
   z odwołaniem do normy albo decyzji.
 - **Weryfikuj, nie twierdź.** Wynik polecenia zamiast deklaracji; zestaw testów dwa razy

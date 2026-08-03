@@ -47,8 +47,17 @@ tego nie wymagają.
 /plugin install archirules@archirules
 ```
 
-Zapis to `nazwa-wtyczki@nazwa-marketplace'u`. Obie nazwy są tu takie same, i to nie pomyłka —
-repozytorium zawiera jeden marketplace o nazwie `archirules` i jedną wtyczkę o tej samej nazwie.
+Zapis to `nazwa-wtyczki@nazwa-marketplace'u` — i warto wiedzieć, **skąd te nazwy się biorą**,
+bo żadna z nich nie wynika ze ścieżki repozytorium.
+
+Dodając marketplace w kroku 1, podałeś **ścieżkę na GitHubie** (`tutum-pro/archirules`).
+Claude pobrał z niej plik `.claude-plugin/marketplace.json` i zarejestrował źródło pod nazwą,
+którą ten plik **deklaruje w polu `name`** — tutaj `archirules`. Od tej chwili ścieżka
+repozytorium nie jest już do niczego potrzebna; posługujesz się zadeklarowaną nazwą.
+
+Wtyczka nazywa się tak samo, bo repozytorium zawiera jedną wtyczkę o nazwie `archirules` —
+stąd `archirules@archirules`. Gdyby pole `name` marketplace'u brzmiało inaczej, na przykład
+`tutum-metoda`, instalowałbyś `archirules@tutum-metoda` **z tego samego repozytorium**.
 
 Alternatywnie: `/plugin` otwiera przeglądarkę wtyczek, w której można ją znaleźć na liście.
 
@@ -95,7 +104,7 @@ Fragment jest krótki i możesz go obejrzeć przed zgodą: `CLAUDE.md.pl.example
 ### 5. Sprawdź, że wyszło
 
 ```
-/archirules:audyt
+/archirules:audit
 ```
 
 albo bezpośrednio:
@@ -113,9 +122,9 @@ zawsze taki jest — sens tej kontroli pojawia się później, gdy dokumentów p
 |---|---|
 | zapisać decyzję | `/archirules:adr` |
 | zapisać wątpliwość, na którą nie ma teraz odpowiedzi | `/archirules:oq` |
-| otworzyć fazę z kryterium akceptacji | `/archirules:fazy` |
-| sprawdzić, czy rejestr nie skłamał | `/archirules:audyt` |
-| dodać bramkę i udowodnić, że pada | `/archirules:weryfikacja` |
+| otworzyć fazę z kryterium akceptacji | `/archirules:phases` |
+| sprawdzić, czy rejestr nie skłamał | `/archirules:audit` |
+| dodać bramkę i udowodnić, że pada | `/archirules:verification` |
 | przełączyć projekt na inny język | `/archirules:language` |
 
 ## Skąd się to wzięło

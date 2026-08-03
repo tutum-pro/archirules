@@ -11,10 +11,10 @@ Metoda prowadzenia projektu wytwórczego IT jako zestaw skilli dla Claude Code.
 | `/archirules:bootstrap` | założenie rejestrów w projekcie, wybór języka dokumentacji |
 | `/archirules:adr` | zapisanie, zastąpienie albo poprawienie decyzji |
 | `/archirules:oq` | zarejestrowanie albo zamknięcie pytania otwartego |
-| `/archirules:fazy` | otwarcie fazy z kryterium akceptacji, zamknięcie z dowodem |
-| `/archirules:audyt` | audyt kompletności i prawdziwości rejestrów |
+| `/archirules:phases` | otwarcie fazy z kryterium akceptacji, zamknięcie z dowodem |
+| `/archirules:audit` | audyt kompletności i prawdziwości rejestrów |
 | `/archirules:language` | przełączenie języka dokumentacji projektu, całościowo |
-| `/archirules:weryfikacja` | dyscyplina dowodu: udowodnij, że bramka pada |
+| `/archirules:verification` | dyscyplina dowodu: udowodnij, że bramka pada |
 
 ## Narzędzia
 

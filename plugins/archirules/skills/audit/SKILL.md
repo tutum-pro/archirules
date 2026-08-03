@@ -1,5 +1,5 @@
 ---
-name: audyt
+name: audit
 description: Audit the architecture documentation for completeness and truthfulness — numbering defects, missing index entries, superseded records still claiming to be current, statuses that reality has overtaken. Use periodically and before any milestone.
 ---
 

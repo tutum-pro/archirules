@@ -13,8 +13,8 @@ In force without being reminded:
 - **A doubt becomes a question entry**, not an on-the-spot decision (`/archirules:oq`).
 - **A decision becomes a record** with "Considered and rejected" and **"Costs, knowingly
   accepted"** (`/archirules:adr`).
-- **A phase gets its acceptance criterion written before the work** (`/archirules:fazy`).
-- **A new gate needs proof that it fails** (`/archirules:weryfikacja`).
+- **A phase gets its acceptance criterion written before the work** (`/archirules:phases`).
+- **A new gate needs proof that it fails** (`/archirules:verification`).
 - **Refuse rather than guess.** An unsupported construct stops the work loudly, citing the
   specification or the decision it violates.
 - **Verify, do not assert.** The output of a command instead of a claim; the test suite twice

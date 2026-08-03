@@ -46,9 +46,17 @@ need it again.
 /plugin install archirules@archirules
 ```
 
-The form is `plugin-name@marketplace-name`. Both names are the same here, and that is not a
-mistake — the repository holds one marketplace called `archirules` and one plugin of the same
-name.
+The form is `plugin-name@marketplace-name` — and it is worth knowing **where those names come
+from**, because neither is derived from the repository path.
+
+When you added the marketplace in step 1 you gave a **GitHub path** (`tutum-pro/archirules`).
+Claude fetched `.claude-plugin/marketplace.json` from it and registered the source under the
+name that file **declares in its `name` field** — here, `archirules`. From that point the
+repository path is no longer needed; you refer to the declared name.
+
+The plugin happens to share it, because the repository holds one plugin called `archirules` —
+hence `archirules@archirules`. If the marketplace's `name` field said something else, say
+`tutum-method`, you would install `archirules@tutum-method` **from the same repository**.
 
 Alternatively, `/plugin` opens a browser where it can be found in the list.
 
@@ -94,7 +102,7 @@ The fragment is short and you can read it first: `CLAUDE.md.en.example` in the p
 ### 5. Check that it worked
 
 ```
-/archirules:audyt
+/archirules:audit
 ```
 
 or directly:
@@ -112,9 +120,9 @@ one always is — this check earns its keep later, once there are documents to g
 |---|---|
 | record a decision | `/archirules:adr` |
 | record a doubt with no answer yet | `/archirules:oq` |
-| open a phase with an acceptance criterion | `/archirules:fazy` |
-| check whether the register has started lying | `/archirules:audyt` |
-| add a gate and prove it fails | `/archirules:weryfikacja` |
+| open a phase with an acceptance criterion | `/archirules:phases` |
+| check whether the register has started lying | `/archirules:audit` |
+| add a gate and prove it fails | `/archirules:verification` |
 | switch the project to another language | `/archirules:language` |
 
 ## Where this came from

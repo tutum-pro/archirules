@@ -203,7 +203,7 @@ place.**
 3. **On making a decision** — an ADR with costs and rejected options.
 4. **On building a gate** — prove it fails.
 5. **On closing a phase** — evidence, not a claim; two runs.
-6. **Periodically** — a completeness audit (`/archirules:audyt`).
+6. **Periodically** — a completeness audit (`/archirules:audit`).
 
 ---
 

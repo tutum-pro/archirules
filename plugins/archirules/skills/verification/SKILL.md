@@ -1,5 +1,5 @@
 ---
-name: weryfikacja
+name: verification
 description: Verification discipline — prove a new gate can fail, avoid measuring your own test artifacts, run suites twice. Use when adding a check, a test, or before reporting any measured result.
 ---
 
