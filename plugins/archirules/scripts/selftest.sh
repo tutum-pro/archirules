@@ -65,6 +65,15 @@ for lang in pl en; do
   else sed -i.bak 's/(phases.md)/(no-such-file.md)/' "$d/README.md"; fi
   expect "a link pointing nowhere is caught" 1 "$d"
 
+  d=$(copy_of "drift-$lang" "$set")
+  perl -0pi -e 's/^### OQ-(\d+) — /### OQ-$1: /gm' "$d/open-questions.md"
+  expect "a drifted question-heading format is caught" 1 "$d"
+
+  d=$(copy_of "nolang-$lang" "$set")
+  if [ "$lang" = pl ]; then sed -i.bak 's/Wymagania obowiązujące/Wymagania inne/' "$d/README.md"
+  else sed -i.bak 's/Binding requirements/Other requirements/' "$d/README.md"; fi
+  expect "undetectable documentation language is caught" 1 "$d"
+
   d=$(copy_of "verif-$lang" "$set")
   rm -f "$d"/rejestr-weryfikacji.md "$d"/verification.md
   expect "missing verification register is caught" 1 "$d"

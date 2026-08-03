@@ -122,6 +122,31 @@ Then check by counting, not by feeling:
 
 Anything that changed count was lost or duplicated in translation.
 
+## Traps found by running this procedure on a real register
+
+The switch was rehearsed on a copy of a 23-document register before this skill was trusted.
+Three things went wrong, and all three were silent:
+
+**A different dash switches off a whole section.** Translating `### OQ-01 — text` to
+`### OQ-01 - text` made the checker parse **zero** questions out of thirty-six. Numbering and
+status checks stopped applying and the gate reported success — the check count fell from 168
+to 131 and nothing said so. The checker now accepts any dash and, more importantly, compares
+**headings that look like questions** against **headings that parsed**, so any future drift in
+that format fails loudly instead of disabling the section.
+
+**A near-miss translation of one heading breaks language detection.** Writing "Mandatory
+requirements" instead of "Binding requirements" made detection fall back to the source language
+and produced 47 spurious findings about missing sections that were all there. The checker now
+says explicitly that it could not detect the language, so the flood has a stated cause.
+
+**Renaming files breaks links that live in other documents.** On the rehearsal register the
+rename produced exactly three dangling links — in `README.md`, in `open-questions.md` and in a
+decision record. This is why step 4 exists and why the checker verifies links at all.
+
+The lesson underneath all three: **a translation defect does not look like a defect.** It looks
+like a document that is merely worded differently, and the tooling goes quiet. Run the checker
+after every document, not only at the end.
+
 ## What NOT to do
 
 **Do not keep both languages.** Two parallel registers drift, and the drift is invisible until
