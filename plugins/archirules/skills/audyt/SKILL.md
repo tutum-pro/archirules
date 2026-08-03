@@ -54,6 +54,34 @@ Zwłaszcza bezpieczeństwo i operacje: klucze w historii, repozytoria bez kopii,
 w manifestach, konfiguracja istniejąca tylko na jednej maszynie. Sprawdź **stan faktyczny**
 (`git ls-remote`, `git branch`, obecność obiektu), nie wspomnienie o nim.
 
+## 7. Zgodność strukturalna — i pułapka, którą ona zastawia
+
+Sprawdzenie, czy każdy ADR ma wymagane sekcje, jest kuszące do zautomatyzowania i **bardzo
+łatwe do zepsucia**. Cztery kolejne wersje takiego kontrolera dały wyniki fałszywe, każda
+z innego powodu:
+
+| błąd | skutek |
+|---|---|
+| wzorzec `**Koszty` | nie widział `**Koszt.**` w liczbie pojedynczej → 6 fałszywych braków |
+| lista słów `odrzuc\|odpad\|alternatyw` | nie widziała „**Nie zakładamy** trzeciego namespace" |
+| wzorzec regularny z pustą alternatywą | narzędzie zwróciło błąd na stderr, skrypt wypisał „czysto" |
+| `for x in $zmienna` w **zsh** | brak podziału na słowa → jeden obieg zamiast jedenastu |
+
+Stąd trzy zasady dla tego punktu:
+
+1. **Dopasowuj prefiksy, nie pełne brzmienia.** `**Koszt` zamiast `**Koszty, przyjęte
+   świadomie.**`. Wariant językowy nie jest niezgodnością.
+2. **Zanim zgłosisz brak — otwórz plik.** Treść bywa pod innym nagłówkiem albo w prozie.
+   Zgłoszenie „brak sekcji" jest twierdzeniem o dokumencie, więc podlega regule W3.
+3. **Rozliczaj pokrycie.** Licz sprawdzone kontra wszystkie i **odmawiaj orzeczenia przy
+   niezgodności**. To jedyna z czterech pułapek powyżej, którą wykryto automatycznie —
+   dokładnie dzięki temu licznikowi.
+
+Rozbieżność brzmienia nagłówków sama w sobie **nie jest wadą dokumentu**. `**Koszt.**` przy
+jednym koszcie jest poprawne, a `**Koszty i warunki wstępne**` niesie treść, której skrócenie
+by usunęło. Wadą jest dopiero to, że **nie da się tego sprawdzić maszynowo** — i naprawia się
+to w kontrolerze oraz w szablonie dla nowych dokumentów, nie przez przepisywanie historii.
+
 ## Wynik
 
 Raportuj z podziałem na wagę i **z dowodem przy każdym znalezisku**. Poprawki wnoś osobnym

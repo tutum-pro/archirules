@@ -1,6 +1,8 @@
 ### OQ-NN — <pytanie, nie temat>
 
-**Status:** OTWARTE · **Priorytet: <niski|średni|wysoki|krytyczny>** · **Zależy od:** OQ-MM · **Dotyka:** ADR-NNNN
+**Status:** OTWARTE · **Zależy od:** OQ-MM · **Dotyka:** ADR-NNNN
+<!-- Priorytet DOPISUJEMY tylko gdy jest wysoki lub krytyczny. Pole wypełniane
+     przy każdym pytaniu rutynowym staje się szumem i przestaje cokolwiek znaczyć. -->
 
 <Czego nie wiemy.>
 

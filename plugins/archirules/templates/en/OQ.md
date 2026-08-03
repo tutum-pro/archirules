@@ -1,6 +1,8 @@
 ### OQ-NN — <a question, not a topic>
 
-**Status:** OPEN · **Priority: <low|medium|high|critical>** · **Depends on:** OQ-MM · **Touches:** ADR-NNNN
+**Status:** OPEN · **Depends on:** OQ-MM · **Touches:** ADR-NNNN
+<!-- Add a priority ONLY when it is high or critical. A field filled in on every
+     routine question becomes noise and stops meaning anything. -->
 
 <What we do not know.>
 
