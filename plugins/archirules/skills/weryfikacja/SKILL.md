@@ -3,59 +3,61 @@ name: weryfikacja
 description: Verification discipline — prove a new gate can fail, avoid measuring your own test artifacts, run suites twice. Use when adding a check, a test, or before reporting any measured result.
 ---
 
-# Dyscyplina dowodu
+# The discipline of evidence
 
-## Nowa bramka nie jest gotowa, dopóki nie pokazano, że pada
+## A new gate is not finished until it has been shown to fail
 
-Procedura, za każdym razem:
+The procedure, every time:
 
-1. Uruchom na czystym drzewie → ma przejść.
-2. **Zepsuj celowo**, w każdym kształcie naruszenia, jaki bramka ma łapać.
-3. Uruchom → ma paść, z czytelnym komunikatem i **niezerowym kodem wyjścia**.
-4. Cofnij zepsucie, uruchom → ma przejść.
-5. Zapisz w commicie, na jakich kształtach sprawdzono.
+1. Run it on a clean tree — it must pass.
+2. **Break it deliberately**, in every shape of violation the gate claims to catch.
+3. Run it — it must fail, with a readable message and a **non-zero exit code**.
+4. Undo the damage, run it — it must pass.
+5. Record in the commit which shapes it was proven against.
 
-*Dlaczego:* bramka architektoniczna dwukrotnie zgłaszała „czysto" na celowo zepsutej
-bibliotece. Raz przez wyrażenie regularne wymagające wcięcia — widziało importy zgrupowane,
-nie widziało jednolinijkowych. Raz przez `2>/dev/null`, które zamieniło błąd narzędzia
-w pusty wynik czytany jako sukces.
+*Why:* an architecture gate twice reported "clean" against a deliberately broken library. Once
+because a regex required leading whitespace — it saw grouped imports and missed single-line
+ones. Once because `2>/dev/null` turned a tool error into an empty result read as success.
 
-**Kontrola, która nie potrafi paść, wygląda identycznie jak kontrola, która przechodzi.**
+**A check that cannot fail looks exactly like a check that passes.**
 
-## Nie wyciszaj błędów w bramce
+## Do not silence errors inside a gate
 
-`2>/dev/null`, `|| true`, ignorowany kod wyjścia. Jeśli narzędzie zawiodło — **to samo w sobie
-jest naruszeniem**, nie brakiem naruszeń.
+`2>/dev/null`, `|| true`, an ignored exit status. If the tool failed, **that is itself a
+violation**, not an absence of violations.
 
-## Sprawdź ścieżkę domyślną
+## Check the default path
 
-Jeśli każdy test jawnie konfiguruje badany parametr, **żaden nie sprawdza wartości domyślnej**,
-a to jej używa produkcja. Dopisz przynajmniej jeden test biorący obiekt bez opcji.
+If every test configures the parameter under test, **none of them checks the default** — and
+the default is what production uses. Add at least one test that takes the object with no
+options.
 
-Normalizuj konfigurację **po** zastosowaniu opcji, nie tylko przed — inaczej wartość absurdalna
-podana z zewnątrz wprowadzi ten sam błąd innymi drzwiami.
+Normalise configuration **after** applying options, not only before, or an absurd value passed
+from outside reintroduces the same defect through a different door.
 
-## Uruchom dwa razy pod rząd
+## Run it twice in a row
 
-Pierwszy przebieg na czystym stanie nic nie mówi o drugim. Zanieczyszczenie stanu — wspólna
-baza, katalog, kolejka — widać wyłącznie w powtórzeniu.
+A first run on clean state says nothing about the second. Shared state — a database, a
+directory, a queue — is only exposed by repetition.
 
-Asercje zawężaj do **bytu badanego**. Licznik globalny policzy również cudzą pracę.
+Scope assertions to **the thing under test**. A global counter will also count somebody else's
+work.
 
-## Nie mierz własnego artefaktu
+## Do not measure your own artefact
 
-Zanim przypiszesz obserwację systemowi, sprawdź, czy nie pochodzi z atrapy, z narzędzia
-pomiarowego albo z sąsiedniego testu.
+Before attributing an observation to the system, check that it does not come from a stub, from
+the measurement itself, or from a neighbouring test.
 
-*Awaria:* rzekomy wyciek pamięci okazał się artefaktem testu; rzekomy limit przepustowości
-okazał się własnym `time.After`.
+*Failure:* a phantom memory leak turned out to be an artefact of the test; a throughput ceiling
+turned out to be the test's own timer.
 
-## Test zależny od zegara jest testem zegara
+## A clock-dependent test is a test of the clock
 
-Jeśli asercja zależy od tego, czy coś zdąży się wykonać w oknie czasowym — **usuń czas**.
-Wygaszaj dzierżawy jawnie, wstrzykuj zegar, przesuwaj go w teście. Sen w teście mierzy sieć.
+If an assertion depends on something completing inside a time window, **remove the time**.
+Expire leases explicitly, inject the clock, advance it in the test. A sleep in a test measures
+the network.
 
-## Raportowanie
+## Reporting
 
-Podawaj polecenie i jego wynik, nie wniosek. Gdy test padł — pokaż wyjście. Gdy coś pominięto —
-powiedz to. Gdy zrobione i sprawdzone — stwierdź wprost, bez asekuracji.
+Give the command and its output, not the conclusion. When a test failed, show the output. When
+something was skipped, say so. When it is done and verified, say it plainly, without hedging.

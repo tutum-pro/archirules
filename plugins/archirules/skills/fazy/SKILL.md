@@ -3,45 +3,44 @@ name: fazy
 description: Manage the phase register — open a phase with its acceptance criterion, or close one with evidence. Use before starting a work phase and when reporting it complete.
 ---
 
-# Rejestr faz
+# The phase register
 
-## Otwarcie fazy — **przed** pracą
+## Opening a phase — **before** the work
 
-Wpis w tabeli: identyfikator, nazwa, status `☐`, **kryterium akceptacji**.
+A row in the table: identifier, name, status `☐`, **acceptance criterion**.
 
-Kryterium musi być **sprawdzalne i nietrywialne**:
+The criterion has to be **checkable and non-trivial**:
 
-| źle | dobrze |
+| bad | good |
 |---|---|
-| „zrobić persystencję" | „**instancja przeżywa restart i wznawia się**" |
-| „dodać walidację" | „`@annuity` w warunku = **błąd kompilacji**" |
-| „obsłużyć ponawianie" | „**dwukrotne dostarczenie kroku = jeden skutek**" |
+| "do persistence" | "**an instance survives a restart and resumes**" |
+| "add validation" | "`@annuity` in a guard is a **compile error**" |
+| "handle retries" | "**a step delivered twice produces one effect**" |
 
-Kryterium zapisane po fakcie zawsze jest spełnione — dlatego P5 wymaga zapisania go wcześniej.
+A criterion written afterwards is always met — which is why P5 requires it up front.
 
-## Twarda bramka
+## The hard gate
 
-Przy podejściu kosztownym zapisz **warunek jego porzucenia**, zanim zaczniesz. Sformułuj tak,
-żeby dało się go stwierdzić bez dyskusji: *„jeśli fazy B1–B5 nie mieszczą się w tygodniu
-pracy, opcja C była zła"*.
+For an expensive approach, write down **the condition for abandoning it** before you start.
+Phrase it so it can be settled without discussion: *"if phases B1–B5 do not fit in a week of
+work, option C was wrong"*.
 
-## Zamknięcie fazy
+## Closing a phase
 
-**Nie zamykaj na podstawie tego, że kod istnieje.** Zamknięcie wymaga:
+**Do not close it because the code exists.** Closing requires:
 
-1. **Dowodu**, że kryterium akceptacji jest spełnione — polecenie i jego wynik, nie deklaracja.
-2. **Dwóch przebiegów** testów pod rząd (reguła W7).
-3. **Sekcji opisowej** pod tabelą: co zostało zrobione, **jakie decyzje projektowe** podjęto
-   po drodze, **co świadomie pominięto** i pod jakim OQ to zapisano.
-4. Odnotowania rzeczy, które wyszły przy okazji — zwłaszcza błędów znalezionych we własnej
-   wcześniejszej pracy. To jest najcenniejsza część rejestru i jedyne miejsce, gdzie się
-   utrwala.
+1. **Evidence** that the acceptance criterion is met — a command and its output, not a claim.
+2. **Two consecutive runs** of the tests (rule W7).
+3. **A prose section** under the table: what was built, **what design decisions** were taken
+   along the way, **what was deliberately left out** and under which question it is recorded.
+4. A note on what surfaced incidentally — especially defects found in your own earlier work.
+   That is the most valuable part of the register and the only place it survives.
 
-## Gdy faza „prawie" gotowa
+## When a phase is "nearly" done
 
-Status `◐` i **wypunktowanie, czego brakuje**. Nie zaokrąglaj w górę: faza zamknięta
-przedwcześnie zabiera bramce cały sens.
+Status `◐` and **a list of what is missing**. Do not round up: a phase closed early takes the
+whole point out of the gate.
 
-Zanim zgłosisz fazę jako kompletną, **sprawdź kryterium dosłownie**. „Błąd kompilacji" znaczy
-nieudane budowanie, a nie odmowę w czasie działania — to nie jest to samo i różnicę widać
-dopiero, gdy się ją naprawdę uruchomi.
+Before reporting a phase complete, **check the criterion literally**. "Compile error" means a
+failing build, not a refusal at run time — those are not the same thing, and the difference is
+only visible if you actually run it.

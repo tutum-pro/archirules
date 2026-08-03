@@ -4,7 +4,7 @@
 
 ## Decyzja
 
-Przykład minimalnego, zgodnego ADR-a.
+Minimalny zgodny rekord decyzji.
 
 ## Konsekwencje
 

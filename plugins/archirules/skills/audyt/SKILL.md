@@ -3,105 +3,89 @@ name: audyt
 description: Audit the architecture documentation for completeness and truthfulness — numbering defects, missing index entries, superseded records still claiming to be current, statuses that reality has overtaken. Use periodically and before any milestone.
 ---
 
-# Audyt kompletności rejestrów
+# Auditing the registers
 
-**Sprawdzaj, nie zapewniaj.** Wynikiem audytu jest lista znalezisk albo zdanie „sprawdziłem
-N rzeczy, nic nie znalazłem" — nigdy „wszystko wygląda dobrze".
+**Check, do not reassure.** The result of an audit is a list of findings, or the sentence "I
+checked N things and found nothing" — never "everything looks fine".
 
-## 1. Wady numeracji
-
-```
-grep -oE "^### OQ-[0-9]+" open-questions.md | sort | uniq -d          # duplikaty
-grep -oE "^### OQ-[0-9]+" open-questions.md | grep -oE "[0-9]+" \
-  | sort -n -u                                                        # luki
-```
-
-Duplikat numeru czyni **każde** odwołanie do niego niejednoznacznym. Przy poprawianiu
-przenumeruj tę pozycję, do której jest **mniej odwołań**, i popraw wszystkie odwołania.
-
-## 2. Indeks kontra rzeczywistość
-
-Liczba plików w `decisions/` musi się zgadzać z liczbą wierszy w tabeli `README.md`. **ADR
-spoza indeksu nie istnieje** — nikt go nie znajdzie.
-
-## 3. Zapisy, które przestały być prawdą
-
-Najgroźniejsza kategoria i najtrudniejsza do znalezienia:
-
-- ADR ze statusem *Przyjęty*, którego decyzja została w praktyce odwrócona;
-- OQ *ZABLOKOWANE przez* pytanie już rozstrzygnięte;
-- OQ *OTWARTE*, którego treść jest zbudowana;
-- zdanie w ADR opisujące zachowanie, którego kod nie ma.
-
-Dla każdego ADR-a zapytaj: **czy gdyby ktoś przeczytał tylko ten dokument, wyciągnąłby
-wniosek zgodny z tym, co jest zbudowane?**
-
-## 4. Kod bez śladu w dokumentacji
-
-Wypisz elementy wprowadzone od ostatniego audytu — migracje, bramki, moduły, publiczne typy —
-i sprawdź, czy każdy ma wzmiankę. Szukaj **pojęcia**, nie nazwy pliku: migracja `0007_retry.sql`
-bywa opisana jako „migracja `0007`".
-
-## 5. Decyzje, które nigdy nie trafiły do rejestru
-
-Przejrzyj historię commitów i rejestr faz pod kątem rozstrzygnięć żyjących wyłącznie w kodzie.
-**To jest najczęstsze i najpoważniejsze znalezisko.** Decyzja podjęta w trakcie pracy rzadko
-sama prosi się o ADR.
-
-## 6. Ryzyka odkryte i nieodnotowane
-
-Zwłaszcza bezpieczeństwo i operacje: klucze w historii, repozytoria bez kopii, poświadczenia
-w manifestach, konfiguracja istniejąca tylko na jednej maszynie. Sprawdź **stan faktyczny**
-(`git ls-remote`, `git branch`, obecność obiektu), nie wspomnienie o nim.
-
-## 7. Zgodność strukturalna — uruchom kontroler, nie pisz go od nowa
+## 1. Structural conformance — run the checker, do not rewrite it
 
 ```
 python3 ${CLAUDE_PLUGIN_ROOT}/scripts/conform.py docs/architecture
 ```
 
-Sprawdza artefakty, sekcje każdego ADR-a, zgodność indeksu z liczbą plików, numerację
-i kształt wpisów OQ oraz rejestr faz. Rozpoznaje wariant polski i angielski po `README.md`.
-Kod wyjścia 1 przy jakimkolwiek naruszeniu, więc nadaje się do bramki CI.
+It checks the artefacts, the sections of every decision record, agreement between the index and
+the directory, the numbering and shape of open questions, and the phase register. It detects
+the Polish and English variants from `README.md`. Exit code 1 on any problem, so it works as a
+CI gate.
 
-**Zanim mu uwierzysz**, uruchom dowód, że potrafi paść:
+**Before trusting it**, run the proof that it can fail:
 
 ```
 bash ${CLAUDE_PLUGIN_ROOT}/scripts/selftest.sh
 ```
 
-Psuje kopię poprawnego zestawu na sześć sposobów i wymaga wykrycia każdego.
+Fifteen cases across both languages: each defect the checker claims to find is introduced into
+a copy of a known-good set and must be caught.
 
-### Dlaczego kontroler wygląda tak, a nie inaczej
+### Why the checker looks the way it does
 
-Sprawdzenie, czy każdy ADR ma wymagane sekcje, jest kuszące do zautomatyzowania i **bardzo
-łatwe do zepsucia**. Cztery kolejne wersje takiego kontrolera dały wyniki fałszywe, każda
-z innego powodu:
+Four successive versions of this check produced false results, each for a different reason:
 
-| błąd | skutek |
+| defect | effect |
 |---|---|
-| wzorzec `**Koszty` | nie widział `**Koszt.**` w liczbie pojedynczej → 6 fałszywych braków |
-| lista słów `odrzuc\|odpad\|alternatyw` | nie widziała „**Nie zakładamy** trzeciego namespace" |
-| wzorzec regularny z pustą alternatywą | narzędzie zwróciło błąd na stderr, skrypt wypisał „czysto" |
-| `for x in $zmienna` w **zsh** | brak podziału na słowa → jeden obieg zamiast jedenastu |
+| pattern `**Koszty` | did not see `**Koszt.**` in the singular → 6 false gaps |
+| keyword list `rejected\|dropped\|alternative` | did not see "**we do not create** a third namespace" |
+| a regex with an empty alternative | the tool errored on stderr, the script printed "clean" |
+| `for x in $var` under **zsh** | no word splitting → one iteration instead of eleven |
 
-Stąd trzy zasady, wbudowane już w `conform.py`:
+Hence three rules, already built into `conform.py`:
 
-1. **Dopasowuj prefiksy, nie pełne brzmienia.** `**Koszt` zamiast `**Koszty, przyjęte
-   świadomie.**`. Wariant językowy nie jest niezgodnością.
-2. **Zanim zgłosisz brak — otwórz plik.** Treść bywa pod innym nagłówkiem albo w prozie.
-   Zgłoszenie „brak sekcji" jest twierdzeniem o dokumencie, więc podlega regule W3.
-3. **Rozliczaj pokrycie.** Licz sprawdzone kontra wszystkie i **odmawiaj orzeczenia przy
-   niezgodności**. To jedyna z czterech pułapek powyżej, którą wykryto automatycznie —
-   dokładnie dzięki temu licznikowi.
+1. **Match prefixes, not full wordings.** `**Koszt` rather than `**Koszty, przyjęte
+   świadomie.**`. A wording variant is not a deviation.
+2. **Open the file before reporting something missing.** Content is often under a different
+   heading, or in prose. "Section missing" is a claim about a document, so rule W3 applies.
+3. **Account for coverage.** Count what you checked against what exists and **refuse to
+   conclude** when they disagree. That is the only one of the four traps above that was caught
+   automatically — precisely by that counter.
 
-Rozbieżność brzmienia nagłówków sama w sobie **nie jest wadą dokumentu**. `**Koszt.**` przy
-jednym koszcie jest poprawne, a `**Koszty i warunki wstępne**` niesie treść, której skrócenie
-by usunęło. Wadą jest dopiero to, że **nie da się tego sprawdzić maszynowo** — i naprawia się
-to w kontrolerze oraz w szablonie dla nowych dokumentów, nie przez przepisywanie historii.
+Divergent heading wording is **not in itself a defect in a document**. `**Koszt.**` is correct
+when there is one cost, and a heading like `**Costs and preconditions**` may carry meaning that
+shortening would delete. The defect is only that it cannot be checked mechanically — and that
+is fixed in the checker and in the template for new documents, not by rewriting history.
 
-## Wynik
+## 2. Records that stopped being true
 
-Raportuj z podziałem na wagę i **z dowodem przy każdym znalezisku**. Poprawki wnoś osobnym
-commitem od pracy funkcjonalnej — historia z jednym commitem „funkcja + dokumentacja" ukrywa,
-że audyt coś znalazł.
+The most dangerous category and the hardest to find:
+
+- a record marked *Accepted* whose decision was in practice reversed;
+- a question *blocked by* a question that has since been resolved;
+- a question still *open* whose subject has been built;
+- a sentence describing behaviour the code does not have.
+
+For every record ask: **if somebody read only this document, would they conclude something
+consistent with what is built?**
+
+## 3. Code with no trace in the documentation
+
+List what has been introduced since the last audit — migrations, gates, modules, public types —
+and check each has a mention. Look for the **concept**, not the filename: a migration
+`0007_retry.sql` is often described as "migration `0007`".
+
+## 4. Decisions that never reached the register
+
+Go through the commit history and the phase register looking for choices that live only in the
+code. **This is the most common and most serious finding.** A decision taken mid-work rarely
+asks to be written down.
+
+## 5. Risks discovered and never recorded
+
+Security and operations especially: keys in history, repositories with no backup, credentials
+in manifests, configuration that exists on one machine only. Check the **actual state**
+(`git ls-remote`, `git branch`, whether an object exists), not your memory of it.
+
+## Reporting
+
+Report by severity, **with evidence for each finding**. Commit the fixes separately from
+feature work — a history with a single "feature + docs" commit hides the fact that the audit
+found anything.

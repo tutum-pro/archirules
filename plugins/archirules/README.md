@@ -15,11 +15,28 @@ Metoda prowadzenia projektu wytwórczego IT jako zestaw skilli dla Claude Code.
 | `/archirules:audyt` | audyt kompletności i prawdziwości rejestrów |
 | `/archirules:weryfikacja` | dyscyplina dowodu: udowodnij, że bramka pada |
 
+## Narzędzia
+
+```
+python3 scripts/conform.py docs/architecture   # kontrola zgodności strukturalnej
+bash    scripts/selftest.sh                    # dowód, że kontroler potrafi paść
+```
+
+`scripts/testdata/` to **dane wejściowe samotestu, nie przykłady do kopiowania** — najmniejsze
+dokumenty spełniające kontroler, w dwóch językach, bo obsługę dwujęzyczną też trzeba czymś
+pilnować.
+
 ## Szablony
 
 `templates/pl/` i `templates/en/` — ADR, OQ, rejestr faz, rejestr weryfikacji, README.
 
-Polski jest kanoniczny. Angielski to tłumaczenie; **przy rozbieżności rozstrzyga polski**.
+Polski jest kanoniczny **dla treści metody** (`RULES.md`, szablony, ten plik). Angielski to
+tłumaczenie; przy rozbieżności rozstrzyga polski.
+
+**Warstwa wykonywalna jest po angielsku bez wyjątku:** skille, skrypty, metadane wtyczki.
+`SKILL.md` konsumuje model w czasie działania i czyta każdy, kto instaluje wtyczkę — bliżej
+mu do kodu niż do prozy. Język instrukcji nie determinuje języka wyniku: angielski skill
+produkuje polskie ADR-y, jeśli taki jest język projektu.
 Rozumowanie skupione jest w `RULES.md`, a szablony są celowo ubogie w prozę — żeby rozjazd
 wersji miał gdzie nie powstać.
 

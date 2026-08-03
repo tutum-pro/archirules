@@ -3,39 +3,39 @@ name: bootstrap
 description: Scaffold the architecture documentation set (decision records, open questions, phase register) in a project that does not have one yet. Use when starting a new project or introducing the archirules method into an existing one.
 ---
 
-# Założenie rejestrów w projekcie
+# Setting up the registers
 
-## Zanim cokolwiek utworzysz
+## Before creating anything
 
-1. Sprawdź, czy `docs/architecture/` już istnieje. **Jeśli tak — nie nadpisuj.** Zgłoś, co
-   zastałeś, i zaproponuj uzupełnienie brakujących elementów.
-2. Ustal z użytkownikiem **język dokumentacji** (`pl` lub `en`) — decyduje o tym, których
-   szablonów użyjesz z `templates/`. Zapisz wybór w `README.md` rejestru, żeby kolejna sesja
-   nie musiała zgadywać.
-3. Ustal, **czy projekt zaczyna się od modelu procesu** (reguła P1). Jeśli tak, załóż też
-   katalog na modele i pierwszy plik `.bpmn` albo równoważny.
+1. Check whether `docs/architecture/` already exists. **If it does, do not overwrite.**
+   Report what you found and offer to fill in what is missing.
+2. Agree the **documentation language** (`pl` or `en`) with the user — it decides which set
+   of `templates/` you use. Record the choice in the register's `README.md` so the next
+   session does not have to guess.
+3. Agree whether the project **starts from a process model** (rule P1). If it does, create the
+   directory for models and the first `.bpmn` file or equivalent.
 
-## Co utworzyć
+## What to create
 
 ```
 docs/architecture/
-  README.md              indeks + sekcja "Wymagania obowiązujące"
-  decisions/             (pusty, na ADR-y)
-  open-questions.md      z nagłówkiem i pustą numeracją
-  fazy-realizacji.md     z legendą i pustą tabelą faz
+  README.md              index + "binding requirements" section
+  decisions/             (empty, for decision records)
+  open-questions.md      heading and empty numbering
+  fazy-realizacji.md     legend and empty phase table   (or phases.md in English)
 ```
 
-`rejestr-weryfikacji.md` **zakładaj dopiero**, gdy pojawi się pierwsze twierdzenie wymagające
-sprostowania. Pusty rejestr weryfikacji uczy, że można go ignorować.
+Create the verification register **only when** the first claim needs correcting. An empty
+verification register teaches people that it can be ignored.
 
-## Sekcja „Wymagania obowiązujące"
+## The binding-requirements section
 
-To jest najważniejsza część `README.md` i jedyna, którą czyta się przy **każdym** zadaniu.
-Trafiają tu wyłącznie decyzje wiążące pracę poza własnym obszarem — na starcie zwykle pusta,
-z jednym zdaniem wyjaśniającym, co tu trafi.
+This is the most important part of `README.md` and the only part read on **every** task. Only
+decisions that bind work outside their own area belong here — usually empty at the start, with
+one sentence saying what will land in it.
 
-## Na koniec
+## Finally
 
-Zaproponuj dopisanie do `CLAUDE.md` projektu fragmentu z `CLAUDE.md.example`, żeby metoda
-obowiązywała bez proszenia o nią w każdej sesji. **Nie dopisuj bez zgody** — to zmienia
-domyślne zachowanie w całym projekcie.
+Offer to add the fragment from `CLAUDE.md.example` to the project's `CLAUDE.md`, so the method
+applies without being asked for in every session. **Do not add it without consent** — it
+changes default behaviour across the whole project.

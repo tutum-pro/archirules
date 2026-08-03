@@ -3,44 +3,46 @@ name: oq
 description: Register a new open question or resolve an existing one in the open-questions register. Use when a doubt has no answer yet, or when a decision closes one.
 ---
 
-# Rejestr pytań otwartych
+# The open-questions register
 
-## Rejestrowanie
+## Registering
 
-1. **Numer** — najwyższy + 1. Sprawdź **duplikaty i luki** przed nadaniem:
+1. **Number** — the highest plus one. Check for **duplicates and gaps** before assigning:
    ```
-   grep -oE "^### OQ-[0-9]+" open-questions.md | sort | uniq -d     # duplikaty
+   grep -oE "^### OQ-[0-9]+" open-questions.md | sort | uniq -d     # duplicates
    ```
-   Nie licz nagłówków, żeby zgadnąć kolejny numer — wpisy archiwalne i duplikaty zafałszują
-   wynik. Weź **maksimum**, nie liczbę.
+   Do not count headings to guess the next number — archived entries and duplicates will skew
+   the count. Take the **maximum**, not the count.
 
-2. **Nagłówek wpisu:**
+2. **Entry header:**
    ```
-   ### OQ-NN — <pytanie, nie temat>
-   **Status:** OTWARTE · **Priorytet: ...** · **Blokuje/Zależy od/Dotyka:** ...
+   ### OQ-NN — <a question, not a topic>
+   **Status:** OPEN · **Depends on / Blocks / Touches:** ...
    ```
+   Add a priority only when it is high or critical. A field filled in on every routine question
+   becomes noise and stops meaning anything.
 
-3. **Treść** odpowiada na trzy rzeczy: czego nie wiemy, co się stanie, jeśli nie
-   rozstrzygniemy, i co trzeba wiedzieć, żeby rozstrzygnąć.
+3. **The body** answers three things: what we do not know, what happens if we leave it
+   unresolved, and what has to be known before it can be answered.
 
-## Kiedy zakładać OQ
+## When to open a question
 
-- wątpliwość, którą kusi rozstrzygnąć „na razie tak" — **zawsze**;
-- granica, której nie da się wyegzekwować maszynowo (reguła W9);
-- ryzyko odkryte przy okazji innej pracy, którego teraz nie naprawiasz;
-- decyzja odłożona świadomie — z zapisem, **do kiedy** i **od czego** zależy.
+- a doubt you are tempted to settle with "let's do X for now" — **always**;
+- a boundary that cannot be enforced mechanically (rule W9);
+- a risk discovered while doing something else, which you are not fixing now;
+- a decision deliberately deferred — recording **until when** and **on what** it depends.
 
-Jeśli piszesz w kodzie komentarz zaczynający się od „na razie", „docelowo" albo „do
-rozważenia" — to jest OQ, nie komentarz.
+If you are writing a code comment that starts with "for now", "eventually" or "to be
+considered", that is an open question, not a comment.
 
-## Zamykanie
+## Closing
 
-Status zmień na `ROZSTRZYGNIĘTE → <ADR albo faza>, <data>` i **napisz, jak brzmi
-odpowiedź** — link bez odpowiedzi zmusza do czytania całego ADR-a.
+Change the status to `RESOLVED → <record or phase>, <date>` and **state the answer** — a bare
+link forces the reader through an entire decision record.
 
-Trzy przypadki szczególne:
+Three special cases:
 
-- **Odpowiedź odwrócona** — zaznacz, że pierwsza była inna i dlaczego się zmieniła. To
-  ważniejsze niż podmiana linku.
-- **Pytanie przestało istnieć** — napisz to wprost zamiast udawać rozstrzygnięcie.
-- **Zamknięte częściowo** — zostaw otwarte i przenieś sedno wpisu na to, co zostało.
+- **The answer was reversed** — say that the first one was different and why. That matters more
+  than swapping the link.
+- **The question stopped existing** — say so plainly instead of dressing it up as a resolution.
+- **Partially closed** — leave it open and move the body onto what remains.

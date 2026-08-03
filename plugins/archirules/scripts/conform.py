@@ -1,48 +1,69 @@
 #!/usr/bin/env python3
-"""Sprawdza zgodność strukturalną rejestrów z archirules (RULES.md).
+"""Check an architecture documentation set against the archirules structure.
 
-Checks an architecture documentation set against the archirules structure.
+    conform.py <path to docs/architecture> [--lang pl|en|auto]
 
-    conform.py <katalog docs/architecture> [--lang pl|en|auto]
+Exit code 0 when nothing is wrong, 1 otherwise, so it works as a CI gate.
 
-Kod wyjścia 0, gdy nie ma naruszeń; 1 w przeciwnym razie.
+MATCHING IS BY PREFIX, not by exact wording. In Polish, `**Koszt.**` (singular) is
+correct when a decision has one cost, and is not a deviation. The first version of
+this checker required `**Koszty` and reported six false gaps in a project that had
+a complete set — which is why prefixes are a rule here and not a convenience.
 
-DOPASOWANIE PREFIKSAMI, nie pełnymi brzmieniami. `**Koszt.**` przy jednym koszcie
-jest poprawne i nie jest niezgodnością — pierwsza wersja tego kontrolera wymagała
-`**Koszty` i zgłosiła sześć fałszywych braków. Wariant językowy to nie wada.
+The checker deliberately does NOT report a missing "considered and rejected"
+section. In practice that content is often written into the prose of the decision
+instead, and reporting it absent would be a claim about a document nobody read
+(rule W3). Extracting it into its own section is what the template teaches for new
+records, not something to retrofit by machine.
 
-Kontroler NIE zgłasza braku sekcji „Rozważone i odrzucone": w praktyce treść
-bywa w prozie, a zgłoszenie braku byłoby twierdzeniem o dokumencie bez jego
-przeczytania (reguła W3). Wyodrębnienie sekcji prowadzi szablon dla nowych ADR-ów.
+Language is detected from README.md and can be forced with --lang.
 """
-import os, re, sys, glob
+import glob
+import os
+import re
+import sys
 
-M = {
-    "pl": {"conseq": r"^## Konsekwencje", "impl": r"^## Stan realizacji",
-           "cost": r"\*\*Koszt", "binding": "Wymagania obowiązujące",
-           "legend": "Legenda", "criterion": "Kryterium akceptacji", "gate": "Twarda bramka"},
-    "en": {"conseq": r"^## Consequences", "impl": r"^## Implementation status",
-           "cost": r"\*\*Cost", "binding": "Binding requirements",
-           "legend": "Legend", "criterion": "Acceptance criterion", "gate": "Hard gate"},
+MARKERS = {
+    "pl": {
+        "conseq": r"^## Konsekwencje",
+        "impl": r"^## Stan realizacji",
+        "cost": r"\*\*Koszt",
+        "binding": "Wymagania obowiązujące",
+        "legend": "Legenda",
+        "criterion": "Kryterium akceptacji",
+        "gate": "Twarda bramka",
+    },
+    "en": {
+        "conseq": r"^## Consequences",
+        "impl": r"^## Implementation status",
+        "cost": r"\*\*Cost",
+        "binding": "Binding requirements",
+        "legend": "Legend",
+        "criterion": "Acceptance criterion",
+        "gate": "Hard gate",
+    },
 }
-PHASES = ["fazy-realizacji.md", "phases.md"]
-VERIF  = ["rejestr-weryfikacji.md", "verification.md"]
+
+# Both naming conventions are accepted so that an existing project never has to
+# rename files to become checkable.
+PHASE_FILES = ["fazy-realizacji.md", "phases.md"]
+VERIFICATION_FILES = ["rejestr-weryfikacji.md", "verification.md"]
 
 
-def first_existing(d, names):
-    for n in names:
-        if os.path.isfile(os.path.join(d, n)):
-            return n
+def first_existing(directory, names):
+    for name in names:
+        if os.path.isfile(os.path.join(directory, name)):
+            return name
     return None
 
 
-def detect_lang(d):
-    rd = os.path.join(d, "README.md")
-    if os.path.isfile(rd):
-        t = open(rd, encoding="utf-8").read()
-        if M["pl"]["binding"] in t:
+def detect_language(directory):
+    readme = os.path.join(directory, "README.md")
+    if os.path.isfile(readme):
+        text = open(readme, encoding="utf-8").read()
+        if MARKERS["pl"]["binding"] in text:
             return "pl"
-        if M["en"]["binding"] in t:
+        if MARKERS["en"]["binding"] in text:
             return "en"
     return "pl"
 
@@ -51,73 +72,81 @@ def main():
     if len(sys.argv) < 2:
         print(__doc__)
         return 2
-    d = sys.argv[1]
-    lang = "auto"
+
+    directory = sys.argv[1]
+    language = "auto"
     if "--lang" in sys.argv:
-        lang = sys.argv[sys.argv.index("--lang") + 1]
-    if lang == "auto":
-        lang = detect_lang(d)
-    m = M[lang]
+        language = sys.argv[sys.argv.index("--lang") + 1]
+    if language == "auto":
+        language = detect_language(directory)
+    marker = MARKERS[language]
 
-    issues, checks = [], 0
+    problems = []
+    checks = 0
 
-    def chk(cond, msg):
+    def check(condition, message):
         nonlocal checks
         checks += 1
-        if not cond:
-            issues.append(msg)
+        if not condition:
+            problems.append(message)
 
-    # 1. artefakty
-    chk(os.path.isfile(f"{d}/README.md"), "brak artefaktu: README.md")
-    chk(os.path.isfile(f"{d}/open-questions.md"), "brak artefaktu: open-questions.md")
-    phases = first_existing(d, PHASES)
-    chk(phases is not None, f"brak rejestru faz ({' albo '.join(PHASES)})")
-    chk(first_existing(d, VERIF) is not None,
-        f"brak rejestru weryfikacji ({' albo '.join(VERIF)})")
-    chk(os.path.isdir(f"{d}/decisions"), "brak katalogu decisions/")
+    # 1. Required artefacts.
+    check(os.path.isfile(f"{directory}/README.md"), "missing artefact: README.md")
+    check(os.path.isfile(f"{directory}/open-questions.md"), "missing artefact: open-questions.md")
+    phases = first_existing(directory, PHASE_FILES)
+    check(phases is not None, f"missing phase register ({' or '.join(PHASE_FILES)})")
+    check(
+        first_existing(directory, VERIFICATION_FILES) is not None,
+        f"missing verification register ({' or '.join(VERIFICATION_FILES)})",
+    )
+    check(os.path.isdir(f"{directory}/decisions"), "missing decisions/ directory")
 
-    # 2. ADR-y
-    adrs = sorted(glob.glob(f"{d}/decisions/ADR-*.md"))
-    chk(len(adrs) > 0, "brak ADR-ów w decisions/")
-    for f in adrs:
-        t = open(f, encoding="utf-8").read()
-        n = os.path.basename(f)
-        chk(re.search(r"^\*\*Status:\*\*", t, re.M), f"{n}: brak **Status:**")
-        chk(re.search(m["conseq"], t, re.M), f"{n}: brak sekcji konsekwencji")
-        chk(re.search(m["impl"], t, re.M), f"{n}: brak sekcji stanu realizacji")
-        chk(re.search(m["cost"], t), f"{n}: brak sekcji kosztów (prefiks {m['cost']})")
+    # 2. Every decision record carries the sections a decision needs to be one.
+    records = sorted(glob.glob(f"{directory}/decisions/ADR-*.md"))
+    check(len(records) > 0, "no decision records in decisions/")
+    for path in records:
+        text = open(path, encoding="utf-8").read()
+        name = os.path.basename(path)
+        check(re.search(r"^\*\*Status:\*\*", text, re.M), f"{name}: no **Status:**")
+        check(re.search(marker["conseq"], text, re.M), f"{name}: no consequences section")
+        check(re.search(marker["impl"], text, re.M), f"{name}: no implementation status section")
+        check(re.search(marker["cost"], text), f"{name}: no costs section (prefix {marker['cost']})")
 
-    # 3. indeks
-    if os.path.isfile(f"{d}/README.md"):
-        rd = open(f"{d}/README.md", encoding="utf-8").read()
-        rows = len(re.findall(r"^\| \[\d{4}\]", rd, re.M))
-        chk(rows == len(adrs), f"indeks README ma {rows} wierszy, plików ADR jest {len(adrs)}")
-        chk(m["binding"] in rd, f"README: brak sekcji „{m['binding']}”")
+    # 3. The index and the directory must agree: a record outside the index is
+    #    invisible, which is the same as not existing.
+    if os.path.isfile(f"{directory}/README.md"):
+        readme = open(f"{directory}/README.md", encoding="utf-8").read()
+        rows = len(re.findall(r"^\| \[\d{4}\]", readme, re.M))
+        check(rows == len(records), f"index lists {rows} records, decisions/ holds {len(records)}")
+        check(marker["binding"] in readme, f"README: no '{marker['binding']}' section")
 
-    # 4. pytania otwarte
-    if os.path.isfile(f"{d}/open-questions.md"):
-        oq = open(f"{d}/open-questions.md", encoding="utf-8").read()
-        nums = [int(x) for x in re.findall(r"^### OQ-(\d+) —", oq, re.M)]
-        dup = sorted({n for n in nums if nums.count(n) > 1})
-        chk(not dup, f"duplikaty numerów OQ: {dup}")
-        if nums:
-            gaps = sorted(set(range(1, max(nums) + 1)) - set(nums))
-            chk(not gaps, f"luki w numeracji OQ: {gaps}")
-        for mm in re.finditer(r"^### OQ-(\d+) —[^\n]*\n(.*)$", oq, re.M):
-            chk(mm.group(2).startswith("**Status:**"),
-                f"OQ-{mm.group(1)}: **Status:** nie jest bezpośrednio pod nagłówkiem")
+    # 4. Open questions: a number is a public reference, so duplicates and gaps
+    #    both make references ambiguous.
+    if os.path.isfile(f"{directory}/open-questions.md"):
+        questions = open(f"{directory}/open-questions.md", encoding="utf-8").read()
+        numbers = [int(n) for n in re.findall(r"^### OQ-(\d+) —", questions, re.M)]
+        duplicates = sorted({n for n in numbers if numbers.count(n) > 1})
+        check(not duplicates, f"duplicate open-question numbers: {duplicates}")
+        if numbers:
+            gaps = sorted(set(range(1, max(numbers) + 1)) - set(numbers))
+            check(not gaps, f"gaps in open-question numbering: {gaps}")
+        for match in re.finditer(r"^### OQ-(\d+) —[^\n]*\n(.*)$", questions, re.M):
+            check(
+                match.group(2).startswith("**Status:**"),
+                f"OQ-{match.group(1)}: **Status:** is not directly under the heading",
+            )
 
-    # 5. rejestr faz
+    # 5. Phase register.
     if phases:
-        fz = open(f"{d}/{phases}", encoding="utf-8").read()
-        chk(m["legend"] in fz, "rejestr faz: brak legendy")
-        chk(m["criterion"] in fz, "rejestr faz: brak kolumny kryterium akceptacji")
-        chk(m["gate"] in fz, "rejestr faz: brak twardej bramki")
+        register = open(f"{directory}/{phases}", encoding="utf-8").read()
+        check(marker["legend"] in register, "phase register: no legend")
+        check(marker["criterion"] in register, "phase register: no acceptance-criterion column")
+        check(marker["gate"] in register, "phase register: no hard gate")
 
-    print(f"  język: {lang} · sprawdzeń: {checks} · naruszeń: {len(issues)}")
-    for i in issues:
-        print(f"    ✗ {i}")
-    return 1 if issues else 0
+    print(f"  language: {language} · checks: {checks} · problems: {len(problems)}")
+    for problem in problems:
+        print(f"    x {problem}")
+    return 1 if problems else 0
 
 
 if __name__ == "__main__":

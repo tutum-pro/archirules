@@ -6,4 +6,4 @@
 |---|---|---|---|
 | X1 | Przykład | ☐ | kontroler kończy się kodem 0 |
 
-**Twarda bramka:** jeśli atrapa przestanie przechodzić, kontroler zmienił zachowanie.
+**Twarda bramka:** jeśli ten zestaw przestanie przechodzić, kontroler zmienił zachowanie.
