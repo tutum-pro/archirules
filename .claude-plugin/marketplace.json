@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "archirules",
-  "description": "Metoda prowadzenia projektu wytwórczego IT: decyzje, pytania otwarte, fazy i dyscyplina weryfikacji jako artefakty pierwszej klasy",
+  "description": "A method for running software projects: decisions, open questions, phases and verification discipline as first-class artefacts",
   "owner": {
     "name": "Robert Sternal",
     "email": "dev@tutum-pro.io"
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "archirules",
-      "description": "Prowadzi projekt przez rejestr decyzji (ADR), rejestr pytań otwartych (OQ), rejestr faz z kryteriami akceptacji i rejestr weryfikacji. Wymusza dyscyplinę: odmawiaj zamiast zgadywać, nazywaj koszty każdej decyzji, dowódź że bramka potrafi paść.",
+      "description": "Runs a project through a decision register (ADR), an open-questions register (OQ), a phase register whose acceptance criteria are agreed before the work, and a verification register. Enforces the discipline behind them: refuse rather than guess, name the costs of every decision, and prove a gate can fail before trusting it.",
       "author": {
         "name": "Robert Sternal",
         "email": "dev@tutum-pro.io"

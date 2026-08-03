@@ -1,6 +1,6 @@
 {
   "name": "archirules",
-  "description": "Metoda prowadzenia projektu wytwórczego IT: ADR, pytania otwarte, fazy, weryfikacja",
+  "description": "A method for running software projects: ADRs, open questions, phases, verification",
   "author": {
     "name": "Robert Sternal",
     "email": "dev@tutum-pro.io"
