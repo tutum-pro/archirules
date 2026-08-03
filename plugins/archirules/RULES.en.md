@@ -3,9 +3,13 @@
 **Version:** 1.0 · **Canonical language:** Polish. This is a translation of `RULES.md`; **if
 the two disagree, the Polish version wins.**
 
-A method developed in practice, on a leasing platform. **Every rule below exists because its
-absence broke something** — not because it sounds good. Where possible, the failure it
-prevents is recorded with it.
+A method developed in practice. **Every rule below exists because its absence broke
+something** — not because it sounds good.
+
+The failures the rules came from are described in [`CASEBOOK.en.md`](CASEBOOK.en.md) and
+referenced as `C-NN`. The separation is deliberate: **a rule must be readable and usable
+without knowing somebody else's project**, while the evidence stays for those who want to know
+why it is worded the way it is.
 
 ---
 
@@ -94,22 +98,26 @@ Write that it was untrue for a period, and since when. A superseded ADR gets the
 **Superseded by ADR-NNNN** and stays in the register — it documents the reasoning that led to
 the change.
 
-*Why:* a decision register that quietly rewrites the past stops being evidence of anything.
+*Why:* a decision register that quietly rewrites the past stops being evidence of anything. A
+practical note: **the status field and the notice above it are two different places** — a
+correction sitting above a field that still lies is not a correction.
+[C-04](CASEBOOK.en.md#c-04--a-decision-register-announced-a-choice-reversed-the-day-before)
 
 ---
 
 ## Rules of execution
 
-These govern the work itself. **Each comes from a specific failure.**
+These govern the work itself. **Each comes from a specific failure** — described in the
+[casebook](CASEBOOK.en.md).
 
 ### W1. Refuse rather than guess
 
 A tool that meets something it does not support **stops loudly** and says what the problem is —
 ideally citing a specification, standard or decision.
 
-*Failure it prevents:* a process engine accepted diagrams containing constructs it could not
-execute, and simply skipped them. A diagram with a compensation event ran and compensated
-nothing. Nothing in the log, nothing in the result — just less than was drawn.
+Silent degradation is worse than refusal because it **looks like success**. A tool that does
+less than it was asked and says nothing is indistinguishable from one that did everything.
+[C-09](CASEBOOK.en.md#c-09--an-engine-that-executed-less-than-was-drawn)
 
 ### W2. Distinguish "not implemented" from "impossible by design"
 
@@ -126,17 +134,22 @@ A claim about system behaviour is worth exactly the command that demonstrates it
 writing "it works" — run it. Before writing "it is safe" — inspect the object, not a reference
 to it.
 
-*Failure:* twice, a measured result was reported that was an artefact of the test itself (a
-phantom memory leak; a throughput ceiling that was the test's own timer).
+Applies to your **own checking tools** as well: the result of a check is a claim about a
+document or about code, so the same rule governs it. Open the file before reporting something
+missing.
+[C-05](CASEBOOK.en.md#c-05--a-checker-looked-for-the-plural-and-missed-the-singular) ·
+[C-08](CASEBOOK.en.md#c-08--a-private-key-survived-the-cleaning-of-the-history)
 
 ### W4. A check that cannot fail looks exactly like a check that passes
 
 **A new gate is not finished until it has been shown to fail.** Break it deliberately, run it,
 read the error, revert. Record in the commit which shapes of violation it was proven against.
 
-*Failure:* an architecture gate twice reported "clean" against a deliberately broken library —
-once because a regex required leading whitespace (it saw grouped imports and missed
-single-line ones), once because `2>/dev/null` turned a tool error into an empty result.
+This covers **safety nets** too: a counter that watches whether a check ran at all must be
+looser than the check it watches. Tightened along with it, it stops watching anything.
+[C-01](CASEBOOK.en.md#c-01--a-gate-that-could-not-fail) ·
+[C-06](CASEBOOK.en.md#c-06--changing-one-punctuation-mark-switched-off-thirty-seven-checks) ·
+[C-07](CASEBOOK.en.md#c-07--tightening-the-safety-net-blinded-it)
 
 ### W5. Do not silence errors inside a gate
 
@@ -148,22 +161,21 @@ tool failed, **that is itself a violation**.
 If every test sets a parameter explicitly, none of them checks the default — and the default is
 what production uses.
 
-*Failure:* six retry tests passed with `maxAttempts = 0`, because all of them supplied their
-own configuration. The default path never ran.
+[C-02](CASEBOOK.en.md#c-02--six-tests-passed-with-a-broken-default)
 
 ### W7. Run it twice in a row
 
 A first run on clean state says nothing about the second. Tests sharing a database, a directory
 or a queue are only exposed by repetition.
 
-*Failure:* a suite passed and then failed on the next run — an instance left behind by one test
-was counted by another.
+[C-03](CASEBOOK.en.md#c-03--a-suite-passed-once-and-failed-on-the-second-run)
 
 ### W8. Do not measure your own artefact
 
 Before attributing an observation to the system, check that it does not come from the
 measurement, from a stub, or from a neighbouring test. Scope assertions to the thing under
 test, not to global state.
+[C-10](CASEBOOK.en.md#c-10--measuring-your-own-measuring-instrument)
 
 ### W9. Mechanism over convention — and when you cannot, name it as a convention
 

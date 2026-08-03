@@ -2,9 +2,13 @@
 
 **Wersja:** 1.0 · **Język kanoniczny:** polski (przy rozbieżności z `RULES.en.md` rozstrzyga ta wersja)
 
-Metoda wypracowana w praktyce, na projekcie platformy leasingowej. **Każda reguła poniżej
-istnieje dlatego, że jej brak coś zepsuł** — nie dlatego, że dobrze brzmi. Tam gdzie to
-możliwe, przy regule zapisana jest awaria, której zapobiega.
+Metoda wypracowana w praktyce. **Każda reguła poniżej istnieje dlatego, że jej brak coś
+zepsuł** — nie dlatego, że dobrze brzmi.
+
+Awarie, z których reguły powstały, opisane są w [`CASEBOOK.md`](CASEBOOK.md) i wskazywane
+odnośnikiem `(C-NN)`. Rozdzielenie jest celowe: **regułę ma dać się przeczytać i zastosować
+bez znajomości cudzego projektu**, a dowód ma zostać dla tych, którzy chcą wiedzieć, dlaczego
+reguła brzmi właśnie tak.
 
 ---
 
@@ -95,22 +99,25 @@ Gdy dokument mówi coś, co przestało obowiązywać, **nie usuwa się zdania po
 do zmiany.
 
 *Dlaczego:* rejestr decyzji, który po cichu przepisuje przeszłość, przestaje być dowodem
-czegokolwiek.
+czegokolwiek. Uwaga praktyczna: **pole statusu i notka nad nim to dwa różne miejsca** — notka
+prostująca nad polem, które nadal kłamie, nie jest korektą.
+[C-04](CASEBOOK.md#c-04--rejestr-decyzji-ogłaszał-wybór-odwrócony-dzień-wcześniej)
 
 ---
 
 ## Reguły wykonawcze
 
-Te dotyczą już samej pracy. **Każda pochodzi z konkretnej awarii.**
+Te dotyczą już samej pracy. **Każda pochodzi z konkretnej awarii** — opisanej w
+[kazuistyce](CASEBOOK.md).
 
 ### W1. Odmawiaj, zamiast zgadywać
 
 Narzędzie, które napotyka coś, czego nie obsługuje, **zatrzymuje się głośno** i mówi, czego
 dotyczy problem — najlepiej z odwołaniem do normy, specyfikacji albo decyzji.
 
-*Awaria, której zapobiega:* silnik procesów przyjmował diagramy z konstrukcjami, których nie
-umiał wykonać, i po prostu je pomijał. Diagram ze zdarzeniem kompensacji uruchamiał się
-i nie kompensował niczego. Nic w logu, nic w wyniku — po prostu mniej, niż napisano.
+Cicha degradacja jest gorsza od odmowy, bo **wygląda jak sukces**. Narzędzie, które robi mniej,
+niż mu zlecono, i nie mówi o tym, jest nieodróżnialne od narzędzia, które zrobiło wszystko.
+[C-09](CASEBOOK.md#c-09--silnik-który-wykonywał-mniej-niż-narysowano)
 
 ### W2. Rozróżniaj „niezaimplementowane" od „niemożliwe z definicji"
 
@@ -125,19 +132,24 @@ po nią iść.
 
 Twierdzenie o zachowaniu systemu jest warte tyle, ile polecenie, które je pokazuje. Zanim
 napiszesz „działa" — uruchom. Zanim napiszesz „jest bezpieczne" — sprawdź obiekt, nie
-referencję do niego.
+referencję do niego, i nie wspomnienie o wykonanej pracy.
 
-*Awaria:* dwukrotnie zaraportowano wynik pomiaru, który był artefaktem samego testu
-(rzekomy wyciek pamięci; przepustowość ograniczona przez własny `time.After`).
+Dotyczy to również **własnych narzędzi kontrolnych**: wynik kontroli jest twierdzeniem
+o dokumencie albo o kodzie, więc podlega tej samej regule. Zanim zgłosisz brak — otwórz plik.
+[C-05](CASEBOOK.md#c-05--kontroler-szukał-liczby-mnogiej-i-nie-widział-pojedynczej) ·
+[C-08](CASEBOOK.md#c-08--klucz-prywatny-przeżył-czyszczenie-historii)
 
 ### W4. Kontrola, która nie potrafi paść, wygląda identycznie jak kontrola, która przechodzi
 
 **Nowa bramka nie jest gotowa, dopóki nie pokazano, że pada.** Zepsuj celowo, uruchom, obejrzyj
 błąd, cofnij. Zapisz w commicie, na jakich kształtach naruszenia ją sprawdzono.
 
-*Awaria:* bramka architektoniczna dwukrotnie zgłaszała „czysto" na celowo zepsutej bibliotece —
-raz przez wyrażenie regularne wymagające wcięcia (widziało importy zgrupowane, nie widziało
-jednolinijkowych), raz przez `2>/dev/null`, które zamieniło błąd narzędzia w pusty wynik.
+Dotyczy to również **siatek bezpieczeństwa**: licznik pilnujący, czy kontrola w ogóle się
+wykonała, musi być luźniejszy od kontroli, którą pilnuje. Uszczelniony razem z nią przestaje
+cokolwiek pilnować.
+[C-01](CASEBOOK.md#c-01--bramka-która-nie-potrafiła-paść) ·
+[C-06](CASEBOOK.md#c-06--zmiana-znaku-interpunkcyjnego-wyłączyła-trzydzieści-siedem-kontroli) ·
+[C-07](CASEBOOK.md#c-07--uszczelnienie-siatki-bezpieczeństwa-oślepiło-ją)
 
 ### W5. Nie wyciszaj błędów w bramce
 
@@ -149,21 +161,20 @@ pozytywny. Jeśli narzędzie zawiodło, **to samo w sobie jest naruszeniem**.
 Jeśli każdy test jawnie ustawia parametr, żaden nie sprawdzi wartości domyślnej — a to jej
 używa produkcja.
 
-*Awaria:* sześć testów ponawiania przeszło, mając `maxAttempts = 0`, bo wszystkie podawały
-własną konfigurację. Domyślna ścieżka nie wykonała się ani razu.
+[C-02](CASEBOOK.md#c-02--sześć-testów-przeszło-mimo-zepsutej-wartości-domyślnej)
 
 ### W7. Uruchom dwa razy pod rząd
 
 Pierwszy przebieg na czystym stanie niczego nie mówi o drugim. Testy dzielące bazę,
 katalog albo kolejkę wykrywa się wyłącznie powtórzeniem.
 
-*Awaria:* zestaw testów przeszedł, po czym padł przy kolejnym uruchomieniu — instancja
-zostawiona przez jeden test została policzona przez inny.
+[C-03](CASEBOOK.md#c-03--zestaw-testów-przeszedł-raz-i-padł-za-drugim-razem)
 
 ### W8. Nie mierz własnego artefaktu
 
 Zanim przypiszesz obserwację systemowi, sprawdź, czy nie pochodzi z narzędzia pomiarowego,
 z atrapy albo z sąsiedniego testu. Asercje zawężaj do bytu badanego, nie do stanu globalnego.
+[C-10](CASEBOOK.md#c-10--pomiar-własnego-narzędzia-pomiarowego)
 
 ### W9. Mechanizm ponad konwencję — a gdy się nie da, nazwij to konwencją
 

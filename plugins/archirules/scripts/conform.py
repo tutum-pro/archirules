@@ -5,10 +5,11 @@
 
 Exit code 0 when nothing is wrong, 1 otherwise, so it works as a CI gate.
 
-MATCHING IS BY PREFIX, not by exact wording. In Polish, `**Koszt.**` (singular) is
-correct when a decision has one cost, and is not a deviation. The first version of
-this checker required `**Koszty` and reported six false gaps in a project that had
-a complete set — which is why prefixes are a rule here and not a convenience.
+MATCHING IS BY PREFIX, not by exact wording. A singular heading is correct when a
+decision has one cost, and is not a deviation. The first version of this checker
+matched only the plural form and reported six sections absent that were all
+present — which is why prefixes are a rule here and not a convenience.
+See CASEBOOK case C-05.
 
 The checker deliberately does NOT report a missing "considered and rejected"
 section. In practice that content is often written into the prose of the decision
@@ -138,8 +139,8 @@ def main():
     if os.path.isfile(f"{directory}/open-questions.md"):
         questions = open(f"{directory}/open-questions.md", encoding="utf-8").read()
         # Any dash. A translator writing "-" instead of "—" must not be able to
-        # switch the whole section off: with the strict pattern, 36 entries parsed
-        # as zero and the checker reported success.
+        # switch the whole section off: with a strict pattern, an entire register of
+        # questions parsed as zero and the checker reported success (case C-06).
         # Any dash, but it must be separated from the number: "### OQ-20-archiwum"
         # is an archived variant, not a twentieth question, and a pattern loose
         # enough to swallow it invents a duplicate that is not there.
@@ -148,7 +149,8 @@ def main():
         # non-questions such as "### OQ-20-archiwum". Tightening this the same way
         # as the parser above would blind the safety net to exactly the drift it
         # exists to catch — which is what happened the first time: headings and
-        # parsed entries both fell to zero together and the mismatch never fired.
+        # parsed entries both fell to zero together and the mismatch never fired
+        # (case C-07).
         headings = len(re.findall(r"^### OQ-\d+(?![\w-])", questions, re.M))
         # Coverage accounting for the PARSER itself: if a heading looks like an
         # open question but does not parse, the checks below silently stop

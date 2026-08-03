@@ -21,36 +21,115 @@ Projekt wytwórczy rzadko przegrywa z trudnymi decyzjami. Przegrywa z decyzjami 
 milcząco** — przez kolejność refaktorów, przez wartość domyślną, przez to, że nikt nie zapisał
 alternatywy.
 
-## Instalacja
+## Zaczynamy — od zera do działającego rejestru
+
+### Czego potrzebujesz
+
+- **Claude Code** (CLI, aplikacja albo rozszerzenie do IDE),
+- katalog projektu, najlepiej będący repozytorium git.
+
+Nic poza tym. Wtyczka nie instaluje zależności ani nie uruchamia usług.
+
+### 1. Dodaj marketplace — raz na maszynę
+
+W Claude Code wpisz:
 
 ```
 /plugin marketplace add tutum-pro/archirules
+```
+
+To rejestruje **źródło** wtyczek. Robi się to raz; kolejne projekty na tej samej maszynie już
+tego nie wymagają.
+
+### 2. Zainstaluj wtyczkę
+
+```
 /plugin install archirules@archirules
 ```
 
-W projekcie:
+Zapis to `nazwa-wtyczki@nazwa-marketplace'u`. Obie nazwy są tu takie same, i to nie pomyłka —
+repozytorium zawiera jeden marketplace o nazwie `archirules` i jedną wtyczkę o tej samej nazwie.
+
+Alternatywnie: `/plugin` otwiera przeglądarkę wtyczek, w której można ją znaleźć na liście.
+
+Po instalacji sprawdź, czy skille są widoczne — wpisz `/archirules:` i powinna pojawić się
+podpowiedź z siedmioma pozycjami.
+
+### 3. Uruchom bootstrap **w katalogu projektu**
+
+Otwórz Claude Code w katalogu projektu i wpisz:
 
 ```
 /archirules:bootstrap
 ```
 
-## Zawartość
+**Co się wydarzy.** Zostaniesz zapytany o dwie rzeczy:
 
-- [`RULES.md`](plugins/archirules/RULES.md) — reguły, wersja kanoniczna (PL)
-- [`RULES.en.md`](plugins/archirules/RULES.en.md) — tłumaczenie (EN)
-- `plugins/archirules/skills/` — siedem skilli
-- `plugins/archirules/templates/` — szablony PL i EN
-- `plugins/archirules/scripts/` — kontroler zgodności strukturalnej wraz z samotestem
-  dowodzącym, że potrafi paść
+- **język dokumentacji** — polski albo angielski; decyduje o szablonach i nazwach plików,
+  i nie jest wyborem na zawsze (patrz `/archirules:language`);
+- **czy projekt zaczyna się od modelu procesu biznesowego** — jeśli tak, powstanie też miejsce
+  na modele.
+
+Następnie powstanie:
+
+```
+docs/architecture/
+  README.md              indeks decyzji + sekcja „Wymagania obowiązujące"
+  decisions/             pusty, na rekordy decyzji
+  open-questions.md      rejestr pytań otwartych
+  fazy-realizacji.md     rejestr faz z kryteriami akceptacji
+```
+
+**Projekt, który już ma `docs/architecture/`, nie zostanie nadpisany.** Bootstrap zgłosi, co
+zastał, i zaproponuje uzupełnienie brakujących elementów.
+
+### 4. Zgódź się na wpis do `CLAUDE.md`
+
+Bootstrap zaproponuje dopisanie fragmentu do `CLAUDE.md` projektu. **To jest krok, który
+sprawia, że metoda obowiązuje bez proszenia o nią w każdej sesji** — bez niego skille istnieją,
+ale trzeba je wołać ręcznie.
+
+Fragment jest krótki i możesz go obejrzeć przed zgodą: `CLAUDE.md.pl.example` albo
+`CLAUDE.md.en.example` we wtyczce.
+
+### 5. Sprawdź, że wyszło
+
+```
+/archirules:audyt
+```
+
+albo bezpośrednio:
+
+```
+python3 ~/.claude/plugins/marketplaces/archirules/plugins/archirules/scripts/conform.py docs/architecture
+```
+
+Zero naruszeń i kod wyjścia 0 znaczy, że rejestr jest kompletny strukturalnie. Świeżo założony
+zawsze taki jest — sens tej kontroli pojawia się później, gdy dokumentów przybędzie.
+
+### Co dalej
+
+| chcesz | wpisz |
+|---|---|
+| zapisać decyzję | `/archirules:adr` |
+| zapisać wątpliwość, na którą nie ma teraz odpowiedzi | `/archirules:oq` |
+| otworzyć fazę z kryterium akceptacji | `/archirules:fazy` |
+| sprawdzić, czy rejestr nie skłamał | `/archirules:audyt` |
+| dodać bramkę i udowodnić, że pada | `/archirules:weryfikacja` |
+| przełączyć projekt na inny język | `/archirules:language` |
 
 ## Skąd się to wzięło
 
-Z projektu, w którym po kilku dniach pracy okazało się, że: bramka kontrolna dwukrotnie
-zgłaszała „czysto" na celowo zepsutym kodzie, sześć testów przeszło mimo zepsutej konfiguracji
-domyślnej, a rejestr decyzji przez dobę ogłaszał wybór technologii odwrócony dzień wcześniej.
+Z projektu, w którym po kilku dniach pracy okazało się między innymi, że bramka kontrolna
+dwukrotnie zgłaszała „czysto" na celowo zepsutym kodzie, sześć testów przeszło mimo zepsutej
+konfiguracji domyślnej, a rejestr decyzji przez dobę ogłaszał wybór technologii odwrócony dzień
+wcześniej.
 
-Każda z tych rzeczy została znaleziona **przez sprawdzenie, nie przez czytanie kodu**. Reguły
-w `RULES.md` są zapisem tego, jak się je znajduje.
+Każda z tych rzeczy została znaleziona **przez sprawdzenie, nie przez czytanie kodu**.
+
+Dziesięć takich przypadków opisuje [`CASEBOOK.md`](plugins/archirules/CASEBOOK.md) — osobno od
+reguł, celowo. **Regułę ma dać się zastosować bez znajomości cudzego projektu**, a przypadek
+jest dowodem dla tych, którzy chcą wiedzieć, dlaczego brzmi właśnie tak.
 
 ## Licencja
 

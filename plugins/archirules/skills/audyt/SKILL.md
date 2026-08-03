@@ -34,24 +34,27 @@ Four successive versions of this check produced false results, each for a differ
 
 | defect | effect |
 |---|---|
-| pattern `**Koszty` | did not see `**Koszt.**` in the singular → 6 false gaps |
-| keyword list `rejected\|dropped\|alternative` | did not see "**we do not create** a third namespace" |
-| a regex with an empty alternative | the tool errored on stderr, the script printed "clean" |
-| `for x in $var` under **zsh** | no word splitting → one iteration instead of eleven |
+| a pattern matching only the plural form of a word | missed the singular; reported six sections absent that were all present |
+| a keyword list for "rejected alternatives" | missed a rejection phrased as "we do not create X, because…" |
+| a regular expression the tool refused to compile | the error went to stderr, the script printed "clean" |
+| a loop over an unquoted variable in a shell that does not word-split | one iteration instead of eleven, reported as full coverage |
+
+Full write-ups: [C-05](../../CASEBOOK.en.md#c-05--a-checker-looked-for-the-plural-and-missed-the-singular),
+[C-08](../../CASEBOOK.en.md#c-08--a-private-key-survived-the-cleaning-of-the-history).
 
 Hence three rules, already built into `conform.py`:
 
-1. **Match prefixes, not full wordings.** `**Koszt` rather than `**Koszty, przyjęte
-   świadomie.**`. A wording variant is not a deviation.
+1. **Match prefixes, not full wordings.** A wording variant — singular for plural, a longer
+   heading that carries extra meaning — is not a deviation.
 2. **Open the file before reporting something missing.** Content is often under a different
    heading, or in prose. "Section missing" is a claim about a document, so rule W3 applies.
 3. **Account for coverage.** Count what you checked against what exists and **refuse to
    conclude** when they disagree. That is the only one of the four traps above that was caught
    automatically — precisely by that counter.
 
-Divergent heading wording is **not in itself a defect in a document**. `**Koszt.**` is correct
-when there is one cost, and a heading like `**Costs and preconditions**` may carry meaning that
-shortening would delete. The defect is only that it cannot be checked mechanically — and that
+Divergent heading wording is **not in itself a defect in a document**. A singular form is
+correct when there is one item, and a heading like "Costs and preconditions" may carry meaning
+that shortening would delete. The defect is only that it cannot be checked mechanically — and that
 is fixed in the checker and in the template for new documents, not by rewriting history.
 
 ## 2. Records that stopped being true

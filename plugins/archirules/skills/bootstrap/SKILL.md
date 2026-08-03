@@ -17,7 +17,9 @@ description: Scaffold the architecture documentation set (decision records, open
    The choice is **not permanent**: `/archirules:language` switches an existing project end to
    end. Say so, so nobody picks English "just in case" for a team that thinks in Polish.
 3. Agree whether the project **starts from a process model** (rule P1). If it does, create the
-   directory for models and the first `.bpmn` file or equivalent.
+   directory for models and the first model file — the notation is the project's choice (BPMN,
+   a state machine, a sequence diagram); the method only requires that it be versioned rather
+   than living in a presentation.
 
 ## What to create
 

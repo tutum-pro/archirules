@@ -124,8 +124,10 @@ Anything that changed count was lost or duplicated in translation.
 
 ## Traps found by running this procedure on a real register
 
-The switch was rehearsed on a copy of a 23-document register before this skill was trusted.
-Three things went wrong, and all three were silent:
+The switch was rehearsed on a copy of a real 23-document register before this skill was
+trusted. Three things went wrong, and all three were silent. Full write-ups:
+[C-06](../../CASEBOOK.en.md#c-06--changing-one-punctuation-mark-switched-off-thirty-seven-checks),
+[C-07](../../CASEBOOK.en.md#c-07--tightening-the-safety-net-blinded-it).
 
 **A different dash switches off a whole section.** Translating `### OQ-01 — text` to
 `### OQ-01 - text` made the checker parse **zero** questions out of thirty-six. Numbering and
