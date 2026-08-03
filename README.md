@@ -3,6 +3,8 @@
 [![Licencja: CC BY-SA 4.0](https://img.shields.io/badge/Licencja-CC%20BY--SA%204.0-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-wtyczka-orange.svg)](https://github.com/tutum-pro/archirules)
 
+🇬🇧 [English](README.en.md) — tłumaczenie; przy rozbieżności rozstrzyga ta wersja
+
 **Meta-reguły prowadzenia projektu wytwórczego IT** — jako wtyczka do Claude Code.
 
 Metoda wypracowana w praktyce, przy budowie platformy leasingowej. **Każda reguła istnieje
@@ -38,6 +40,8 @@ W projekcie:
 - [`RULES.en.md`](plugins/archirules/RULES.en.md) — tłumaczenie (EN)
 - `plugins/archirules/skills/` — sześć skilli
 - `plugins/archirules/templates/` — szablony PL i EN
+- `plugins/archirules/scripts/` — kontroler zgodności strukturalnej wraz z samotestem
+  dowodzącym, że potrafi paść
 
 ## Skąd się to wzięło
 
