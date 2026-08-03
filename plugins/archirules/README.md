@@ -31,3 +31,10 @@ wersji miał gdzie nie powstać.
 
 Następnie wklej `CLAUDE.md.example` do `CLAUDE.md` projektu, żeby metoda obowiązywała bez
 przypominania o niej w każdej sesji.
+
+## Licencja
+
+[CC BY-SA 4.0](../../LICENSE) · Copyright © 2026 Robert Sternal (tutum-pro).
+
+Licencja nie udziela praw do nazw „archirules" ani „tutum-pro" — szczegóły w
+[README repozytorium](../../README.md#znaki-towarowe).

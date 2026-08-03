@@ -15,7 +15,9 @@
         "email": "dev@tutum-pro.io"
       },
       "source": "./plugins/archirules",
-      "category": "workflow"
+      "category": "workflow",
+      "license": "CC-BY-SA-4.0",
+      "homepage": "https://github.com/tutum-pro/archirules"
     }
   ]
 }

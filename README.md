@@ -47,6 +47,31 @@ w `RULES.md` są zapisem tego, jak się je znajduje.
 
 ## Licencja
 
-<!-- DO USTALENIA. Repozytorium przeznaczone do publicznego udostępnienia i ponownego
-     użycia w innych projektach; brak pliku LICENSE oznacza domyślnie "wszelkie prawa
-     zastrzeżone", co prawdopodobnie nie jest intencją. Decyzja prawna, nie inżynierska. -->
+**[CC BY-SA 4.0](LICENSE)** — Uznanie autorstwa · Na tych samych warunkach 4.0 Międzynarodowe.
+
+Copyright © 2026 Robert Sternal (tutum-pro).
+
+Wolno kopiować, rozpowszechniać i adaptować, również komercyjnie, pod dwoma warunkami:
+**wskazania autorstwa** oraz **udostępnienia utworów zależnych na tej samej licencji**.
+
+Co to znaczy w praktyce:
+
+- **Użycie wewnątrz firmy — bez żadnych zobowiązań.** Share-alike uruchamia się przy
+  rozpowszechnianiu, nie przy stosowaniu. Adaptacja metody na wewnętrzne potrzeby zespołu
+  czy klienta nie rodzi obowiązku publikacji.
+- **Publikacja adaptacji — na CC BY-SA 4.0.** Wydając zmienioną wersję na zewnątrz,
+  udostępniasz ją na tych samych warunkach.
+- **Dokumenty wytworzone metodą nie są utworami zależnymi.** ADR-y, rejestry i plany powstałe
+  w Twoim projekcie należą do Ciebie. Licencja obejmuje samą metodę — reguły, skille
+  i szablony — a nie to, co przy ich użyciu napiszesz.
+
+## Znaki towarowe
+
+**Licencja nie udziela praw do nazw „archirules" ani „tutum-pro".**
+
+Utwory zależne nie mogą używać tych nazw ani sugerować, że są firmowane, wspierane lub
+zatwierdzone przez autora. Nazwij swoją adaptację inaczej — wskazanie źródła („na podstawie
+archirules") jest wymagane przez licencję i jest w porządku; **posłużenie się nazwą jako
+własną — nie**.
+
+To rozróżnienie, a nie klauzula copyleft, jest tym, co realnie chroni tożsamość metody.
