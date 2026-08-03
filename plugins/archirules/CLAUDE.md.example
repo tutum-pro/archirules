@@ -1,0 +1,20 @@
+<!-- Fragment do wklejenia w CLAUDE.md projektu.
+     Sprawia, że metoda obowiązuje bez proszenia o nią w każdej sesji. -->
+
+## Metoda prowadzenia projektu
+
+Ten projekt jest prowadzony zgodnie z **archirules**. Reguły: `RULES.md` we wtyczce
+`archirules`; rejestry w `docs/architecture/`.
+
+Obowiązuje bez przypominania:
+
+- **Wątpliwość → wpis OQ**, nie decyzja w locie (`/archirules:oq`).
+- **Decyzja → ADR** z sekcjami „Rozważone i odrzucone" oraz **„Koszty, przyjęte świadomie"**
+  (`/archirules:adr`).
+- **Faza → kryterium akceptacji zapisane przed pracą** (`/archirules:fazy`).
+- **Nowa bramka → dowód, że pada** (`/archirules:weryfikacja`).
+- **Odmawiaj, zamiast zgadywać.** Konstrukcja nieobsługiwana zatrzymuje pracę głośno,
+  z odwołaniem do normy albo decyzji.
+- **Weryfikuj, nie twierdź.** Wynik polecenia zamiast deklaracji; zestaw testów dwa razy
+  pod rząd.
+- **Zapis, który przestał być prawdą, koryguj w zapisie** — nie usuwaj po cichu.
