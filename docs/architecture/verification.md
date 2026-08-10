@@ -76,6 +76,23 @@ whose own docstring promised that skips are printed.
 None of this was caught by reading. All of it was caught by running the checker against
 documents produced from the instructions instead of from the fixtures.
 
+## The release version
+
+**Verified.** That `claude plugin validate ./plugins/archirules --strict` passes. Before the
+version field existed the same command reported `version: No version specified` and passed only
+with warnings, which `--strict` turns into a failure — so this asserts the change, not the tool.
+
+**Verified.** That the agreement between `plugin.json` and `CHANGELOG.md` fails in each of the
+four ways it can be wrong: version bumped alone, changelog bumped alone, version field removed,
+changelog file missing. The last is the one that matters — an assertion going quiet when its
+input disappears is the C-11 shape, and this one prints a sentinel rather than an empty result.
+
+**Asserted, not verified.** That the version will actually be bumped when it should be. Nothing
+detects a change that ought to have been a release and was not; the gate only catches the two
+files disagreeing. Stated as a cost in
+[ADR-0007](decisions/ADR-0007-explicit-version-as-the-migration-anchor.md) rather than papered
+over.
+
 ## Installation instructions
 
 **Verified.** That `/plugin install <name>@<marketplace>` is the documented form, by reading the

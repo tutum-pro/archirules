@@ -18,6 +18,7 @@ anger rather than only against a synthetic fixture.
 | [0004](decisions/ADR-0004-checker-ships-with-its-own-proof.md) | The checker ships with a proof that it fails | Accepted |
 | [0005](decisions/ADR-0005-distribution-as-a-plugin.md) | Distribution as a Claude Code plugin, not a template repository | Accepted |
 | [0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md) | A checker keys only on wording the method itself produces | Accepted |
+| [0007](decisions/ADR-0007-explicit-version-as-the-migration-anchor.md) | An explicit version is what a migration moves between | Accepted |
 
 ## Binding requirements
 

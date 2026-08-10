@@ -15,6 +15,7 @@ A living document. **Updated whenever a phase completes.**
 | P5 | `--json` output and a CI example | ☐ | a pull request with a malformed register fails its check |
 | P6 | A second, unrelated project | ☐ | **someone who did not co-create the method uses it without asking its author how** |
 | P7 | Cross-register consistency checker | ☑ 2026-08-11 | **a register built by following `adr/SKILL.md` and the templates literally passes both checkers** — and every marker string either checker keys on is found in a template or a skill, asserted by the self-test rather than by reading |
+| P8 | A version users can migrate from | ☑ 2026-08-11 | `claude plugin validate --strict` passes, and **the version in `plugin.json` and the newest `CHANGELOG.md` heading agree** — asserted by the self-test, which fails when one moves without the other |
 
 **Hard gate at P6:** if the method cannot be applied by somebody who was not part of writing it,
 it is a private working habit and not a method. Publishing it would then be a marketing claim
@@ -124,3 +125,41 @@ first draft, and none of it was visible from reading:
   checker's exit code outrank the match, so cases reading output reported "printed nothing"; and
   a vocabulary assertion that passed when the module it measures failed to import, because an
   empty result read as "nothing missing".
+
+### P8 — what was delivered
+
+An explicit `version` in `plugin.json`, a `CHANGELOG.md` inside the plugin, and a self-test case
+requiring the two to agree. The reasoning and the four rejected alternatives are in
+[ADR-0007](decisions/ADR-0007-explicit-version-as-the-migration-anchor.md).
+
+**Closed with evidence.** Both halves of the criterion, checked literally:
+
+```
+claude plugin validate ./plugins/archirules --strict   ✔ Validation passed
+selftest.sh   ok  plugin version and changelog agree   1.1.0
+```
+
+Before this phase the same validation reported `version: No version specified` and passed only
+with warnings — `--strict` turns that into a failure, which is why the criterion names it.
+
+**Shown to fail, in four directions** rather than one, because a version check has more than one
+way of being wrong:
+
+| broken how | what the gate says |
+|---|---|
+| version bumped, changelog not | `plugin.json says 1.2.0, newest CHANGELOG heading is 1.1.0` |
+| changelog bumped, version not | `plugin.json says 1.1.0, newest CHANGELOG heading is 1.2.0` |
+| version field removed | `plugin.json declares no version` |
+| changelog missing entirely | `unreadable: No such file or directory` |
+
+The fourth matters most and is the reason the check prints a sentinel instead of returning an
+empty result. An assertion that goes quiet when the file it reads disappears is the defect
+recorded as C-11 in the casebook, and it was introduced and fixed once already in P7.
+
+**A design decision along the way.** `CHANGELOG.md` lives in the plugin root, not the repository
+root. Only the plugin directory is distributed, so a changelog outside it would be invisible to
+every installed user — and to `/archirules:update`, which reads it. The gate would then have
+passed here and been unrunnable everywhere else.
+
+**Deliberately not done:** git tags. The version, the changelog heading and a tag would be three
+places for one fact, and Claude Code reads none of the third.

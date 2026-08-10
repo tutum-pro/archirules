@@ -193,6 +193,45 @@ else
   failed=1
 fi
 
+# The release claim (ADR-0007). The version in plugin.json is what /archirules:update
+# migrates between, and CHANGELOG.md is where it reads what changed. Two files that must
+# agree, so the agreement is asserted rather than left to attention. A sentinel again,
+# not an empty result: if either file is unreadable the check must go red, not quiet.
+version=$(python3 - "$here" <<'PY'
+import json
+import os
+import re
+import sys
+
+root = os.path.dirname(sys.argv[1])                     # plugins/archirules
+try:
+    with open(os.path.join(root, ".claude-plugin", "plugin.json"), encoding="utf-8") as fh:
+        declared = json.load(fh).get("version")
+    with open(os.path.join(root, "CHANGELOG.md"), encoding="utf-8") as fh:
+        headings = re.findall(r"^## (\d+\.\d+\.\d+)", fh.read(), flags=re.M)
+except Exception as exc:                                # noqa: BLE001 - reported, not swallowed
+    print("unreadable: %s" % exc)
+    raise SystemExit(0)
+if not declared:
+    print("plugin.json declares no version")
+elif not headings:
+    print("CHANGELOG.md has no version heading")
+elif declared != headings[0]:
+    print("plugin.json says %s, newest CHANGELOG heading is %s" % (declared, headings[0]))
+else:
+    print("VERSION-OK " + declared)
+PY
+)
+case_no=$((case_no + 1))
+case "$version" in
+  "VERSION-OK "*)
+    printf "  ok    %-46s %s\n" "plugin version and changelog agree" "${version#VERSION-OK }" ;;
+  *)
+    printf "  FAIL  %-46s %s\n" "plugin version and changelog disagree" \
+      "${version:-(the version check itself did not run)}"
+    failed=1 ;;
+esac
+
 echo
 if [ "$failed" -eq 0 ]; then
   echo "  $case_no cases: the checker fails when it should, in both languages"
