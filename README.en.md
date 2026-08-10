@@ -108,11 +108,14 @@ The fragment is short and you can read it first: `CLAUDE.md.en.example` in the p
 or directly:
 
 ```
-python3 ~/.claude/plugins/marketplaces/archirules/plugins/archirules/scripts/conform.py docs/architecture
+SCRIPTS=~/.claude/plugins/marketplaces/archirules/plugins/archirules/scripts
+python3 $SCRIPTS/conform.py docs/architecture       # inside each file
+python3 $SCRIPTS/consistency.py docs/architecture   # between the registers
 ```
 
-Zero problems and exit code 0 means the register is structurally complete. A freshly created
-one always is — this check earns its keep later, once there are documents to get wrong.
+Zero problems and exit code 0 means the register is structurally complete and that the registers
+do not contradict each other. A freshly created one always is — these checks earn their keep
+later, once there are documents to get wrong.
 
 ### What next
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check agreement BETWEEN archirules registers, and non-contradiction of decisions.
 
-    consistency.py <path to docs/architecture> [--lang pl|en|auto]
+    consistency.py <path to docs/architecture> [--lang pl|en]
 
 `conform.py` checks the structure *inside* each register — sections of a decision
 record, question numbering, the shape of the phase table. It cannot see a register
@@ -11,58 +11,56 @@ This checks the other axis:
 
   A. a question declaring it blocks a phase, against that phase's status and blocker list
   B. a phase waiting on a question, against that question's existence and status
-  C. a resolved question still cited as a blocker anywhere
-  D. references to decision records — existence and superseded status
-  E. non-contradiction of decision records: modification links must be two-way,
-     a modified record must say what changed, and two records must not resolve
-     the same question without referencing each other
+  C. a question that is no longer open yet still declares what it blocks
+  D. references to decision records — existence, and entries pointing at a superseded one
+  E. non-contradiction of decision records: a supersession link must be two-way, and two
+     records must not resolve the same question without referencing each other
 
-Exit code 0 when nothing is wrong, 1 otherwise, so it works as a CI gate.
+Exit code 0 when nothing is wrong, 1 otherwise, so it works as a CI gate. Exit code 2
+is a usage error, which is a different conversation from a defective register.
 
-Two rules taken from conform.py, for the same reasons:
+Three rules govern what may be added here:
 
-1. **Language is detected, not assumed.** A wrong guess makes every marker miss and
-   buries the real finding under spurious ones.
-2. **Absent structure is not a finding.** The blocker table is a project convention,
-   not part of the method — a set that does not keep one is not thereby defective.
-   Checks A(ii) and B are skipped, and the skip is REPORTED, so that "0 problems"
-   never silently means "0 checks ran".
+1. **Language is detected, not assumed**, and forcing it is reconciled against the
+   detection rather than replacing it. A wrong language makes every marker miss, so
+   every check passes over its subject without a word and the run reports zero
+   problems because it did almost nothing.
+2. **Absent structure is not a finding — but the skip is REPORTED.** The blocker table
+   is a project convention rather than part of the method, and a set that keeps none is
+   not thereby defective. "0 problems" must never silently mean "0 checks ran".
+3. **Every marker below occurs in a template or in a skill** (ADR-0006). A marker
+   invented here and honoured only by the fixtures proves this script consistent with
+   its own test data, which was never in doubt. `selftest.sh` asserts this; it is not
+   left to review.
 """
 import os
 import re
 import sys
 from collections import defaultdict
 
+# Every string here is produced by templates/<lang>/ or prescribed by a SKILL.md.
+# The one exception is `blocker_table`, which is a project convention and is recorded
+# as one in skills/audit/SKILL.md — see rule W9 and OQ-06.
 MARKERS = {
     "pl": {
         "binding": "Wymagania obowiązujące",
         "open": "OTWARTE",
-        "resolved": "ROZSTRZYGNIĘTE",
         "blocks": "Blokuje",
         "blocker_table": "Co blokuje",
-        "modified_by": "Zmodyfikowany przez",
-        "modifies": "Modyfikuje",
         "supersedes": "Zastępuje",
         "superseded": "ZASTĄPIONY",
         "resolves": "Rozstrzyga",
-        "what_changed": ("Co zostało zmienione", "Zakres zastąpienia"),
-        "waits_on": "czeka na",
         "touches": "Dotyka",
         "question": "OQ",
     },
     "en": {
         "binding": "Binding requirements",
         "open": "OPEN",
-        "resolved": "RESOLVED",
         "blocks": "Blocks",
         "blocker_table": "What blocks",
-        "modified_by": "Modified by",
-        "modifies": "Modifies",
         "supersedes": "Supersedes",
         "superseded": "SUPERSEDED",
         "resolves": "Resolves",
-        "what_changed": ("What changed", "Scope of supersession"),
-        "waits_on": "waits on",
         "touches": "Touches",
         "question": "OQ",
     },
@@ -77,10 +75,48 @@ def read(path):
         return fh.read()
 
 
-def detect_language(directory, forced=None):
-    """Return (language, confident). Never guesses silently — see module docstring."""
-    if forced in ("pl", "en"):
-        return forced, True
+def die(message):
+    """Refuse rather than guess (rule W1). Exit 2, so it cannot read as a finding."""
+    print("  %s" % message, file=sys.stderr)
+    raise SystemExit(2)
+
+
+def parse_args(argv):
+    """Both `--lang en` and `--lang=en` are accepted, and an unusable value stops the run.
+
+    The sibling checker documents the spaced form and this one used to accept only the
+    `=` form — silently detecting the language instead of forcing it. Silent degradation
+    looks exactly like success (rule W1), which is the whole reason for this function.
+    """
+    positional, forced, awaiting = [], None, False
+    for arg in argv:
+        if awaiting:
+            forced, awaiting = arg, False
+        elif arg == "--lang":
+            awaiting = True
+        elif arg.startswith("--lang="):
+            forced = arg.split("=", 1)[1]
+        elif arg.startswith("--"):
+            die("unknown option: %s" % arg)
+        else:
+            positional.append(arg)
+    if awaiting:
+        die("--lang needs a value: %s" % " or ".join(sorted(MARKERS)))
+    if forced is not None and forced not in MARKERS:
+        die("--lang %s: no marker table for that language; supported: %s"
+            % (forced, ", ".join(sorted(MARKERS))))
+    return positional, forced
+
+
+def detect_language(directory):
+    """Return (language, confident) from README.md alone — never a silent guess.
+
+    Forcing is reconciled against this rather than replacing it. A forced language that
+    contradicts the register's own README makes every marker miss, and every check then
+    passes over its subject in silence: the run reports zero problems because it did
+    almost nothing. The language skill already asks a human to confirm that the detected
+    language is the intended one; this is that check, mechanised (rule W9).
+    """
     readme = os.path.join(directory, "README.md")
     if os.path.isfile(readme):
         text = read(readme)
@@ -93,9 +129,9 @@ def detect_language(directory, forced=None):
 
 def phase_register(directory):
     for name in PHASE_FILES:
-        p = os.path.join(directory, name)
-        if os.path.isfile(p):
-            return p
+        path = os.path.join(directory, name)
+        if os.path.isfile(path):
+            return path
     return None
 
 
@@ -106,8 +142,8 @@ def questions(text, m):
         head = re.match(r"### (%s-\d+)" % m["question"], block)
         if not head:
             continue
-        st = re.search(r"\*\*Status:\*\*\s*(\S+)", block)
-        out[head.group(1)] = (st.group(1) if st else "?", block)
+        status = re.search(r"\*\*Status:\*\*\s*(\S+)", block)
+        out[head.group(1)] = (status.group(1) if status else "?", block)
     return out
 
 
@@ -134,63 +170,72 @@ def blocker_table(text, m):
 
 
 def decisions(directory, m):
-    """{number: {'status','modifies','modified_by','resolves','has_what_changed','file'}}."""
-    d = os.path.join(directory, "decisions")
+    """{number: {'status', 'supersedes', 'superseded_by', 'resolves', 'file'}}.
+
+    The method has one relation between records, not two: supersession, whole or
+    partial. Its forward half is the `Supersedes:` field on the new record and its
+    reverse half is the status line of the old one — which is where adr/SKILL.md puts
+    it, and where rule P7 requires it, a correction sitting above a field that still
+    lies not being a correction (case C-04).
+    """
+    directory = os.path.join(directory, "decisions")
     out = {}
-    if not os.path.isdir(d):
-        return out
-    for fname in sorted(os.listdir(d)):
+    for fname in sorted(os.listdir(directory)):
         num = re.match(r"(ADR-\d{4})", fname)
         if not num or not fname.endswith(".md"):
             continue
-        text = read(os.path.join(d, fname))
+        text = read(os.path.join(directory, fname))
         head = text[: text.find("\n## ")] if "\n## " in text else text
         out[num.group(1)] = {
             "file": fname,
             "status": m["superseded"] if m["superseded"] in head else "current",
-            "modifies": set(re.findall(r"ADR-\d{4}", _field(head, m["modifies"]) + _field(head, m["supersedes"]))),
-            # supersession is a valid reverse link, but it lives in Status — take that
-            # line only, never the whole head, or neighbouring fields leak in
-            "modified_by": set(re.findall(r"ADR-\d{4}",
-                                          _field(head, m["modified_by"]) + " " +
-                                          _field(head, "Status"))) - {num.group(1)},
-            "resolves": set(re.findall(r"%s-\d+" % m["question"], _field(head, m["resolves"]))),
-            "has_what_changed": any(h in text for h in m["what_changed"]),
+            "supersedes": set(re.findall(r"ADR-\d{4}", field(head, m["supersedes"]))),
+            # the reverse link lives in Status; take that field only, never the whole
+            # head, or the neighbouring fields leak in
+            "superseded_by": set(re.findall(r"ADR-\d{4}", field(head, "Status"))) - {num.group(1)},
+            "resolves": set(re.findall(r"%s-\d+" % m["question"], field(head, m["resolves"]))),
         }
     return out
 
 
-def _field(head, label):
+def field(head, label):
     """Every occurrence of the field, each cut at the next '**Label:**' on the line.
 
     Two defects this guards against, both found by running the checker on a real set:
-    a record may carry the same field twice (modified by two successors), and fields
-    are separated by ' · ' on one line, so a greedy match swallows the neighbours.
+    a record may carry the same field twice, and fields are separated by ' · ' on one
+    line, so a greedy match swallows the neighbours.
     """
-    out = []
-    for hit in re.finditer(r"\*\*%s:?\*\*\s*(.*?)(?=\s*·\s*\*\*|$)" % re.escape(label),
-                           head, flags=re.M):
-        out.append(hit.group(1))
-    return " ".join(out)
+    return " ".join(
+        hit.group(1)
+        for hit in re.finditer(r"\*\*%s:?\*\*\s*(.*?)(?=\s*·\s*\*\*|$)" % re.escape(label),
+                               head, flags=re.M)
+    )
 
 
 def main(directory, forced=None):
-    lang, confident = detect_language(directory, forced)
+    detected, confident = detect_language(directory)
+    lang = forced if forced is not None else detected
     m = MARKERS[lang]
     problems, skipped, checks = [], [], 0
 
-    if not confident:
+    if forced is None and not confident:
         problems.append(
             "language could not be detected from README.md; assuming %s, so every "
             "marker below may be wrong" % lang
         )
+    elif forced is not None and confident and forced != detected:
+        problems.append(
+            "--lang %s was given, but README.md reads as %s; the checks below ran against "
+            "%s wording and will have missed their subject rather than approved it"
+            % (forced, detected, forced)
+        )
 
     qpath = os.path.join(directory, QUESTION_FILES[0])
-    ppath = phase_register(directory)
     if not os.path.isfile(qpath):
         print("  missing %s — nothing to cross-check" % QUESTION_FILES[0])
         return 1
     qs = questions(read(qpath), m)
+    ppath = phase_register(directory)
     ptext = read(ppath) if ppath else ""
     ph = phases(ptext)
     bt = blocker_table(ptext, m)
@@ -199,31 +244,44 @@ def main(directory, forced=None):
             "no blocker table (heading '%s') — checks A(ii) and B not run" % m["blocker_table"]
         )
 
-    # A. question declares it blocks a phase
-    for num, (status, block) in qs.items():
-        field = _field(block, m["blocks"])
-        if not field:
+    # Coverage accounting before anything keys on a status: a question whose status
+    # cannot be read silently drops out of checks A and C, which is worse than any
+    # single defect they would have found.
+    unreadable = {num for num, (status, _) in qs.items() if status == "?"}
+    for num in sorted(unreadable):
+        problems.append(
+            "%s: **Status:** could not be read, so the checks keying on it did not run "
+            "for this question" % num
+        )
+
+    # A. a question declares it blocks a phase
+    for num, (status, block) in sorted(qs.items()):
+        if num in unreadable or status != m["open"]:
             continue
-        for pid in re.findall(r"\b[A-Za-z]\w*\d\w*\b", field):
+        declared = field(block, m["blocks"])
+        if not declared:
+            continue
+        for pid in re.findall(r"\b[A-Za-z]\w*\d\w*\b", declared):
             if pid not in ph:
                 continue
             checks += 1
-            if status == m["open"] and ph[pid] != "⛔":
+            if ph[pid] != "⛔":
                 problems.append(
                     "%s (%s) declares it blocks %s, but %s is marked '%s' instead of ⛔"
                     % (num, m["open"], pid, pid, ph[pid])
                 )
-            if bt is not None and status == m["open"] and num not in bt.get(pid, set()):
+            if bt is not None:
                 checks += 1
-                problems.append(
-                    "%s declares 'blocks %s', but the blocker table for %s does not list it"
-                    % (num, pid, pid)
-                )
+                if num not in bt.get(pid, set()):
+                    problems.append(
+                        "%s declares 'blocks %s', but the blocker table for %s does not list it"
+                        % (num, pid, pid)
+                    )
 
-    # B. phase waits on a question
+    # B. a phase waits on a question
     if bt is not None:
-        for pid, nums in bt.items():
-            for num in nums:
+        for pid, nums in sorted(bt.items()):
+            for num in sorted(nums):
                 checks += 1
                 if num not in qs:
                     problems.append("phase %s waits on %s, which does not exist" % (pid, num))
@@ -232,86 +290,91 @@ def main(directory, forced=None):
                         "phase %s waits on %s, whose status is %s" % (pid, num, qs[num][0])
                     )
 
-    # C. a resolved question cited as a blocker
-    closed = {n for n, (s, _) in qs.items() if s != m["open"]}
-    for fname in os.listdir(directory):
-        if not fname.endswith(".md"):
-            continue
-        text = read(os.path.join(directory, fname))
-        for num in closed:
-            checks += 1
-            if re.search(r"(%s|%s)[^\n]*%s\b"
-                         % (re.escape(m["blocks"]), re.escape(m["waits_on"]), num), text):
-                problems.append("%s: %s is resolved, yet listed as a blocker" % (fname, num))
-
-    # D. references to decision records
-    adrs = decisions(directory, m)
-    for fname in list(os.listdir(directory)) + [
-        os.path.join("decisions", f) for f in os.listdir(os.path.join(directory, "decisions"))
-    ] if os.path.isdir(os.path.join(directory, "decisions")) else []:
-        if not fname.endswith(".md"):
-            continue
-        for lineno, line in enumerate(read(os.path.join(directory, fname)).split("\n"), 1):
-            if line.strip().startswith("<!--"):
-                continue
-            for ref in re.findall(r"ADR-\d{4}", line):
-                checks += 1
-                if ref not in adrs:
-                    problems.append("%s:%d: reference to non-existent %s" % (fname, lineno, ref))
-                elif adrs[ref]["status"] != "current" and m["touches"] in line:
-                    problems.append("%s:%d: entry points at %s, which is superseded" % (fname, lineno, ref))
-
-    # E. non-contradiction of decision records
-    for num, rec in adrs.items():
-        for target in rec["modifies"]:
-            checks += 1
-            if target not in adrs:
-                problems.append("%s modifies %s, which does not exist" % (num, target))
-            elif num not in adrs[target]["modified_by"]:
-                problems.append(
-                    "%s modifies %s, but %s does not say it was modified by %s "
-                    "(one-way link)" % (num, target, target, num)
-                )
-        if rec["modified_by"]:
-            checks += 1
-            if not rec["has_what_changed"]:
-                problems.append(
-                    "%s is modified by %s but has no '%s' section saying which points "
-                    "lost force" % (num, ", ".join(sorted(rec["modified_by"])),
-                                    " / ".join(m["what_changed"]))
-                )
-    by_question = defaultdict(list)
-    for num, rec in adrs.items():
-        for q in rec["resolves"]:
-            by_question[q].append(num)
-    for q, nums in by_question.items():
-        if len(nums) < 2:
+    # C. a question that is no longer open yet still declares what it blocks.
+    #    Independent of the blocker table, so it runs everywhere. The earlier version
+    #    of this check searched for a marker and a question number on ONE line, a shape
+    #    no template produces — it could not fire, and nothing noticed because it had no
+    #    self-test case. See ADR-0006 and rule W4.
+    for num, (status, block) in sorted(qs.items()):
+        if num in unreadable or status == m["open"]:
             continue
         checks += 1
-        linked = any(
-            b in adrs[a]["modifies"] or b in adrs[a]["modified_by"]
-            for a in nums
-            for b in nums
-            if a != b
-        )
-        if not linked:
+        declared = field(block, m["blocks"]).strip()
+        if declared:
             problems.append(
-                "%s is resolved by %s with no modification link between them — one "
-                "record may not know about the other" % (q, " and ".join(sorted(nums)))
+                "%s is %s yet still declares 'blocks %s' — either the question is not "
+                "actually closed, or a phase is being held for an answered question"
+                % (num, status, declared)
             )
 
-    print("  language: %s · cross-register checks: %d · problems: %d" % (lang, checks, len(problems)))
-    for s in skipped:
-        print("    ~ skipped: %s" % s)
-    for p in problems:
-        print("    x %s" % p)
+    # D and E both need the records themselves. Their absence is a structural defect
+    # conform.py reports on its own axis; repeating it here as a flood of dangling
+    # references would bury it.
+    if not os.path.isdir(os.path.join(directory, "decisions")):
+        skipped.append("no decisions/ directory — checks D and E not run "
+                       "(conform.py reports the missing directory itself)")
+        adrs = {}
+    else:
+        adrs = decisions(directory, m)
+        files = [f for f in sorted(os.listdir(directory)) if f.endswith(".md")]
+        files += [os.path.join("decisions", f)
+                  for f in sorted(os.listdir(os.path.join(directory, "decisions")))
+                  if f.endswith(".md")]
+
+        # D. references to decision records
+        for fname in files:
+            for lineno, line in enumerate(read(os.path.join(directory, fname)).split("\n"), 1):
+                if line.strip().startswith("<!--"):
+                    continue
+                for ref in re.findall(r"ADR-\d{4}", line):
+                    checks += 1
+                    if ref not in adrs:
+                        problems.append("%s:%d: reference to non-existent %s" % (fname, lineno, ref))
+                    elif adrs[ref]["status"] != "current" and m["touches"] in line:
+                        problems.append(
+                            "%s:%d: entry points at %s, which is superseded" % (fname, lineno, ref)
+                        )
+
+        # E. non-contradiction of decision records
+        for num, rec in sorted(adrs.items()):
+            for target in sorted(rec["supersedes"]):
+                checks += 1
+                if target not in adrs:
+                    problems.append("%s supersedes %s, which does not exist" % (num, target))
+                elif num not in adrs[target]["superseded_by"]:
+                    problems.append(
+                        "%s supersedes %s, but the status of %s does not say so "
+                        "(one-way link)" % (num, target, target)
+                    )
+        by_question = defaultdict(list)
+        for num, rec in sorted(adrs.items()):
+            for question in rec["resolves"]:
+                by_question[question].append(num)
+        for question, nums in sorted(by_question.items()):
+            if len(nums) < 2:
+                continue
+            checks += 1
+            linked = any(
+                b in adrs[a]["supersedes"] or b in adrs[a]["superseded_by"]
+                for a in nums
+                for b in nums
+                if a != b
+            )
+            if not linked:
+                problems.append(
+                    "%s is resolved by %s with no supersession link between them — one "
+                    "record may not know about the other" % (question, " and ".join(sorted(nums)))
+                )
+
+    print("  language: %s · cross-register checks: %d · problems: %d"
+          % (lang, checks, len(problems)))
+    for note in skipped:
+        print("    ~ skipped: %s" % note)
+    for problem in problems:
+        print("    x %s" % problem)
     return 1 if problems else 0
 
 
 if __name__ == "__main__":
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    forced = None
-    for a in sys.argv[1:]:
-        if a.startswith("--lang"):
-            forced = a.split("=", 1)[1] if "=" in a else None
-    sys.exit(main(args[0] if args else "docs/architecture", forced))
+    positional, forced_language = parse_args(sys.argv[1:])
+    sys.exit(main(positional[0] if positional else "docs/architecture", forced_language))

@@ -1,8 +1,13 @@
 ### OQ-NN — <pytanie, nie temat>
 
-**Status:** OTWARTE · **Zależy od:** OQ-MM · **Dotyka:** ADR-NNNN
+**Status:** OTWARTE · **Zależy od:** OQ-MM · **Blokuje:** <faza> · **Dotyka:** ADR-NNNN
 <!-- Priorytet DOPISUJEMY tylko gdy jest wysoki lub krytyczny. Pole wypełniane
-     przy każdym pytaniu rutynowym staje się szumem i przestaje cokolwiek znaczyć. -->
+     przy każdym pytaniu rutynowym staje się szumem i przestaje cokolwiek znaczyć.
+
+     **Blokuje:** jest czytane międzyrejestrowo: consistency.py wymaga, żeby faza
+     tam wymieniona miała status zablokowanej. Przy zamknięciu pytania to pole
+     ZNIKA — pytanie rozstrzygnięte, które nadal mówi, co wstrzymuje, zostawia
+     fazę czekającą na odpowiedź, która już jest. To jest znalezisko. -->
 
 <Czego nie wiemy.>
 

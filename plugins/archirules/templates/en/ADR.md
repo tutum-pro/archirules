@@ -2,7 +2,15 @@
 
 **Status:** Accepted (decided by <who>, <date>)
 **Resolves:** OQ-NN · **Unblocks:** <phase> · **Related:** ADR-MMMM
-<!-- when reversing an earlier decision: **Supersedes:** ADR-MMMM -->
+<!-- when reversing an earlier decision: **Supersedes:** ADR-MMMM
+
+     and the record being reversed gets, in place of its own status:
+     **Status:** SUPERSEDED by ADR-MMMM, <date> — <what stopped holding>
+
+     The scope belongs in that line and not in a section below it: a correction
+     written under a field that still says the old thing is not a correction
+     (rule P7). Often only part of a decision is superseded, so "which part" is
+     the whole point. conform.py requires it — a bare pointer is a finding. -->
 
 <!-- If this ADR is written late, say so here, including the period during which
      the register stated something untrue. Rule P7. -->

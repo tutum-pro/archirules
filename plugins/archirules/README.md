@@ -19,9 +19,21 @@ Metoda prowadzenia projektu wytwórczego IT jako zestaw skilli dla Claude Code.
 ## Narzędzia
 
 ```
-python3 scripts/conform.py docs/architecture   # kontrola zgodności strukturalnej
-bash    scripts/selftest.sh                    # dowód, że kontroler potrafi paść
+python3 scripts/conform.py docs/architecture      # zgodność strukturalna, wewnątrz plików
+bash    scripts/selftest.sh                       # dowód, że powyższy potrafi paść
+python3 scripts/consistency.py docs/architecture  # zgodność między rejestrami
+bash    scripts/selftest-consistency.sh           # dowód, że powyższy potrafi paść
 ```
+
+Dwa kontrolery, bo mają różne osie. `conform.py` czyta jeden plik naraz: sekcje rekordu decyzji,
+numerację pytań, kształt tabeli faz. `consistency.py` czyta relacje **między** dokumentami,
+których pierwszy nie widzi, bo każdy plik z osobna jest poprawny — pytanie kontra faza, którą
+blokuje, zastąpienie zapisane w obie strony, odnośnik do rekordu, który już nie obowiązuje.
+
+Ostatni przypadek w `selftest.sh` nie dotyczy żadnego rejestru: wymaga, żeby **każdy marker,
+na którym opiera się którykolwiek kontroler, występował w szablonie albo w skillu**. Marker
+wymyślony przez skrypt i honorowany wyłącznie przez jego własne dane testowe dowodzi zgodności
+skryptu z samym sobą — patrz C-11 w kazuistyce.
 
 `scripts/testdata/` to **dane wejściowe samotestu, nie przykłady do kopiowania** — najmniejsze
 dokumenty spełniające kontroler, w dwóch językach, bo obsługę dwujęzyczną też trzeba czymś

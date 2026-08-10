@@ -25,8 +25,15 @@ CI gate.
 bash ${CLAUDE_PLUGIN_ROOT}/scripts/selftest.sh
 ```
 
-Fifteen cases across both languages: each defect the checker claims to find is introduced into
-a copy of a known-good set and must be caught.
+Each defect the checker claims to find is introduced into a copy of a known-good set and must be
+caught, in both languages. The run prints the case count; a number quoted here would go stale
+the first time a case is added.
+
+The last assertion in that script is not about a register at all: it requires **every marker
+string either checker keys on to occur in a template or in a skill**. A marker invented by a
+script and honoured only by its own fixtures proves the script consistent with its test data,
+which was never in doubt — and that is exactly how a check that could not fire once survived a
+full passing self-test. See ADR-0006 in this plugin's own register.
 
 ### Why the checker looks the way it does
 
@@ -72,33 +79,45 @@ python3 ${CLAUDE_PLUGIN_ROOT}/scripts/consistency.py docs/architecture
 bash ${CLAUDE_PLUGIN_ROOT}/scripts/selftest-consistency.sh
 ```
 
-Twenty-eight cases across both languages. It checks five pairings:
+It checks five pairings:
 
 | | |
 |---|---|
 | **A** | a question declaring it blocks a phase, against that phase's status **and** the blocker table |
 | **B** | a phase waiting on a question, against that question's existence and status |
-| **C** | a resolved question still cited as a blocker |
+| **C** | a question that is no longer open and still declares what it blocks |
 | **D** | references to decision records — existence, and entries pointing at a superseded one |
-| **E** | non-contradiction of decision records: modification links two-way, a modified record saying **what** changed, two records not resolving one question in ignorance of each other |
+| **E** | non-contradiction of decision records: a supersession link written in both directions, and two records not resolving one question in ignorance of each other |
 
 **It points at a pair, not at a culprit.** Which side of a disagreement is wrong is a decision;
 matching a status to whatever the other file happens to say is how a register gains a second
 untrue sentence instead of none. Read both, then correct in the record — rule P7.
 
 Category **E** has no other home in this method. `adr/SKILL.md` tells the author to write the
-link in both directions, and until now nothing checked that the second direction was written.
+supersession in both directions — `Supersedes:` on the new record, the status line on the old
+one — and until this existed, nothing checked that the second direction was written.
 
-The blocker table is a project convention, not part of the method. A set that keeps none has
-checks A(ii) and B skipped — and the skip is printed, because otherwise "0 problems" silently
-means "0 checks ran".
+What is **not** here: whether the supersession names its scope. That is readable inside a single
+file, so it belongs to `conform.py`, and putting it here would erase the only line that
+distinguishes the two scripts (ADR-0006).
+
+### The blocker table is a convention, and that is said out loud
+
+Checks A(ii) and B need the phase register to keep a table of what blocks what, under a heading
+beginning **`### What blocks`** — `### Co blokuje` in Polish. No template produces one, and no
+rule requires it: this is a project convention (rule W9), open as OQ-06.
+
+A set that keeps none has those two checks skipped — **and the skip is printed**, because
+otherwise "0 problems" silently means "0 checks ran". The same applies where there is no
+`decisions/` directory: checks D and E say they did not run rather than reporting nothing.
 
 ## 2. Records that stopped being true
 
 The most dangerous category and the hardest to find:
 
 - a record marked *Accepted* whose decision was in practice reversed;
-- a question *blocked by* a question that has since been resolved — **now mechanised**, check C in section 1b; attention does not scale past twenty records;
+- a question that is closed and still declares what it blocks — **mechanised**, check C in section 1b, but only for the question's own `Blocks:` field; a blocker written into prose is still yours to spot (OQ-05);
+- a question *blocked by* a question that has since been resolved — **not mechanised**; `Depends on:` is not cross-checked, and attention does not scale past twenty records;
 - a question still *open* whose subject has been built;
 - a sentence describing behaviour the code does not have.
 

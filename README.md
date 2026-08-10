@@ -110,11 +110,14 @@ Fragment jest krótki i możesz go obejrzeć przed zgodą: `CLAUDE.md.pl.example
 albo bezpośrednio:
 
 ```
-python3 ~/.claude/plugins/marketplaces/archirules/plugins/archirules/scripts/conform.py docs/architecture
+SCRIPTS=~/.claude/plugins/marketplaces/archirules/plugins/archirules/scripts
+python3 $SCRIPTS/conform.py docs/architecture       # wewnątrz plików
+python3 $SCRIPTS/consistency.py docs/architecture   # między rejestrami
 ```
 
-Zero naruszeń i kod wyjścia 0 znaczy, że rejestr jest kompletny strukturalnie. Świeżo założony
-zawsze taki jest — sens tej kontroli pojawia się później, gdy dokumentów przybędzie.
+Zero naruszeń i kod wyjścia 0 znaczy, że rejestr jest kompletny strukturalnie i że rejestry nie
+przeczą sobie nawzajem. Świeżo założony zawsze taki jest — sens tych kontroli pojawia się
+później, gdy dokumentów przybędzie.
 
 ### Co dalej
 

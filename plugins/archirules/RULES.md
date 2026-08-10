@@ -149,7 +149,8 @@ wykonała, musi być luźniejszy od kontroli, którą pilnuje. Uszczelniony raze
 cokolwiek pilnować.
 [C-01](CASEBOOK.md#c-01--bramka-która-nie-potrafiła-paść) ·
 [C-06](CASEBOOK.md#c-06--zmiana-znaku-interpunkcyjnego-wyłączyła-trzydzieści-siedem-kontroli) ·
-[C-07](CASEBOOK.md#c-07--uszczelnienie-siatki-bezpieczeństwa-oślepiło-ją)
+[C-07](CASEBOOK.md#c-07--uszczelnienie-siatki-bezpieczeństwa-oślepiło-ją) ·
+[C-11](CASEBOOK.md#c-11--kontrola-bez-własnego-przypadku-testowego-nie-potrafiła-zadziałać)
 
 ### W5. Nie wyciszaj błędów w bramce
 
@@ -174,7 +175,8 @@ katalog albo kolejkę wykrywa się wyłącznie powtórzeniem.
 
 Zanim przypiszesz obserwację systemowi, sprawdź, czy nie pochodzi z narzędzia pomiarowego,
 z atrapy albo z sąsiedniego testu. Asercje zawężaj do bytu badanego, nie do stanu globalnego.
-[C-10](CASEBOOK.md#c-10--pomiar-własnego-narzędzia-pomiarowego)
+[C-10](CASEBOOK.md#c-10--pomiar-własnego-narzędzia-pomiarowego) ·
+[C-11](CASEBOOK.md#c-11--kontrola-bez-własnego-przypadku-testowego-nie-potrafiła-zadziałać)
 
 ### W9. Mechanizm ponad konwencję — a gdy się nie da, nazwij to konwencją
 

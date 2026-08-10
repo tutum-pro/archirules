@@ -25,6 +25,57 @@ Only one of the four was caught automatically, by coverage accounting. The other
 running the check against deliberately broken data — which is now what `selftest.sh` does on
 every invocation.
 
+## The cross-register checker
+
+**Verified.** That it fails on each class of defect it claims to catch, in both supported
+languages — `scripts/selftest-consistency.sh`, forty-one cases. Thirty-four assert an exit code
+and seven assert what was **printed**, because an exit code says a defect was found and not
+which one. Two of the thirty-four assert a usage error, which must not share an exit code with a
+finding about a register.
+
+**Verified.** That the self-test itself can fail. With `consistency.py` replaced by one that
+always returns 0, twenty-four of the forty-one cases fail; the seventeen survivors are exactly
+those that do not assert "exit 1". With the script replaced by one that does not parse,
+seventeen fail. The equivalent figures for `selftest.sh` are 34 cases, 22 failing under an
+always-green `conform.py`.
+
+**Verified.** That every marker string either checker keys on occurs in a template or in a
+skill — asserted at the end of `selftest.sh`, searching `templates/` and `skills/` and nothing
+else. Shown to fail before it was satisfied: it named six markers with no documentary source
+(`ZASTĄPIONY`, `przez`, `Blokuje`, `Co blokuje`, `What blocks`, and the Polish superseded status
+generally), which is what drove the template and skill corrections in
+[ADR-0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md).
+
+**Verified.** That `conform.py` reports a supersession status naming no scope, and does **not**
+report one that names it — both directions, both languages, with the reason pinned by reading
+the message rather than the exit code.
+
+**Verified.** That a `--lang` contradicting the register's own README is reported by both
+checkers, and that an unsupported language is refused with exit 2 rather than being silently
+detected instead. The spaced form `--lang en` and the `--lang=en` form are both honoured.
+
+**Asserted, not verified.** That the five cross-register pairings are the ones worth having.
+They are the relations the templates express; whether a register drifts in some other way that
+matters more is unknown until the method is kept by somebody else — phase P6.
+
+### Correction 2026-08-11 — this checker shipped with a check that could not fire
+
+Between 2026-08-10 (commit `75d6d68`) and this entry, `skills/audit/SKILL.md` stated that a
+resolved question still cited as a blocker was "now mechanised". It was not. The check looked
+for a marker and a question number on one line, a shape no template produces, and it was the
+only one of the five without a case of its own in the self-test — so twenty-eight passing cases
+said nothing about it. Written up as
+[C-11](../../plugins/archirules/CASEBOOK.en.md#c-11--a-check-with-no-case-of-its-own-could-not-fire).
+
+Two further claims from the same period were wrong in the same direction. The checker's
+self-test proved it consistent with fixtures written in vocabulary the checker had invented,
+while a register built by following `adr/SKILL.md` literally was reported as broken. And the
+reference checks vanished without a word when a set kept no `decisions/` directory, in a script
+whose own docstring promised that skips are printed.
+
+None of this was caught by reading. All of it was caught by running the checker against
+documents produced from the instructions instead of from the fixtures.
+
 ## Installation instructions
 
 **Verified.** That `/plugin install <name>@<marketplace>` is the documented form, by reading the

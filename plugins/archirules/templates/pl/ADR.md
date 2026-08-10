@@ -2,7 +2,15 @@
 
 **Status:** Przyjęty (decyzja <kto>, <data>)
 **Rozstrzyga:** OQ-NN · **Odblokowuje:** <faza> · **Powiązane:** ADR-MMMM
-<!-- przy odwróceniu wcześniejszej decyzji: **Zastępuje:** ADR-MMMM -->
+<!-- przy odwróceniu wcześniejszej decyzji: **Zastępuje:** ADR-MMMM
+
+     a rekord odwracany dostaje w miejsce swojego statusu:
+     **Status:** ZASTĄPIONY przez ADR-MMMM, <data> — <co przestało obowiązywać>
+
+     Zakres stoi w tej linii, a nie w sekcji poniżej: sprostowanie napisane pod
+     polem, które nadal mówi swoje, nie jest sprostowaniem (reguła P7). Zwykle
+     zastąpiona zostaje tylko część decyzji, więc „która część" jest tu sednem.
+     conform.py tego wymaga — sam wskaźnik bez zakresu to znalezisko. -->
 
 <!-- Jeśli ADR powstaje z opóźnieniem, napisz to tutaj wraz z okresem,
      w którym rejestr mówił coś nieprawdziwego. Reguła P7. -->

@@ -12,15 +12,35 @@ trap 'rm -rf "$tmp"' EXIT
 failed=0
 case_no=0
 
-# expect <description> <expected exit code> <directory>
+# expect <description> <expected exit code> <directory> [extra args...]
 expect() {
-  python3 "$here/conform.py" "$3" >/dev/null 2>&1
+  local what="$1" want="$2" dir="$3"; shift 3
+  python3 "$here/conform.py" "$dir" "$@" >/dev/null 2>&1
   local code=$?
   case_no=$((case_no + 1))
-  if [ "$code" -eq "$2" ]; then
-    printf "  ok    %-46s exit %s\n" "$1" "$code"
+  if [ "$code" -eq "$want" ]; then
+    printf "  ok    %-46s exit %s\n" "$what" "$code"
   else
-    printf "  FAIL  %-46s exit %s, expected %s\n" "$1" "$code" "$2"
+    printf "  FAIL  %-46s exit %s, expected %s\n" "$what" "$code" "$want"
+    failed=1
+  fi
+}
+
+# expect_says <description> <needle> <directory> [extra args...]
+# An exit code says a defect was found; it does not say WHICH. Where a case could
+# pass for an unrelated reason, the reason itself is pinned here. The output is
+# captured before it is searched: piped straight into grep, `pipefail` would let
+# the checker's own exit code outrank grep's and every real finding would read as
+# "printed nothing" (rule W5).
+expect_says() {
+  local what="$1" needle="$2" dir="$3"; shift 3
+  local out
+  out="$(python3 "$here/conform.py" "$dir" "$@" 2>&1)"
+  case_no=$((case_no + 1))
+  if printf '%s' "$out" | grep -q "$needle"; then
+    printf "  ok    %-46s said so\n" "$what"
+  else
+    printf "  FAIL  %-46s silent\n" "$what"
     failed=1
   fi
 }
@@ -77,6 +97,38 @@ for lang in pl en; do
   d=$(copy_of "verif-$lang" "$set")
   rm -f "$d"/rejestr-weryfikacji.md "$d"/verification.md
   expect "missing verification register is caught" 1 "$d"
+
+  # A supersession has to say WHICH part stopped holding, because often only part of
+  # it did (rule P7). The scope belongs in the status line and not in a section below
+  # it — a correction sitting above a field that still lies is not one (case C-04).
+  # Both directions are pinned: a bare pointer is a finding, a stated scope is not.
+  if [ "$lang" = pl ]; then
+    bare='**Status:** ZASTĄPIONY przez ADR-0002'
+    scoped='**Status:** ZASTĄPIONY przez ADR-0002, 2026-08-11 — wyłącznie punkt drugi'
+    was='\*\*Status:\*\* Przyjęty'
+  else
+    bare='**Status:** SUPERSEDED by ADR-0002'
+    scoped='**Status:** SUPERSEDED by ADR-0002, 2026-08-11 — the second point only'
+    was='\*\*Status:\*\* Accepted'
+  fi
+
+  d=$(copy_of "scope-$lang" "$set")
+  sed -i.bak "s|^$was|$bare|" "$d"/decisions/ADR-*.md
+  expect "a supersession naming no scope is caught" 1 "$d"
+  expect_says "and it is caught for that reason" "names no scope" "$d"
+
+  d=$(copy_of "scoped-$lang" "$set")
+  sed -i.bak "s|^$was|$scoped|" "$d"/decisions/ADR-*.md
+  expect "a supersession that names its scope passes" 0 "$d"
+
+  # Forcing a language the register does not use makes every marker miss, so the run
+  # finds nothing and looks exactly like a run that found nothing wrong. The language
+  # skill asks a human to confirm the detected language; this is that check.
+  other=$([ "$lang" = "pl" ] && echo en || echo pl)
+  d=$(copy_of "forced-$lang" "$set")
+  expect "--lang contradicting the README is caught" 1 "$d" --lang "$other"
+  expect_says "and it names the contradiction" "README.md reads as $lang" "$d" --lang "$other"
+  expect "--lang with no marker table refuses, exit 2" 2 "$d" --lang klingon
 done
 
 # The language claim itself: the English set must be detected as English. If
@@ -89,6 +141,55 @@ if [ "$detected" = "en" ]; then
   printf "  ok    %-46s\n" "English set is detected as English"
 else
   printf "  FAIL  %-46s detected '%s'\n" "English set is detected as English" "$detected"
+  failed=1
+fi
+
+# The vocabulary claim, for BOTH checkers (ADR-0006). Every marker string a checker
+# keys on has to occur in a template or in a skill. A marker invented by a script and
+# honoured only by its own fixtures proves the script consistent with its test data,
+# which was never in doubt — and that is exactly how a check that could not fire
+# survived twenty-eight passing cases. This is the only assertion here that leaves
+# the fixtures entirely, which is the whole reason it can see what they cannot.
+missing=$(python3 - "$here" <<'PY'
+import importlib.util
+import os
+import sys
+
+scripts = sys.argv[1]
+root = os.path.dirname(scripts)               # plugins/archirules
+prose = []
+for sub in ("templates", "skills"):
+    for path, _, names in os.walk(os.path.join(root, sub)):
+        for name in names:
+            if name.endswith(".md"):
+                with open(os.path.join(path, name), encoding="utf-8") as fh:
+                    prose.append(fh.read())
+prose = "\n".join(prose)
+
+absent = []
+for script in ("conform.py", "consistency.py"):
+    spec = importlib.util.spec_from_file_location(script[:-3], os.path.join(scripts, script))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    for language, markers in module.MARKERS.items():
+        for key, value in markers.items():
+            # a few markers are anchored regexes: drop the syntax, keep the wording
+            wording = value.replace("^", "").replace("\\", "")
+            if wording not in prose:
+                absent.append("%s %s:%s = %r" % (script, language, key, wording))
+# A sentinel, not an empty result. If loading a checker raises — a syntax error, a
+# renamed table — the program dies and prints nothing, and "nothing" would read as
+# "nothing missing". The assertion would then pass BECAUSE the thing it measures
+# stopped working, which is the shape of failure this whole file exists to catch.
+print("\n".join(sorted(set(absent))) or "VOCABULARY-OK")
+PY
+)
+case_no=$((case_no + 1))
+if [ "$missing" = "VOCABULARY-OK" ]; then
+  printf "  ok    %-46s\n" "every marker occurs in a template or a skill"
+else
+  printf "  FAIL  %-46s\n" "markers no template or skill produces:"
+  echo "${missing:-(the vocabulary check itself did not run)}" | sed 's/^/        /'
   failed=1
 fi
 

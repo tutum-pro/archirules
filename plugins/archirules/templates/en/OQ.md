@@ -1,8 +1,13 @@
 ### OQ-NN — <a question, not a topic>
 
-**Status:** OPEN · **Depends on:** OQ-MM · **Touches:** ADR-NNNN
+**Status:** OPEN · **Depends on:** OQ-MM · **Blocks:** <phase> · **Touches:** ADR-NNNN
 <!-- Add a priority ONLY when it is high or critical. A field filled in on every
-     routine question becomes noise and stops meaning anything. -->
+     routine question becomes noise and stops meaning anything.
+
+     **Blocks:** is read across registers: consistency.py requires the phase it
+     names to be marked blocked. It also has to GO when the question closes — a
+     resolved question that still says what it blocks leaves a phase waiting for
+     an answer that exists, and that is a finding. -->
 
 <What we do not know.>
 

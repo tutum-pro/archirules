@@ -17,6 +17,7 @@ anger rather than only against a synthetic fixture.
 | [0003](decisions/ADR-0003-casebook-apart-from-rules.md) | The casebook is separate from the rules | Accepted |
 | [0004](decisions/ADR-0004-checker-ships-with-its-own-proof.md) | The checker ships with a proof that it fails | Accepted |
 | [0005](decisions/ADR-0005-distribution-as-a-plugin.md) | Distribution as a Claude Code plugin, not a template repository | Accepted |
+| [0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md) | A checker keys only on wording the method itself produces | Accepted |
 
 ## Binding requirements
 
@@ -28,7 +29,13 @@ Decisions that bind **every** change here, not only their own area.
 - **A new gate is not finished until it has been shown to fail**
   ([ADR-0004](decisions/ADR-0004-checker-ships-with-its-own-proof.md)). This applies to the
   tooling in this repository as forcefully as to anything it checks — arguably more, since a
-  broken checker certifies broken projects.
+  broken checker certifies broken projects. Each checker carries **its own** self-test; the
+  obligation attaches to the check, not to a particular file
+  ([ADR-0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md)).
+- **A checker keys only on wording a template or a skill produces**
+  ([ADR-0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md)). A marker invented by
+  a script and honoured only by its own fixtures proves the script consistent with itself, which
+  was never in doubt. The self-test asserts this; it is not left to review.
 - **A rule must be usable without knowing this project's history**
   ([ADR-0003](decisions/ADR-0003-casebook-apart-from-rules.md)). Incidents belong in the
   casebook, referenced, not inlined.

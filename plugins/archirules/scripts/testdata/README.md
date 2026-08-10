@@ -15,7 +15,13 @@ detection and the English markers actually work.
 cannot serve there: one decision record and no blocker table, so `consistency.py` walks them
 without running a single cross-register check. The `xreg-*` sets are the smallest ones holding
 one instance of every relation it looks at — a question blocking a phase, a phase waiting on a
-question, a record modifying another, a superseded record, and a record with no links at all.
+question, a record superseded in part, one superseded in whole, and a record with no links.
+
+**Every field in these sets is one a template produces or a skill prescribes.** That is a rule,
+not an accident of writing. These sets were once written in vocabulary the checker had invented
+for itself; checker and fixtures then agreed with each other, which is all a green self-test
+proved, while a register built by following the method's own instructions was reported as
+broken. The last case in `../selftest.sh` now asserts the rule — see C-11 in the casebook.
 
 Fixtures belong outside the register root. `conform.py` globs `**/*.md` recursively, so a
 project keeping its checker's test sets under `docs/architecture/` has them counted as project

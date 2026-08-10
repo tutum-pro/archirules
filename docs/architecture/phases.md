@@ -14,10 +14,16 @@ A living document. **Updated whenever a phase completes.**
 | P4 | The method applied to this repository | ☑ 2026-08-03 | `conform.py` reports zero problems **on this repository's own register** — 60 checks |
 | P5 | `--json` output and a CI example | ☐ | a pull request with a malformed register fails its check |
 | P6 | A second, unrelated project | ☐ | **someone who did not co-create the method uses it without asking its author how** |
+| P7 | Cross-register consistency checker | ☑ 2026-08-11 | **a register built by following `adr/SKILL.md` and the templates literally passes both checkers** — and every marker string either checker keys on is found in a template or a skill, asserted by the self-test rather than by reading |
 
 **Hard gate at P6:** if the method cannot be applied by somebody who was not part of writing it,
 it is a private working habit and not a method. Publishing it would then be a marketing claim
 rather than a description.
+
+**Hard gate at P7:** if aligning the checker with the method turns out to require adding fields
+to the templates whose only purpose is to be checked, then the checker was measuring its own
+fixtures (rule W8) and the cross-register checks in question are to be **dropped** — the method
+does not grow vocabulary to keep a script happy.
 
 ### P2 — what was delivered
 
@@ -59,3 +65,62 @@ One thing this phase did not settle: whether the register is any good. The check
 every decision record has a costs section, not that the costs are true. That distinction is the
 whole reason [OQ-03](open-questions.md#oq-03--nothing-checks-whether-the-prose-is-understandable)
 stays open.
+
+### P7 — what was delivered
+
+A second checker, `consistency.py`, reading the relations **between** registers that `conform.py`
+cannot see because every file is well-formed on its own: a question against the phase it blocks,
+a phase against the questions it waits on, a closed question that still declares a blocker,
+references to decision records, and supersession written in both directions.
+
+**Closed with evidence.** The criterion was checked literally rather than in spirit. A register
+built by following `adr/SKILL.md` word for word — a decision reversed, the old record given the
+status line the skill prescribes — was constructed and run through both checkers:
+
+```
+conform.py      language: en · checks: 93 · problems: 0                exit 0
+consistency.py  language: en · cross-register checks: 59 · problems: 0  exit 0
+```
+
+**The same construction produced `exit 1` before this phase**, which is the entire reason the
+phase exists. Its second half is asserted by `selftest.sh`, whose last case requires every
+marker string either checker keys on to occur in a template or in a skill; run against the
+scripts as they were, it named six markers with no documentary source at all.
+
+This repository's own register: `conform.py` 85 checks, `consistency.py` 52 cross-register
+checks, zero problems, identical on two consecutive runs (rule W7). Self-tests: 34 and 41 cases,
+all passing, twice. One finding on the way to that: the checker rejected a sentence **in this
+phase's own decision record** that referred to a record number the register does not contain.
+
+**Design decisions taken along the way.** The two scripts were given a stated axis — inside one
+file, between files — and the supersession-scope check was moved to `conform.py` to respect it,
+at the cost of a second fixture set. The reasoning, and the four alternatives that fell, are in
+[ADR-0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md).
+
+**The hard gate fired once**, on the blocker table. Two cross-register checks need one, no
+template produces one, and adding it would have meant growing the method to keep a script happy.
+Nothing was added; the question is
+[OQ-06](open-questions.md#oq-06--should-the-blocker-table-be-part-of-the-method-or-stay-a-project-convention).
+The limit of the closed-question check is
+[OQ-05](open-questions.md#oq-05--is-a-stale-blocker-findable-anywhere-except-the-questions-own-field).
+
+**What surfaced incidentally — the valuable part.** All of it was defects in this phase's own
+first draft, and none of it was visible from reading:
+
+- **A check that could not fire in any circumstance**, in either language, advertised in the
+  audit skill as mechanised. It was the only one of the five without a self-test case of its
+  own. Twenty-eight passing cases said nothing about it —
+  [C-11](../../plugins/archirules/CASEBOOK.en.md#c-11--a-check-with-no-case-of-its-own-could-not-fire).
+- **A self-test that measured its own fixtures.** The checker and the fixtures agreed because
+  the same invention wrote both, while a register built from the instructions was rejected.
+- **Reference checks that vanished silently** when a set kept no `decisions/` directory — in a
+  script whose own docstring promised that skips are printed.
+- **`--lang pl` silently ignored** because only the `--lang=pl` spelling was parsed, in a
+  checker whose sibling documents the spaced form. Silent degradation looks like success.
+- **A forced language that contradicts the register's own README** switched every check off
+  without a word. The language skill already asked a human to confirm this; it is now mechanised
+  in both checkers.
+- **Two defects in the new gates themselves**: a `grep` pipeline where `pipefail` let the
+  checker's exit code outrank the match, so cases reading output reported "printed nothing"; and
+  a vocabulary assertion that passed when the module it measures failed to import, because an
+  empty result read as "nothing missing".
