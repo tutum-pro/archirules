@@ -20,6 +20,7 @@ anger rather than only against a synthetic fixture.
 | [0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md) | A checker keys only on wording the method itself produces | Accepted |
 | [0007](decisions/ADR-0007-explicit-version-as-the-migration-anchor.md) | An explicit version is what a migration moves between | Accepted |
 | [0008](decisions/ADR-0008-help-comes-from-a-file-not-from-memory.md) | `--help` is routed by a sentence and answered by a file | Accepted |
+| [0009](decisions/ADR-0009-updating-a-project-is-not-updating-the-plugin.md) | Updating a project's registers is separate from updating the plugin | Accepted |
 
 ## Binding requirements
 

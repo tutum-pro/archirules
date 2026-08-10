@@ -15,6 +15,7 @@ Metoda prowadzenia projektu wytwórczego IT jako zestaw skilli dla Claude Code.
 | `/archirules:audit` | audyt kompletności i prawdziwości rejestrów |
 | `/archirules:language` | przełączenie języka dokumentacji projektu, całościowo |
 | `/archirules:verification` | dyscyplina dowodu: udowodnij, że bramka pada |
+| `/archirules:update` | dostosowanie rejestrów projektu do nowszej wersji metody |
 
 Do każdego skilla można dopisać `--help`:
 
@@ -33,6 +34,8 @@ python3 scripts/conform.py docs/architecture      # zgodność strukturalna, wew
 bash    scripts/selftest.sh                       # dowód, że powyższy potrafi paść
 python3 scripts/consistency.py docs/architecture  # zgodność między rejestrami
 bash    scripts/selftest-consistency.sh           # dowód, że powyższy potrafi paść
+python3 scripts/migrations.py --from 1.0.0        # co zmieniło się w rejestrach od wersji
+python3 scripts/help.py                           # lista skilli
 ```
 
 Dwa kontrolery, bo mają różne osie. `conform.py` czyta jeden plik naraz: sekcje rekordu decyzji,

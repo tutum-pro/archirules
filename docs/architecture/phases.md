@@ -17,6 +17,7 @@ A living document. **Updated whenever a phase completes.**
 | P7 | Cross-register consistency checker | ☑ 2026-08-11 | **a register built by following `adr/SKILL.md` and the templates literally passes both checkers** — and every marker string either checker keys on is found in a template or a skill, asserted by the self-test rather than by reading |
 | P8 | A version users can migrate from | ☑ 2026-08-11 | `claude plugin validate --strict` passes, and **the version in `plugin.json` and the newest `CHANGELOG.md` heading agree** — asserted by the self-test, which fails when one moves without the other |
 | P9 | `--help` on every skill | ☑ 2026-08-11 | every skill in `skills/` prints usage naming what it needs and what it will not do, from **one script rather than from the model's memory** — and **a skill added without one turns the self-test red** |
+| P10 | Updating a project to a new method version | ☑ 2026-08-11 | **a register created at an earlier version is brought to the current one, both checkers pass, and restoring the snapshot returns the registers byte-identical** — rehearsed on a copy of a real register, not on a fixture |
 
 **Hard gate at P6:** if the method cannot be applied by somebody who was not part of writing it,
 it is a private working habit and not a method. Publishing it would then be a marketing claim
@@ -26,6 +27,10 @@ rather than a description.
 to the templates whose only purpose is to be checked, then the checker was measuring its own
 fixtures (rule W8) and the cross-register checks in question are to be **dropped** — the method
 does not grow vocabulary to keep a script happy.
+
+**Hard gate at P10:** if the snapshot cannot be restored byte-identical, the skill must
+refuse to run at all rather than offer a restore it cannot perform. An update that says it
+can be undone and cannot is worse than one that never offered.
 
 ### P2 — what was delivered
 
@@ -205,3 +210,47 @@ probabilistic — nothing in the plugin system can make it otherwise. What the m
 guarantees is that routing correctly produces a current answer. And the "Will not" lines,
 the most useful part of the text, are prose that nothing verifies. Both are stated in the
 record rather than left for a user to discover.
+
+### P10 — what was delivered
+
+`/archirules:update`, `scripts/migrations.py`, and `.archirules-version` written by
+`/archirules:bootstrap`. The boundary against the plugin manager, and the four rejected
+alternatives, are in
+[ADR-0009](decisions/ADR-0009-updating-a-project-is-not-updating-the-plugin.md).
+
+**Closed with evidence, rehearsed on a real repository.** A git repository was created holding a
+register written in the 1.0.0 vocabulary — a supersession status with a bare pointer, and
+`Modifies:` where the method says `Supersedes:`. The procedure was then executed step by step:
+
+```
+before   conform.py       problems: 1   x ADR-0001: status says SUPERSEDED but names no scope
+         consistency.py   problems: 0
+
+after    conform.py       language: en · checks: 31 · problems: 0        exit 0
+         consistency.py   cross-register checks: 11 · problems: 0        exit 0
+
+restore  git diff --stat <snapshot> -- docs/architecture   (no output — byte-identical)
+```
+
+The "before" line matters as much as the "after": it shows the migration was needed, so the
+"after" is not a register that would have passed anyway.
+
+**The rehearsal found a defect in this phase's own instructions.** The restore command was
+`git restore --source=<snapshot> -- docs/architecture`, which is what anyone would write and is
+wrong. It puts tracked files back and leaves whatever the migration **added** — here
+`.archirules-version`. The register came back in its 1.0.0 shape still claiming to be 1.2.0:
+undone in content, not undone in what it says about itself. Checksums differed; the naive
+restore produced `a796ddb8…` against a target of `e4a070cc…`.
+
+Corrected to `rm -rf docs/architecture` followed by the restore, which is byte-identical. That
+command is only safe because step 1 refuses to start on a tree with untracked files — the two
+steps are one mechanism, and the skill says so where someone editing it will see it.
+
+**The hard gate held.** It required that a snapshot which cannot be restored byte-identical
+means the skill must refuse to run rather than offer a restore it cannot perform. The first
+draft was in exactly that state. It was fixed rather than the gate being relaxed.
+
+**Deliberately not done:** deleting snapshot branches, migrations as executable scripts, and any
+attempt to update the plugin from inside the skill. The second is the interesting one — a script
+cannot ask what a record meant, and one that guessed would produce a register satisfying the
+checker while saying something its author never said.

@@ -108,6 +108,31 @@ mechanised; it is the residue named as a cost in
 **Not verified, and no mechanism exists.** That the "Will not" lines are true. They are the
 most useful sentences in each usage block and the ones with the least enforcement.
 
+## Updating a project across method versions
+
+**Verified.** On a real git repository, not a fixture: a register written in the 1.0.0
+vocabulary failed `conform.py` before the migration, passed both checkers after it, and was
+restored from the snapshot byte-identical — `git diff --stat <snapshot>` empty, checksums equal.
+
+**Verified.** That the obvious restore command is **not** byte-identical. `git restore` alone
+leaves files the migration added, and the register returns in its old shape carrying the new
+version file. Measured, not reasoned about: `a796ddb8…` against a target of `e4a070cc…`.
+
+**Verified.** That `migrations.py` distinguishes the ranges it must: work in range, no register
+changes in range, already current, a version the changelog does not know (exit 2), a malformed
+version (exit 2), and a changelog that is not there (exit 2). An empty range says so in words
+rather than printing nothing.
+
+**Asserted, not verified.** That the migrations themselves are applied correctly. They are prose
+instructions carried out by a model, so the acceptance test is the pair of checkers, which
+constrain the result without constraining the path. A migration that satisfies both checkers
+while misreading what a record meant would not be caught by anything here.
+
+**Not verified.** The refusal paths — no git repository, dirty tree, no `docs/architecture/`.
+They are instructions in a skill rather than code, so there is nothing to run against them. This
+is the same residue as the `--help` routing, and it is why step 1 is written as three named
+stops rather than one sentence.
+
 ## Installation instructions
 
 **Verified.** That `/plugin install <name>@<marketplace>` is the documented form, by reading the

@@ -10,6 +10,28 @@ An entry that requires the reader to change something in their own registers car
 `### Migration` block. **An entry without one requires nothing** — that is what its absence
 means, and `/archirules:update` relies on it.
 
+## 1.3.0 — 2026-08-11
+
+**Added**
+
+- `/archirules:update` — brings a project's registers up to a newer method version. Reads what
+  changed, takes a git snapshot that can be restored, applies the migrations, and proves the
+  result with both checkers. It does **not** update the plugin; that is `/plugin update`, which
+  in turn does not touch your project
+  ([ADR-0009](../../docs/architecture/decisions/ADR-0009-updating-a-project-is-not-updating-the-plugin.md)).
+- `scripts/migrations.py` — prints the migration work between two versions, and says so in words
+  when there is none.
+- `/archirules:bootstrap` now writes `docs/architecture/.archirules-version`.
+
+### Migration
+
+**Only if your registers predate this release.** Create
+`docs/architecture/.archirules-version` holding one line: the version your registers were last
+brought up to. If you do not know, leave the file out — `/archirules:update` then treats the
+project as 1.0.0 and lists every migration, which is safe.
+
+Nothing else changes. No record, template or checker rule moved in this release.
+
 ## 1.2.0 — 2026-08-11
 
 **Added**

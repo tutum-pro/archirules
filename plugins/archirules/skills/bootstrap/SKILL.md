@@ -48,7 +48,16 @@ docs/architecture/
   decisions/             (empty, for decision records)
   open-questions.md      heading and empty numbering
   fazy-realizacji.md     legend and empty phase table   (or phases.md in English)
+  .archirules-version    the method version these registers were written against
 ```
+
+`.archirules-version` holds one line and nothing else: the `version` from
+`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`. Read it, do not type it from memory.
+
+It is the only thing that lets `/archirules:update` know **what a later migration is starting
+from**. A register without it is treated as 1.0.0 and shown every migration ever written, which
+is safe and tedious. It carries no dot-md suffix on purpose: the checkers glob `**/*.md`, and a
+version file counted as a project document would inflate their coverage counters.
 
 Create the verification register **only when** the first claim needs correcting. An empty
 verification register teaches people that it can be ignored.

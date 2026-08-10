@@ -193,6 +193,73 @@ else
   failed=1
 fi
 
+# The migration claim (ADR-0009). /archirules:update reads migrations.py and nothing
+# else, so what this script does on each kind of range is the contract. The case that
+# matters is the unrecognised version: a migration that silently skips a release it did
+# not understand leaves a register half-converted, which is worse than not migrating.
+migrate() { python3 "$here/migrations.py" --changelog "$1" "${@:2}" >/dev/null 2>&1; echo $?; }
+migrate_says() { python3 "$here/migrations.py" --changelog "$1" "${@:2}" 2>&1; }
+
+fixture="$tmp/changelog.md"
+cat > "$fixture" <<'MD'
+# Changelog
+
+## 2.0.0 — 2026-09-01
+
+**Changed**
+
+- Something that reaches registers.
+
+### Migration
+
+Rename the thing to the other thing.
+
+## 1.5.0 — 2026-08-20
+
+**Added**
+
+- Something additive.
+
+## 1.0.0
+
+Initial release.
+MD
+
+for probe in \
+  "a range with work:1:--from 1.0.0 --to 2.0.0:0" \
+  "a range with no register changes:1:--from 1.0.0 --to 1.5.0:0" \
+  "already at the newest version:1:--from 2.0.0:0" \
+  "a version the changelog does not know:1:--from 9.9.9:2" \
+  "a malformed version:1:--from banana:2" \
+  "a changelog that is not there:1:--from 1.0.0 --changelog-missing:2"
+do
+  what=${probe%%:*}; rest=${probe#*:}; rest=${rest#*:}
+  args=${rest%:*}; want=${rest##*:}
+  if [ "$args" = "--from 1.0.0 --changelog-missing" ]; then
+    code=$(migrate "$tmp/no-such-changelog.md" --from 1.0.0)
+  else
+    # shellcheck disable=SC2086
+    code=$(migrate "$fixture" $args)
+  fi
+  case_no=$((case_no + 1))
+  if [ "$code" -eq "$want" ]; then
+    printf "  ok    %-46s exit %s\n" "migrations: $what" "$code"
+  else
+    printf "  FAIL  %-46s exit %s, expected %s\n" "migrations: $what" "$code" "$want"
+    failed=1
+  fi
+done
+
+# "Nothing to do" must be a sentence, not an empty output. An empty result would read
+# the same as a script that failed to find its input, and the reader would act on it.
+case_no=$((case_no + 1))
+if migrate_says "$fixture" --from 1.0.0 --to 1.5.0 | grep -q "no work\|need no work\|changes anything"; then
+  printf "  ok    %-46s said so\n" "migrations: an empty range says so in words"
+else
+  printf "  FAIL  %-46s silent\n" "migrations: an empty range says so in words"
+  failed=1
+fi
+
 # The help claim (ADR-0008). Every skill must answer --help, and the answer has to come
 # from help.py rather than from the model's memory. Three ways this goes wrong and all
 # three are checked: a skill with no `## Usage` section, a skill whose SKILL.md never
