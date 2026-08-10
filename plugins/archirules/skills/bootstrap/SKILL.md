@@ -5,6 +5,25 @@ description: Scaffold the architecture documentation set (decision records, open
 
 # Setting up the registers
 
+**`--help`** — if `$ARGUMENTS` is `--help`, run
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/help.py bootstrap`, show its output, and stop there.
+
+## Usage
+
+```
+/archirules:bootstrap [--help]
+```
+
+Creates `docs/architecture/` with the four registers, the templates filled in for this project,
+and the archirules fragment in `CLAUDE.md`.
+
+**Needs from you:** the documentation language, and whatever decisions the project has already
+made in practice. In a project that is not empty, those exist and are usually recorded only in
+commit messages.
+
+**Will not:** overwrite an existing register set. If `docs/architecture/` is there, the skill
+stops and says so.
+
 ## Before creating anything
 
 1. Check whether `docs/architecture/` already exists. **If it does, do not overwrite.**

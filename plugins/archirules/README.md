@@ -16,6 +16,16 @@ Metoda prowadzenia projektu wytwórczego IT jako zestaw skilli dla Claude Code.
 | `/archirules:language` | przełączenie języka dokumentacji projektu, całościowo |
 | `/archirules:verification` | dyscyplina dowodu: udowodnij, że bramka pada |
 
+Do każdego skilla można dopisać `--help`:
+
+```
+/archirules:adr --help
+```
+
+Wypisze, czego skill od ciebie potrzebuje i **czego nie zrobi**. Tekst pochodzi z sekcji
+`## Usage` w tym samym `SKILL.md`, wyciąganej przez `scripts/help.py` — nie z pamięci modelu.
+Skill dodany bez takiej sekcji zapala selftest na czerwono.
+
 ## Narzędzia
 
 ```

@@ -5,6 +5,28 @@ description: Write, supersede or amend an architecture decision record (ADR). Us
 
 # Decision records
 
+**`--help`** — if `$ARGUMENTS` is `--help`, run
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/help.py adr`, show its output, and stop there.
+
+## Usage
+
+```
+/archirules:adr [--help]
+```
+
+Writes a new decision record, supersedes an existing one, or amends one written late.
+
+**Needs from you:** the decision itself, the alternatives that were genuinely weighed, and the
+reason each fell. If you cannot name one cost of the decision, the skill will say so rather than
+write the record — an unnamed cost means the decision is not yet understood.
+
+**Will not:** invent rejected alternatives to fill the template, or decide anything for you. It
+writes down a decision that has been made.
+
+**Reversing a decision** touches two files: the new record gets `Supersedes:`, the old one gets a
+status line naming the date and **what stopped holding**. A bare pointer to the successor is a
+finding in `conform.py`.
+
 ## A new record
 
 1. **Number** — the highest existing one plus one, zero-padded (`ADR-0014`). Read the

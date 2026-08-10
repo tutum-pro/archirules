@@ -5,6 +5,27 @@ description: Manage the phase register — open a phase with its acceptance crit
 
 # The phase register
 
+**`--help`** — if `$ARGUMENTS` is `--help`, run
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/help.py phases`, show its output, and stop there.
+
+## Usage
+
+```
+/archirules:phases [--help]
+```
+
+Opens a phase with its acceptance criterion, or closes one with evidence.
+
+**Needs from you:** for opening, a criterion that can be settled without discussion — "an
+instance survives a restart and resumes", not "do persistence". For closing, the command output
+that shows the criterion met.
+
+**Will not:** close a phase because the code exists. Closing needs evidence, two consecutive
+runs of the suite, and a prose section saying what was built, what was deliberately left out,
+and under which question it is recorded.
+
+A criterion written after the work is always met, which is why it is written before.
+
 ## Opening a phase — **before** the work
 
 A row in the table: identifier, name, status `☐`, **acceptance criterion**.

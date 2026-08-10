@@ -5,6 +5,26 @@ description: Audit the architecture documentation for completeness and truthfuln
 
 # Auditing the registers
 
+**`--help`** — if `$ARGUMENTS` is `--help`, run
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/help.py audit`, show its output, and stop there.
+
+## Usage
+
+```
+/archirules:audit [--help]
+```
+
+Reads the whole register set and reports what is defective or has stopped being true. Runs both
+checkers and their self-tests first, because a checker nobody has proven can fail says nothing.
+
+**Needs from you:** nothing. It reads; it does not edit.
+
+**Will not:** correct anything. Which side of a disagreement between two registers is wrong is a
+decision, and matching a status to whatever the other file says is how a register gains a second
+untrue sentence instead of none.
+
+**Result:** either a list of findings or a count of what was checked. Never a reassurance.
+
 **Check, do not reassure.** The result of an audit is a list of findings, or the sentence "I
 checked N things and found nothing" — never "everything looks fine".
 

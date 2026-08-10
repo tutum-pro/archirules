@@ -16,6 +16,7 @@ A living document. **Updated whenever a phase completes.**
 | P6 | A second, unrelated project | ☐ | **someone who did not co-create the method uses it without asking its author how** |
 | P7 | Cross-register consistency checker | ☑ 2026-08-11 | **a register built by following `adr/SKILL.md` and the templates literally passes both checkers** — and every marker string either checker keys on is found in a template or a skill, asserted by the self-test rather than by reading |
 | P8 | A version users can migrate from | ☑ 2026-08-11 | `claude plugin validate --strict` passes, and **the version in `plugin.json` and the newest `CHANGELOG.md` heading agree** — asserted by the self-test, which fails when one moves without the other |
+| P9 | `--help` on every skill | ☑ 2026-08-11 | every skill in `skills/` prints usage naming what it needs and what it will not do, from **one script rather than from the model's memory** — and **a skill added without one turns the self-test red** |
 
 **Hard gate at P6:** if the method cannot be applied by somebody who was not part of writing it,
 it is a private working habit and not a method. Publishing it would then be a marketing claim
@@ -163,3 +164,44 @@ passed here and been unrunnable everywhere else.
 
 **Deliberately not done:** git tags. The version, the changelog heading and a tag would be three
 places for one fact, and Claude Code reads none of the third.
+
+### P9 — what was delivered
+
+`--help` on all seven skills. `scripts/help.py` extracts a `## Usage` section from the skill's
+own `SKILL.md`; the skill's only job is to route `--help` to it. Reasoning and four rejected
+alternatives in [ADR-0008](decisions/ADR-0008-help-comes-from-a-file-not-from-memory.md).
+
+**Closed with evidence.** Both halves of the criterion. Every skill answers:
+
+```
+selftest.sh   ok  every skill answers --help from the script   7 skills
+```
+
+And the second half — a skill added without usage turns the self-test red — checked by actually
+adding one, not by reading the code:
+
+| broken how | what the gate says |
+|---|---|
+| a new skill dropped in with no usage | `newthing: no ## Usage section` |
+| the section renamed in an existing skill | `oq: no ## Usage section` |
+| the routing line broken | `phases: SKILL.md does not route --help to help.py phases` |
+| usage naming another skill in its invocation | `adr: its usage names another skill` |
+| `help.py` made unimportable | one line per skill: `help.py prints nothing usable (exit 1)` |
+
+The fourth is the one worth having. A usage block copied from a neighbouring skill reads
+perfectly and sends the reader to the wrong command; nothing about it looks wrong.
+
+**A design decision along the way.** Usage is written for a person and the rest of `SKILL.md`
+for the model that executes it. They stay in one file under separate headings, so they cannot
+drift into two documents that disagree. Every usage block states a **"Will not"** — a skill's
+limits are what a reader cannot infer and what costs them an afternoon.
+
+**Deliberately not done:** an eighth `/archirules:help` skill. It would answer "what skills are
+there", which `/help` already answers, rather than "what does this one need from me". The
+listing survives as `help.py` with no argument.
+
+**What this does not guarantee.** The routing is a sentence a model reads, so it remains
+probabilistic — nothing in the plugin system can make it otherwise. What the mechanism
+guarantees is that routing correctly produces a current answer. And the "Will not" lines,
+the most useful part of the text, are prose that nothing verifies. Both are stated in the
+record rather than left for a user to discover.

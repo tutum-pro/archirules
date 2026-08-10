@@ -93,6 +93,21 @@ files disagreeing. Stated as a cost in
 [ADR-0007](decisions/ADR-0007-explicit-version-as-the-migration-anchor.md) rather than papered
 over.
 
+## Skill help
+
+**Verified.** That every skill answers `--help` with text extracted from its own `SKILL.md`, and
+that the gate fails in five shapes: a new skill added without a usage section, the section
+renamed, the routing line broken, a usage naming a different skill in its invocation line, and
+`help.py` made unimportable. The last prints one line per skill rather than going quiet.
+
+**Asserted, not verified.** That the model routes `--help` to the script rather than answering
+from its own reading of the skill. Nothing in the plugin system parses flags, so this cannot be
+mechanised; it is the residue named as a cost in
+[ADR-0008](decisions/ADR-0008-help-comes-from-a-file-not-from-memory.md).
+
+**Not verified, and no mechanism exists.** That the "Will not" lines are true. They are the
+most useful sentences in each usage block and the ones with the least enforcement.
+
 ## Installation instructions
 
 **Verified.** That `/plugin install <name>@<marketplace>` is the documented form, by reading the

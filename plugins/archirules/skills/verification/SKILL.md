@@ -5,6 +5,27 @@ description: Verification discipline — prove a new gate can fail, avoid measur
 
 # The discipline of evidence
 
+**`--help`** — if `$ARGUMENTS` is `--help`, run
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/help.py verification`, show its output, and stop there.
+
+## Usage
+
+```
+/archirules:verification [--help]
+```
+
+The discipline for anything that claims to check something: prove the gate can fail before
+trusting it, and give every check a case of its own.
+
+**Needs from you:** the check you are about to add or the result you are about to report.
+
+**Will not:** accept "the tests pass" as evidence. A gate that has never been seen to fail looks
+exactly like one that passes.
+
+**The rules it applies:** break it deliberately and watch it go red; never silence an error
+inside a gate; run the suite twice; and do not measure your own test artefact — a self-test that
+agrees with fixtures written by the same hand proves only that.
+
 ## A new gate is not finished until it has been shown to fail
 
 The procedure, every time:

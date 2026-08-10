@@ -193,6 +193,63 @@ else
   failed=1
 fi
 
+# The help claim (ADR-0008). Every skill must answer --help, and the answer has to come
+# from help.py rather than from the model's memory. Three ways this goes wrong and all
+# three are checked: a skill with no `## Usage` section, a skill whose SKILL.md never
+# routes --help to the script, and a usage text that names the wrong skill in its own
+# invocation line — the copy-paste defect, which reads perfectly and sends the user to
+# another skill.
+help_state=$(python3 - "$here" <<'PY'
+import os
+import re
+import subprocess
+import sys
+
+scripts = sys.argv[1]
+skills_dir = os.path.join(os.path.dirname(scripts), "skills")
+broken = []
+try:
+    names = sorted(
+        n for n in os.listdir(skills_dir)
+        if os.path.isfile(os.path.join(skills_dir, n, "SKILL.md"))
+    )
+except OSError as exc:
+    print("unreadable: %s" % exc)
+    raise SystemExit(0)
+if not names:
+    print("no skills found under %s" % skills_dir)
+    raise SystemExit(0)
+
+for name in names:
+    with open(os.path.join(skills_dir, name, "SKILL.md"), encoding="utf-8") as fh:
+        text = fh.read()
+    section = re.search(r"^## Usage\s*\n(.*?)(?=^## |\Z)", text, flags=re.M | re.S)
+    if not section or not section.group(1).strip():
+        broken.append("%s: no ## Usage section" % name)
+        continue
+    if "help.py %s" % name not in text:
+        broken.append("%s: SKILL.md does not route --help to help.py %s" % (name, name))
+    if "/archirules:%s" % name not in section.group(1):
+        broken.append("%s: its usage names another skill in the invocation line" % name)
+    # and the script must actually produce it, which is the claim that matters
+    run = subprocess.run([sys.executable, os.path.join(scripts, "help.py"), name],
+                         capture_output=True, text=True)
+    if run.returncode != 0 or "/archirules:%s" % name not in run.stdout:
+        broken.append("%s: help.py prints nothing usable (exit %d)" % (name, run.returncode))
+print("\n".join(broken) or "HELP-OK %d skills" % len(names))
+PY
+)
+case_no=$((case_no + 1))
+case "$help_state" in
+  "HELP-OK "*)
+    printf "  ok    %-46s %s\n" "every skill answers --help from the script" \
+      "${help_state#HELP-OK }" ;;
+  *)
+    printf "  FAIL  %-46s\n" "skills whose --help is missing or wrong:"
+    echo "${help_state:-(the help check itself did not run)}" | sed 's/^/        /'
+    failed=1 ;;
+esac
+
 # The release claim (ADR-0007). The version in plugin.json is what /archirules:update
 # migrates between, and CHANGELOG.md is where it reads what changed. Two files that must
 # agree, so the agreement is asserted rather than left to attention. A sentinel again,

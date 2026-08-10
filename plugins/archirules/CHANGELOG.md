@@ -10,6 +10,18 @@ An entry that requires the reader to change something in their own registers car
 `### Migration` block. **An entry without one requires nothing** — that is what its absence
 means, and `/archirules:update` relies on it.
 
+## 1.2.0 — 2026-08-11
+
+**Added**
+
+- `--help` on every skill. `/archirules:<skill> --help` prints what the skill needs from you and
+  what it will not do, extracted by `scripts/help.py` from a `## Usage` section of that skill —
+  not recited from the model's memory
+  ([ADR-0008](../../docs/architecture/decisions/ADR-0008-help-comes-from-a-file-not-from-memory.md)).
+- `help.py` with no argument lists every skill with its one-line description.
+
+No migration. Nothing in a register changes.
+
 ## 1.1.0 — 2026-08-11
 
 The first explicitly versioned release. Everything between 1.0.0 and this entry shipped
