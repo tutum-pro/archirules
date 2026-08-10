@@ -10,6 +10,37 @@ An entry that requires the reader to change something in their own registers car
 `### Migration` block. **An entry without one requires nothing** — that is what its absence
 means, and `/archirules:update` relies on it.
 
+## 1.4.0 — 2026-08-11
+
+**Added**
+
+- Traceability from registers to the commits that implement them. Commits carry
+  `Archirules-Phase:`, `Archirules-ADR:` and `Archirules-OQ:` trailers; `scripts/trace.py`
+  derives the mapping and writes `docs/architecture/traceability.md`. The git history is the
+  truth and the file is a verified view of it — never a hand-maintained list
+  ([ADR-0010](../../docs/architecture/decisions/ADR-0010-traceability-derived-from-git-trailers.md)).
+- `trace.py --strict` additionally fails on a closed phase no commit claims and a view behind
+  HEAD. Off by default; see OQ-07 in this plugin's own register.
+
+### Migration
+
+**Optional, and nothing breaks if you skip it.** To start tracing:
+
+1. Add a trailer to commits that implement a register entry:
+
+   ```
+   Archirules-Phase: P3
+   ```
+
+2. Generate the view, in a commit of its own that carries **no** trailer:
+
+   ```
+   python3 <plugin>/scripts/trace.py docs/architecture --write
+   ```
+
+Phases closed before you start will be listed under "Closed phases no commit claims" and stay
+there. That list can only shrink and never grow, which is what makes it readable.
+
 ## 1.3.0 — 2026-08-11
 
 **Added**

@@ -133,6 +133,29 @@ They are instructions in a skill rather than code, so there is nothing to run ag
 is the same residue as the `--help` routing, and it is why step 1 is written as three named
 stops rather than one sentence.
 
+## Traceability
+
+**Verified.** That `trace.py` fails on each shape it claims to catch, against a real git
+repository created by the self-test rather than a fixture: a trailer naming a missing entry, a
+hand-edited view, a missing view, a view recording no commit it was generated at, and — under
+`--strict` — a view behind HEAD. Ten cases.
+
+**Verified.** That usage errors exit 2 and findings exit 1, so a broken invocation cannot be
+read as a clean register: an unknown option, and a register directory outside any repository.
+
+**Verified.** That the vocabulary assertion covers `trace.py` as it covers the checkers. It went
+red the moment it was extended, naming all three trailers as absent from every skill — the same
+defect [ADR-0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md) exists for,
+caught this time by the mechanism instead of by a reader.
+
+**Asserted, not verified.** That trailers get written at all. Nothing catches a commit that
+should have carried one; only `--strict` does, and it is off for the reasons in
+[OQ-07](open-questions.md#oq-07--when-should---strict-traceability-become-the-gate-rather-than-an-option).
+
+**Not traceable, permanently.** Phases P1 to P10. They closed before the mechanism existed and
+their commits are pushed. They are listed under their own heading in `traceability.md`, and that
+list can only shrink.
+
 ## Installation instructions
 
 **Verified.** That `/plugin install <name>@<marketplace>` is the documented form, by reading the

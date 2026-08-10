@@ -56,6 +56,22 @@ work, option C was wrong"*.
    along the way, **what was deliberately left out** and under which question it is recorded.
 4. A note on what surfaced incidentally — especially defects found in your own earlier work.
    That is the most valuable part of the register and the only place it survives.
+5. **The commit carries the claim.** Add a trailer to the commit message that does the work:
+
+   ```
+   Archirules-Phase: P11
+   ```
+
+   `Archirules-ADR:` and `Archirules-OQ:` do the same for a decision record and a question, and
+   one commit may carry several. This is what makes a register entry traceable to the code that
+   implements it — and the identifier stays only in the commit, never copied into the register,
+   because a commit identifier written into a document starts lying at the first rebase.
+
+   Regenerate the view afterwards, in a commit of its own that carries **no** trailer:
+
+   ```
+   python3 ${CLAUDE_PLUGIN_ROOT}/scripts/trace.py docs/architecture --write
+   ```
 
 ## When a phase is "nearly" done
 

@@ -40,3 +40,7 @@ Specific to this repository, from
   The last case in `scripts/selftest.sh` asserts this for both checkers.
 - **A rule must be usable without knowing this project's history.** Incidents go to
   `CASEBOOK.md` and are referenced, not inlined.
+- **A commit that implements a register entry claims it in a trailer** — `Archirules-Phase:`,
+  `Archirules-ADR:`, `Archirules-OQ:`. Regenerate `traceability.md` afterwards, in a commit
+  carrying no trailer of its own. Never copy a commit identifier into a register: it stops
+  being true at the first rebase and nothing about the document looks different.

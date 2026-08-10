@@ -21,6 +21,7 @@ anger rather than only against a synthetic fixture.
 | [0007](decisions/ADR-0007-explicit-version-as-the-migration-anchor.md) | An explicit version is what a migration moves between | Accepted |
 | [0008](decisions/ADR-0008-help-comes-from-a-file-not-from-memory.md) | `--help` is routed by a sentence and answered by a file | Accepted |
 | [0009](decisions/ADR-0009-updating-a-project-is-not-updating-the-plugin.md) | Updating a project's registers is separate from updating the plugin | Accepted |
+| [0010](decisions/ADR-0010-traceability-derived-from-git-trailers.md) | Traceability is derived from commit trailers, never copied into a register | Accepted |
 
 ## Binding requirements
 
@@ -48,3 +49,4 @@ Decisions that bind **every** change here, not only their own area.
 - [Open questions](open-questions.md) — what we do not know yet and what it blocks
 - [Phase register](phases.md) — what is done, what is next
 - [Verification register](verification.md) — what is verified, as opposed to asserted
+- [Traceability](traceability.md) — which commits implement which entry (generated)

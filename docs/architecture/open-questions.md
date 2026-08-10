@@ -116,3 +116,25 @@ duplicated state is what the checker exists to police. Worth deciding once a pha
 other than this repository's has been kept for long enough to say whether blockers drift.
 Depends on the same evidence as [OQ-01](#oq-01--is-an-mcp-server-worth-adding): more than one
 project using the method.
+
+### OQ-07 — When should `--strict` traceability become the gate rather than an option
+**Status:** OPEN · **Touches:** [ADR-0010](decisions/ADR-0010-traceability-derived-from-git-trailers.md)
+
+`trace.py` always reports two things: a commit trailer naming a register entry that does not
+exist, and a generated view that is not a faithful regeneration. Two more are behind `--strict`:
+a closed phase no commit claims, and a view behind HEAD.
+
+They are optional because this repository cannot satisfy them. Phases P1 to P10 closed before
+the mechanism existed, so their commits carry no trailers and never will — history that is
+already pushed. A gate that fails on day one for reasons nobody can fix is a gate people learn
+to pass with `|| true`.
+
+**If left unresolved:** the interesting half of traceability stays advisory. Nothing stops a
+phase being closed with no commit behind it, which is the case the mechanism was built for.
+
+**To resolve:** whether the untraced list actually shrinks. It is printed in `traceability.md`
+under its own heading and can only shrink, never grow — P1–P10 are the whole of it. Once every
+phase closed after this point carries a trailer, `--strict` costs nothing to switch on, and the
+question becomes what to do about the ten historical entries: exempt them by name, or accept a
+gate that names them every run. Revisit at P5, when a CI example has to decide which command it
+runs.

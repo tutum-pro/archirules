@@ -131,6 +131,25 @@ A set that keeps none has those two checks skipped — **and the skip is printed
 otherwise "0 problems" silently means "0 checks ran". The same applies where there is no
 `decisions/` directory: checks D and E say they did not run rather than reporting nothing.
 
+## 1c. Registers against the code that implements them
+
+```
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/trace.py docs/architecture
+```
+
+Commits claim register entries with trailers — `Archirules-Phase:`, `Archirules-ADR:`,
+`Archirules-OQ:` — and this derives the mapping from git history. **The history is the truth**;
+`traceability.md` is a generated view of it, and the checker recomputes that view to confirm it
+was not edited by hand.
+
+Two findings it always reports: a trailer naming an entry no register holds, and a view that is
+not a faithful regeneration of the commit it records.
+
+`--strict` adds two more: a closed phase no commit claims, and a view behind HEAD. **Off by
+default on purpose.** A repository whose history predates the mechanism cannot satisfy them, and
+a gate everybody has to switch off teaches people to switch gates off. When it should become the
+default is OQ-07.
+
 ## 2. Records that stopped being true
 
 The most dangerous category and the hardest to find:

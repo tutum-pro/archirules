@@ -167,11 +167,21 @@ for sub in ("templates", "skills"):
 prose = "\n".join(prose)
 
 absent = []
-for script in ("conform.py", "consistency.py"):
+for script in ("conform.py", "consistency.py", "trace.py"):
     spec = importlib.util.spec_from_file_location(script[:-3], os.path.join(scripts, script))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    for language, markers in module.MARKERS.items():
+    # MARKERS is {language: {key: wording}}; TRAILERS is {key: wording} and has no
+    # language axis, because a git trailer is part of the executable layer and that
+    # layer is English without exception (ADR-0001).
+    tables = {}
+    if hasattr(module, "MARKERS"):
+        tables.update(module.MARKERS)
+    if hasattr(module, "TRAILERS"):
+        tables["trailer"] = module.TRAILERS
+    if not tables:
+        absent.append("%s exposes neither MARKERS nor TRAILERS to check" % script)
+    for language, markers in tables.items():
         for key, value in markers.items():
             # a few markers are anchored regexes: drop the syntax, keep the wording
             wording = value.replace("^", "").replace("\\", "")
@@ -190,6 +200,93 @@ if [ "$missing" = "VOCABULARY-OK" ]; then
 else
   printf "  FAIL  %-46s\n" "markers no template or skill produces:"
   echo "${missing:-(the vocabulary check itself did not run)}" | sed 's/^/        /'
+  failed=1
+fi
+
+# The traceability claim (ADR-0010). trace.py needs real commits, so this builds a
+# throwaway repository rather than a fixture directory: the thing under test is what git
+# history says, and a fixture cannot have history.
+tr="$tmp/trace-repo"
+mkdir -p "$tr/docs/architecture/decisions"
+cat > "$tr/docs/architecture/phases.md" <<'MD'
+# Phase register
+
+**Legend:** `☐` not started · `☑` complete
+
+| | Phase | Status | Acceptance criterion |
+|---|---|---|---|
+| T1 | First | ☑ 2026-08-11 | it exists |
+| T2 | Second | ☐ | later |
+
+**Hard gate:** none.
+MD
+printf '# Open questions\n\n### OQ-01 — A question\n**Status:** OPEN\n\nText.\n' \
+  > "$tr/docs/architecture/open-questions.md"
+printf '# ADR-0001 — A decision\n\n**Status:** Accepted\n\n## Decision\n\nX.\n' \
+  > "$tr/docs/architecture/decisions/ADR-0001-a.md"
+(
+  cd "$tr" || exit 1
+  git init -q && git config user.email t@t && git config user.name T
+  git add -A && git commit -q -m "First phase" -m "Archirules-Phase: T1
+Archirules-ADR: 0001
+Archirules-OQ: 01"
+) >/dev/null 2>&1
+
+traced() { python3 "$here/trace.py" "$tr/docs/architecture" "$@" >/dev/null 2>&1; echo $?; }
+trace_case() { # <description> <expected exit> [args...]
+  local what="$1" want="$2"; shift 2
+  local code; code=$(traced "$@")
+  case_no=$((case_no + 1))
+  if [ "$code" -eq "$want" ]; then
+    printf "  ok    %-46s exit %s\n" "trace: $what" "$code"
+  else
+    printf "  FAIL  %-46s exit %s, expected %s\n" "trace: $what" "$code" "$want"
+    failed=1
+  fi
+}
+
+traced --write >/dev/null
+trace_case "a fully traced repository passes" 0
+trace_case "and passes --strict too" 0 --strict
+
+# A trailer naming an entry no register holds. Same class as a dangling reference to a
+# decision record, and the one check here safe to enforce in any repository.
+(cd "$tr" && git commit -q --allow-empty -m "Phantom" -m "Archirules-Phase: T9") >/dev/null 2>&1
+trace_case "a trailer naming a missing entry is caught" 1
+(cd "$tr" && git reset -q --hard HEAD~1) >/dev/null 2>&1
+
+# The generated view must be a regeneration, not a document somebody edited.
+traced --write >/dev/null
+sed -i.bak 's/| T2 | ☐ | — |/| T2 | ☑ | `deadbee` |/' "$tr/docs/architecture/traceability.md"
+trace_case "a hand-edited view is caught" 1
+traced --write >/dev/null; rm -f "$tr/docs/architecture/"*.bak
+
+mv "$tr/docs/architecture/traceability.md" "$tmp/view.md"
+trace_case "a missing view is caught" 1
+mv "$tmp/view.md" "$tr/docs/architecture/traceability.md"
+
+cp "$tr/docs/architecture/traceability.md" "$tmp/view.md"
+sed -i.bak '/^Generated at commit/d' "$tr/docs/architecture/traceability.md"
+trace_case "a view recording no commit is caught" 1
+cp "$tmp/view.md" "$tr/docs/architecture/traceability.md"; rm -f "$tr/docs/architecture/"*.bak
+
+# Behind HEAD: a note by default, a finding under --strict. The default has to tolerate it
+# or the file would be stale the instant it is committed, and a gate nobody can satisfy is
+# a gate everybody switches off.
+(cd "$tr" && git add -A && git commit -q -m "Second phase" -m "Archirules-Phase: T2") >/dev/null 2>&1
+trace_case "a view behind HEAD is tolerated by default" 0
+trace_case "a view behind HEAD fails --strict" 1 --strict
+
+# Usage errors must not share an exit code with a finding about a register.
+trace_case "an unknown option refuses, exit 2" 2 --nonsense
+mkdir -p "$tmp/nogit/docs/architecture"
+printf '| X1 | a | ☐ | b |\n' > "$tmp/nogit/docs/architecture/phases.md"
+case_no=$((case_no + 1))
+python3 "$here/trace.py" "$tmp/nogit/docs/architecture" >/dev/null 2>&1
+if [ $? -eq 2 ]; then
+  printf "  ok    %-46s exit 2\n" "trace: outside a repository refuses"
+else
+  printf "  FAIL  %-46s\n" "trace: outside a repository refuses"
   failed=1
 fi
 

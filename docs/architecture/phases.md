@@ -18,6 +18,7 @@ A living document. **Updated whenever a phase completes.**
 | P8 | A version users can migrate from | ☑ 2026-08-11 | `claude plugin validate --strict` passes, and **the version in `plugin.json` and the newest `CHANGELOG.md` heading agree** — asserted by the self-test, which fails when one moves without the other |
 | P9 | `--help` on every skill | ☑ 2026-08-11 | every skill in `skills/` prints usage naming what it needs and what it will not do, from **one script rather than from the model's memory** — and **a skill added without one turns the self-test red** |
 | P10 | Updating a project to a new method version | ☑ 2026-08-11 | **a register created at an earlier version is brought to the current one, both checkers pass, and restoring the snapshot returns the registers byte-identical** — rehearsed on a copy of a real register, not on a fixture |
+| P11 | Traceability from registers to commits | ☑ 2026-08-11 | **a commit trailer naming a register entry that does not exist fails the gate**, and the generated traceability section is a faithful regeneration of git history as of the commit it records — byte-compared, not eyeballed |
 
 **Hard gate at P6:** if the method cannot be applied by somebody who was not part of writing it,
 it is a private working habit and not a method. Publishing it would then be a marketing claim
@@ -254,3 +255,45 @@ draft was in exactly that state. It was fixed rather than the gate being relaxed
 attempt to update the plugin from inside the skill. The second is the interesting one — a script
 cannot ask what a record meant, and one that guessed would produce a register satisfying the
 checker while saying something its author never said.
+
+### P11 — what was delivered
+
+Traceability from register entries to the commits implementing them: trailers in commit
+messages, `scripts/trace.py` deriving the mapping, and a generated `traceability.md`. The
+reasoning and four rejected alternatives are in
+[ADR-0010](decisions/ADR-0010-traceability-derived-from-git-trailers.md).
+
+**Closed with evidence.** Both halves of the criterion, proven against a throwaway git
+repository built by the self-test — a fixture directory could not serve, because the thing under
+test is what history says and a fixture has no history:
+
+| broken how | outcome |
+|---|---|
+| a trailer naming an entry no register holds | `Archirules-Phase: T9 names T9, which is not in the register` |
+| the generated view edited by hand | `not a faithful regeneration at 5c744d0` |
+| the view deleted | `traceability.md does not exist` |
+| the view's "generated at" line removed | `records no commit it was generated at` |
+| a trailered commit newer than the view, `--strict` | reported, exit 1 |
+| an unknown option, or a directory outside a repository | exit 2 |
+
+Usage errors exit 2 throughout, so a broken invocation cannot be read as a finding about a
+register.
+
+**The design problem worth recording.** The obvious check — regenerate and compare against
+`HEAD` — cannot ever pass: the commit that writes the view cannot contain its own identifier, so
+the file is stale the instant it is committed. A gate nobody can satisfy is a gate everybody
+switches off. The view therefore records the commit it was generated at and is checked against
+**that**, and the working pattern is: commit the work with trailers, regenerate, commit the view
+in a commit carrying no trailer.
+
+**Two checks are behind `--strict` and that is deliberate.** A closed phase no commit claims, and
+a view behind HEAD. This repository cannot satisfy either: P1 to P10 closed before the mechanism
+existed and their history is already pushed. Shipping them as defaults would mean a gate failing
+on day one for reasons nobody can fix. Carried as
+[OQ-07](open-questions.md#oq-07--when-should---strict-traceability-become-the-gate-rather-than-an-option).
+
+**What surfaced incidentally.** Extending the vocabulary assertion to `trace.py` immediately
+went red on all three trailers: they existed in the script and in no skill. That is the same
+defect ADR-0006 was written for, caught this time by the mechanism rather than by a user — which
+is the first evidence that the assertion works on something other than the case it was built
+from.
