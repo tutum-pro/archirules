@@ -57,12 +57,48 @@ correct when there is one item, and a heading like "Costs and preconditions" may
 that shortening would delete. The defect is only that it cannot be checked mechanically — and that
 is fixed in the checker and in the template for new documents, not by rewriting history.
 
+## 1b. Agreement between registers — the second checker
+
+`conform.py` reads one register at a time. Two registers can contradict each other while both
+stay well-formed, so that contradiction is invisible to it.
+
+```
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/consistency.py docs/architecture
+```
+
+**Before trusting it**, the same proof:
+
+```
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/selftest-consistency.sh
+```
+
+Twenty-eight cases across both languages. It checks five pairings:
+
+| | |
+|---|---|
+| **A** | a question declaring it blocks a phase, against that phase's status **and** the blocker table |
+| **B** | a phase waiting on a question, against that question's existence and status |
+| **C** | a resolved question still cited as a blocker |
+| **D** | references to decision records — existence, and entries pointing at a superseded one |
+| **E** | non-contradiction of decision records: modification links two-way, a modified record saying **what** changed, two records not resolving one question in ignorance of each other |
+
+**It points at a pair, not at a culprit.** Which side of a disagreement is wrong is a decision;
+matching a status to whatever the other file happens to say is how a register gains a second
+untrue sentence instead of none. Read both, then correct in the record — rule P7.
+
+Category **E** has no other home in this method. `adr/SKILL.md` tells the author to write the
+link in both directions, and until now nothing checked that the second direction was written.
+
+The blocker table is a project convention, not part of the method. A set that keeps none has
+checks A(ii) and B skipped — and the skip is printed, because otherwise "0 problems" silently
+means "0 checks ran".
+
 ## 2. Records that stopped being true
 
 The most dangerous category and the hardest to find:
 
 - a record marked *Accepted* whose decision was in practice reversed;
-- a question *blocked by* a question that has since been resolved;
+- a question *blocked by* a question that has since been resolved — **now mechanised**, check C in section 1b; attention does not scale past twenty records;
 - a question still *open* whose subject has been built;
 - a sentence describing behaviour the code does not have.
 

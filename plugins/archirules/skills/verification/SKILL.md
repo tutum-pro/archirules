@@ -21,6 +21,17 @@ ones. Once because `2>/dev/null` turned a tool error into an empty result read a
 
 **A check that cannot fail looks exactly like a check that passes.**
 
+Worked example in this plugin: `scripts/selftest-consistency.sh`. Each class of defect
+`consistency.py` claims to catch is introduced into a copy of a reference set and must produce
+exit 1; the untouched copy must produce 0. Two cases assert the opposite — a reworded heading
+and an absent blocker table are **not** findings — because a checker that reports a sound set
+as broken fails in the direction nobody tests for.
+
+The selftest was itself checked the same way: with the checker replaced by one that always
+returns 0, twenty of its twenty-eight cases fail. The eight that survive are those expecting
+exit 0, plus one that reads printed output rather than an exit code. Re-derive that number
+whenever a case is added — a selftest is a gate too.
+
 ## Do not silence errors inside a gate
 
 `2>/dev/null`, `|| true`, an ignored exit status. If the tool failed, **that is itself a
