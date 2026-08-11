@@ -22,6 +22,13 @@ what it does not do.
 **Will not:** tell you it will make your project succeed. It addresses one specific failure and
 is honest about the rest.
 
+### Examples
+
+```
+/archirules:help          the whole explanation — problem, cost, limits, state of the evidence
+/archirules:help --help   one screen instead: what it prints and what it will not claim
+```
+
 ## The problem
 
 A project rarely loses to a hard decision. It loses to decisions **made silently** — by the

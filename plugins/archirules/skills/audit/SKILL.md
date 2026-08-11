@@ -28,6 +28,15 @@ untrue sentence instead of none.
 **Check, do not reassure.** The result of an audit is a list of findings, or the sentence "I
 checked N things and found nothing" — never "everything looks fine".
 
+### Examples
+
+```
+/archirules:audit
+```
+
+Takes no arguments. It runs every checker and its self-test, reads the registers for records
+that have stopped being true, and reports findings — or a count of what it checked.
+
 ## 1. Structural conformance — run the checker, do not rewrite it
 
 ```

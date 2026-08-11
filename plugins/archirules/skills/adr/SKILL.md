@@ -27,6 +27,18 @@ writes down a decision that has been made.
 status line naming the date and **what stopped holding**. A bare pointer to the successor is a
 finding in `conform.py`.
 
+### Examples
+
+```
+/archirules:adr
+/archirules:adr we call the payment provider directly instead of queueing
+/archirules:adr supersede the storage decision — it is Postgres now, the durability part stands
+```
+
+The first form asks you what was decided. The others start from what you typed, and you will
+still be asked for the rejected alternatives and the costs, because a record without them is not
+a decision record.
+
 ## A new record
 
 1. **Number** — the highest existing one plus one, zero-padded (`ADR-0014`). Read the

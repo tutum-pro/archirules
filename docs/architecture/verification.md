@@ -100,6 +100,10 @@ that the gate fails in five shapes: a new skill added without a usage section, t
 renamed, the routing line broken, a usage naming a different skill in its invocation line, and
 `help.py` made unimportable. The last prints one line per skill rather than going quiet.
 
+**Verified.** That every skill's usage carries an `### Examples` block invoking itself, and that
+the gate fails four ways: the section removed, a block showing no invocation, examples copied
+from a neighbouring skill so they invoke the wrong one, and a new skill added without any.
+
 **Asserted, not verified.** That the model routes `--help` to the script rather than answering
 from its own reading of the skill. Nothing in the plugin system parses flags, so this cannot be
 mechanised; it is the residue named as a cost in

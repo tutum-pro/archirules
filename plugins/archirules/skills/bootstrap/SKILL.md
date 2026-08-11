@@ -24,6 +24,16 @@ commit messages.
 **Will not:** overwrite an existing register set. If `docs/architecture/` is there, the skill
 stops and says so.
 
+### Examples
+
+```
+/archirules:bootstrap        asks which language the documentation is in, then creates the registers
+/archirules:bootstrap en     the same, with the language already answered
+```
+
+In a project that is not empty, expect to be asked what has already been decided in practice —
+those decisions exist, usually only in commit messages, and this is when they get written down.
+
 ## Before creating anything
 
 1. Check whether `docs/architecture/` already exists. **If it does, do not overwrite.**

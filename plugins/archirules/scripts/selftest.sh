@@ -449,6 +449,14 @@ for name in names:
         broken.append("%s: SKILL.md does not route --help to help.py %s" % (name, name))
     if "/archirules:%s" % name not in section.group(1):
         broken.append("%s: its usage names another skill in the invocation line" % name)
+    # A form is not an example. `/archirules:adr [--help]` says how to type it and not
+    # what to type into it, which is the question people actually arrive with.
+    examples = re.search(r"^### Examples\s*\n(.*?)(?=^## |\Z)", section.group(1),
+                         flags=re.M | re.S)
+    if not examples:
+        broken.append("%s: no ### Examples section in its usage" % name)
+    elif not re.search(r"^/archirules:%s\b" % name, examples.group(1), flags=re.M):
+        broken.append("%s: its examples show no invocation of itself" % name)
     # and the script must actually produce it, which is the claim that matters
     run = subprocess.run([sys.executable, os.path.join(scripts, "help.py"), name],
                          capture_output=True, text=True)

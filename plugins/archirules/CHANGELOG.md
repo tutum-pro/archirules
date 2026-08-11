@@ -10,6 +10,18 @@ An entry that requires the reader to change something in their own registers car
 `### Migration` block. **An entry without one requires nothing** — that is what its absence
 means, and `/archirules:update` relies on it.
 
+## 1.6.0 — 2026-08-11
+
+**Changed**
+
+- Every skill's `--help` now ends in an `### Examples` block with real invocations, not only the
+  `/archirules:<skill> [--help]` form. The form says how to type the command; the examples say
+  what to type into it, which is the question people arrive with. The self-test requires one,
+  so a skill cannot ship without
+  ([ADR-0008](../../docs/architecture/decisions/ADR-0008-help-comes-from-a-file-not-from-memory.md)).
+
+No migration. Nothing in a register changes.
+
 ## 1.5.0 — 2026-08-11
 
 **Added**

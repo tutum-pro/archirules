@@ -55,6 +55,23 @@ the usage does not name a different skill in its invocation line — the copy-pa
 reads perfectly and sends the user elsewhere; and that the script actually produces output for
 each skill. The last is what makes the other three more than a spelling check.
 
+### 5. Usage carries a worked example, not only the invocation form
+
+**Added 2026-08-11, after the first version shipped without it.** A usage block opening with
+
+```
+/archirules:adr [--help]
+```
+
+says how to type the command and nothing about what to type *into* it. That is the question
+people actually arrive with, and the descriptions alone did not answer it — reported by a reader,
+which is the only way this class of gap is ever found (the same lesson as OQ-02 in this register).
+
+Every usage now ends in an `### Examples` block showing real invocations, and the self-test
+requires one containing an invocation of that skill. Where a skill genuinely takes no arguments —
+`audit`, `update` — the block says so in those words, which is the useful answer rather than an
+invented second example.
+
 ## Considered and rejected
 
 ### 1. One sentence per `SKILL.md`, no script
@@ -86,7 +103,13 @@ is a procedure written for a model, and a summary of it answers a different ques
 one asked. Generation would also have to guess which limits matter, and a guessed limit stated
 confidently is worse than a stated one.
 
-### 4. Frontmatter fields instead of a section
+### 4. Invent a second example where a skill takes no arguments
+
+So that every block looks alike. Rejected: `/archirules:audit` takes nothing, and a fabricated
+variant would be the plugin telling a user about an interface it does not have. Saying "takes no
+arguments" is shorter and true. The self-test therefore requires **one** invocation, not two.
+
+### 5. Frontmatter fields instead of a section
 
 `usage:` and `limits:` keys in the YAML block. Rejected: Claude Code reads specific keys from
 that block and ignores others, so the plugin would depend on unspecified behaviour for a feature
