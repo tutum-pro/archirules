@@ -24,6 +24,7 @@ anger rather than only against a synthetic fixture.
 | [0010](decisions/ADR-0010-traceability-derived-from-git-trailers.md) | Traceability is derived from commit trailers, never copied into a register | Accepted |
 | [0011](decisions/ADR-0011-a-skill-that-explains-the-method.md) | The method explains itself in a skill, and every reference in it is checked | Accepted |
 | [0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md) | Work stops when the register contradicts itself or a question blocks it | Accepted, not implemented |
+| [0013](decisions/ADR-0013-a-register-earns-its-existence-by-a-defect.md) | A new register earns its existence by a defect its absence caused | Accepted |
 
 ## Binding requirements
 
@@ -42,6 +43,12 @@ Decisions that bind **every** change here, not only their own area.
   ([ADR-0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md)). A marker invented by
   a script and honoured only by its own fixtures proves the script consistent with itself, which
   was never in doubt. The self-test asserts this; it is not left to review.
+- **A new register earns its existence by a defect its absence caused**
+  ([ADR-0013](decisions/ADR-0013-a-register-earns-its-existence-by-a-defect.md)). Not symmetry
+  with another methodology, not tidiness — an event that happened and cannot be reconstructed
+  today. The precedent is the verification register, which is created at the first defect caused
+  by an unverified claim rather than on day one. This cannot be checked mechanically, so it is a
+  review convention (rule W9) and is named as one.
 - **A rule must be usable without knowing this project's history**
   ([ADR-0003](decisions/ADR-0003-casebook-apart-from-rules.md)). Incidents belong in the
   casebook, referenced, not inlined.

@@ -244,3 +244,38 @@ Also needed: whether roles belong in this method at all. Nothing in `RULES.md` m
 architect or a project manager, and every artefact so far is role-blind — a decision is a decision
 whoever wrote it. Introducing authority would be the first exception, and that is a change to the
 method, not a feature of a checker.
+
+### OQ-11 — Where does an external fact live when it is neither a decision nor a doubt
+**Status:** OPEN · **Touches:** [ADR-0013](decisions/ADR-0013-a-register-earns-its-existence-by-a-defect.md)
+
+A vendor deprecates a library. A regulation changes. A budget moves. The fact constrains the
+project, is nobody's decision, and raises no doubt that anyone has yet phrased as a question.
+
+Today it lives in exactly one place: the `## Context` of whichever decision record it forced. If
+it forced none yet, it lives nowhere, and six months later the reason a constraint exists is
+reconstructed from memory — which is the failure this whole method addresses, occurring inside
+the method.
+
+This is the one real gap that survived the analysis rejecting the CHR and Errors registers
+([ADR-0013](decisions/ADR-0013-a-register-earns-its-existence-by-a-defect.md)). It is recorded
+because it survived, not because a register is the answer.
+
+**Candidates, none yet evaluated:**
+
+- **Nothing new.** An external fact nobody has acted on is arguably a doubt — *what do we do
+  about this* — and belongs here as an OQ. Costs nothing, and may be the whole answer.
+- **`analiza-*.md`**, which the artefact table already allows for material weighed before a
+  decision. Exists, is unused in this repository, and may be the intended home.
+- **A section of the index**, alongside the binding requirements: facts that constrain every
+  piece of work, which is what that file is for.
+- **A register of its own** — which ADR-0013 permits only against a named defect, and this
+  question is precisely the search for one.
+
+**If left unresolved:** nothing breaks visibly, which is the difficulty. A constraint whose
+origin was never written down is only discovered when somebody proposes violating it and cannot
+be told why they should not.
+
+**To resolve:** find one. A single external fact, in this or another project, whose origin is
+already unreconstructible. That is the standard ADR-0013 sets for any new artefact, and this
+question is held to it as strictly as the proposal it came from. If none can be produced, the
+first candidate wins by default and the question closes as "an OQ is enough".
