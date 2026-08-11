@@ -65,6 +65,25 @@ An explanation that omits this would be the most consequential untrue thing in t
 Including it is not modesty; it is the same rule that requires a decision record to name its
 costs.
 
+### 5. The help skill answers `--help` like every other skill
+
+`/archirules:help --help` prints the `## Usage` block rather than the whole explanation.
+
+**Recorded late, and honestly:** the flag was there because the self-test requires every skill to
+route `--help`, and the rule was applied without asking whether its reason held for this one.
+That question was raised afterwards, and the argument below is what survived it — not what put
+the flag there. A justification written after the fact is exactly what rule P2 warns about in
+decision records, so the order is stated rather than smoothed over.
+
+The argument that survives: the skill accepts `$ARGUMENTS`. If this one skill discarded `--help`
+while the other eight honour it, the skill whose job is to explain the plugin would be the one
+silently ignoring input — which is the failure this method has a rule against, and the exact
+defect fixed in `consistency.py` in the same week, where `--lang en` was parsed only in the `=`
+form and otherwise dropped without a word.
+
+The `## Usage` block earns its place independently: it is the short version above the long one,
+and a reader gets it for twelve lines instead of two hundred.
+
 ## Considered and rejected
 
 ### 1. Point at `README.md` and write nothing new
@@ -94,6 +113,15 @@ The rules are already written and already carry their reasons. Rejected: the rul
 for somebody applying them, and this text is for somebody deciding whether to. Generation would
 also flatten the part that matters most — what the method does **not** do — which appears in the
 rules as one section and needs to be a third of an explanation.
+
+### 5. Exempt the help skill from the `--help` rule
+
+A skill that is documentation does not obviously need documentation about itself, and
+`/archirules:help --help` reads as circular. Rejected: the exemption would have to live in the
+self-test as a name treated differently from the rest, and an exception inside a gate is how
+gates rot — the next one is easier to argue for. The cost of keeping it is one redundant path
+nobody will type; the cost of removing it is a hole in the only mechanism that keeps every skill
+answerable.
 
 ## Consequences
 
