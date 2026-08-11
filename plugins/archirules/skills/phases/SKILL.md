@@ -26,6 +26,16 @@ and under which question it is recorded.
 
 A criterion written after the work is always met, which is why it is written before.
 
+### Examples
+
+```
+/archirules:phases open X1 for the import pipeline
+/archirules:phases close X1 — here is the test output
+```
+
+Opening asks you for an acceptance criterion that can be settled without discussion. Closing
+asks for the evidence, and will not close on "it works".
+
 ## Opening a phase — **before** the work
 
 A row in the table: identifier, name, status `☐`, **acceptance criterion**.

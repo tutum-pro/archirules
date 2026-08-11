@@ -40,8 +40,13 @@ cannot infer and the part that wastes their afternoon.
 ### 3. Discovery without an eighth skill
 
 `help.py` with no argument lists every skill, and each skill's help ends with the others' names.
-There is no `/archirules:help`, because a skill whose only job is to list skills is one more
-thing to keep true.
+No skill exists whose job is to list skills, because that would be one more thing to keep true.
+
+**Amended 2026-08-11.** This paragraph read "there is no `/archirules:help`" until a skill of
+that name was added — one that explains the **method** rather than listing skills
+([ADR-0011](ADR-0011-a-skill-that-explains-the-method.md)). The sentence was true when written
+and stopped being true without the decision behind it changing, which is the case rule P7 covers:
+corrected here rather than deleted.
 
 ### 4. The self-test checks four things, not one
 
@@ -49,6 +54,23 @@ That the section exists; that the file routes `--help` to the script **for its o
 the usage does not name a different skill in its invocation line — the copy-paste defect, which
 reads perfectly and sends the user elsewhere; and that the script actually produces output for
 each skill. The last is what makes the other three more than a spelling check.
+
+### 5. Usage carries a worked example, not only the invocation form
+
+**Added 2026-08-11, after the first version shipped without it.** A usage block opening with
+
+```
+/archirules:adr [--help]
+```
+
+says how to type the command and nothing about what to type *into* it. That is the question
+people actually arrive with, and the descriptions alone did not answer it — reported by a reader,
+which is the only way this class of gap is ever found (the same lesson as OQ-02 in this register).
+
+Every usage now ends in an `### Examples` block showing real invocations, and the self-test
+requires one containing an invocation of that skill. Where a skill genuinely takes no arguments —
+`audit`, `update` — the block says so in those words, which is the useful answer rather than an
+invented second example.
 
 ## Considered and rejected
 
@@ -65,6 +87,15 @@ Simpler, one place, no per-skill boilerplate. Rejected: it answers "what skills 
 which `/help` already answers, and not "what does this one need from me" — which is the question
 that made the user ask. Kept the listing, dropped the skill: `help.py` with no argument does it.
 
+<!-- Amended 2026-08-11: a skill named /archirules:help now exists. It does not do what was
+     rejected here. This paragraph rejected a skill LISTING the other skills; the one that
+     exists explains the method itself, which neither /help nor --help addresses. The rejection
+     above still holds for what it rejected. See ADR-0011. -->
+**Amended 2026-08-11.** A skill with this name now exists, and it is not the one rejected here:
+it explains **the method**, not the skills. What this paragraph rules out — a skill whose job is
+to list the others — is still ruled out. See
+[ADR-0011](ADR-0011-a-skill-that-explains-the-method.md).
+
 ### 3. Generate usage from the skill body
 
 No new sections, nothing to keep in sync, and the material is already there. Rejected: the body
@@ -72,7 +103,13 @@ is a procedure written for a model, and a summary of it answers a different ques
 one asked. Generation would also have to guess which limits matter, and a guessed limit stated
 confidently is worse than a stated one.
 
-### 4. Frontmatter fields instead of a section
+### 4. Invent a second example where a skill takes no arguments
+
+So that every block looks alike. Rejected: `/archirules:audit` takes nothing, and a fabricated
+variant would be the plugin telling a user about an interface it does not have. Saying "takes no
+arguments" is shorter and true. The self-test therefore requires **one** invocation, not two.
+
+### 5. Frontmatter fields instead of a section
 
 `usage:` and `limits:` keys in the YAML block. Rejected: Claude Code reads specific keys from
 that block and ignores others, so the plugin would depend on unspecified behaviour for a feature
@@ -102,7 +139,7 @@ self-test goes red, naming the skill.
 
 ## Implementation status
 
-Done. `scripts/help.py`, a `## Usage` section in all seven skills, and a self-test case shown to
-fail in five shapes: a new skill added without usage, a section removed, a routing line broken,
+Done. `scripts/help.py`, a `## Usage` section in every skill — seven when this was written, nine
+since — and a self-test case shown to fail in five shapes: a new skill added without usage, a section removed, a routing line broken,
 a usage naming another skill, and the script itself made unimportable. The last prints one line
 per skill rather than going quiet, which is the C-11 lesson applied.

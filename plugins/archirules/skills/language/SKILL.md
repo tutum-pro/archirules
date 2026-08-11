@@ -31,6 +31,16 @@ somebody joined who does not. From that moment the register has to be readable b
 **a half-translated register is worse than an untranslated one** — nobody knows which part is
 current.
 
+### Examples
+
+```
+/archirules:language en     switch the whole register set to English
+/archirules:language pl     and back
+```
+
+The target language is the argument. It renames files through `git mv`, so a clean working tree
+is required before you start.
+
 ## Say this first, before starting
 
 **The invocation is one gesture. The work is not.** Translating an architecture register is a

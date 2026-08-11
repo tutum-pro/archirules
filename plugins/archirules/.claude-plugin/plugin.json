@@ -1,6 +1,6 @@
 {
   "name": "archirules",
-  "version": "1.4.0",
+  "version": "1.6.0",
   "description": "A method for running software projects: ADRs, open questions, phases, verification",
   "author": {
     "name": "Robert Sternal",

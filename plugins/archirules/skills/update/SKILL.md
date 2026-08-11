@@ -33,6 +33,16 @@ it, and a restore would silently discard it.
 The branch name is printed before anything is modified, and the restore touches the registers
 only — your code is untouched.
 
+### Examples
+
+```
+/archirules:update
+```
+
+Takes no arguments: it reads the version your registers were written against and the version now
+installed, and works out the rest. Run it **after** `/plugin update`, which moves the method but
+never touches your project.
+
 ## 1. Refuse before you start
 
 Three conditions, checked in this order. **Stop on the first that fails and say which** — do not

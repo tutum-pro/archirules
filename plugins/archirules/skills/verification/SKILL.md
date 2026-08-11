@@ -26,6 +26,17 @@ exactly like one that passes.
 inside a gate; run the suite twice; and do not measure your own test artefact — a self-test that
 agrees with fixtures written by the same hand proves only that.
 
+### Examples
+
+```
+/archirules:verification
+/archirules:verification I added a check that rejects an empty config
+/archirules:verification the suite is green — can I report the phase done
+```
+
+The second form walks you through breaking the check on purpose and watching it go red. The
+third one is the question this skill exists to answer with something other than yes.
+
 ## A new gate is not finished until it has been shown to fail
 
 The procedure, every time:

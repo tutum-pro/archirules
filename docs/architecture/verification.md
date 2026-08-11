@@ -100,6 +100,10 @@ that the gate fails in five shapes: a new skill added without a usage section, t
 renamed, the routing line broken, a usage naming a different skill in its invocation line, and
 `help.py` made unimportable. The last prints one line per skill rather than going quiet.
 
+**Verified.** That every skill's usage carries an `### Examples` block invoking itself, and that
+the gate fails four ways: the section removed, a block showing no invocation, examples copied
+from a neighbouring skill so they invoke the wrong one, and a new skill added without any.
+
 **Asserted, not verified.** That the model routes `--help` to the script rather than answering
 from its own reading of the skill. Nothing in the plugin system parses flags, so this cannot be
 mechanised; it is the residue named as a cost in
@@ -155,6 +159,24 @@ should have carried one; only `--strict` does, and it is off for the reasons in
 **Not traceable, permanently.** Phases P1 to P10. They closed before the mechanism existed and
 their commits are pushed. They are listed under their own heading in `traceability.md`, and that
 list can only shrink.
+
+## The explanation of the method
+
+**Verified.** That every casebook case, rule identifier, script and skill named in
+`/archirules:help` exists, and that the check fails on each way it can be wrong: an invented
+case, an invented rule, a renamed script, a skill that is not there, a reference to this
+repository's own registers, and the casebook removed so the check cannot run. Six shapes; the
+last prints the reason rather than passing.
+
+**Verified by counting, before the text was written:** seven rules of conduct, ten of execution,
+eleven casebook cases. The text states those numbers and they were read from the files rather
+than remembered.
+
+**Not verified, and no mechanism is claimed.** That the explanation is *true* — that the costs
+listed are the real ones, that the limits are the actual limits, that the account of how much
+evidence exists is fair. Those are the sentences that matter most in that skill and nothing
+checks them. The gate verifies that the text is not made of things that do not exist, which is a
+narrower claim, deliberately.
 
 ## Installation instructions
 

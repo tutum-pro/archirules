@@ -26,6 +26,17 @@ is what this register exists to prevent.
 later reader through the whole record. If the question also declares `Blocks:`, that field goes
 — a closed question still naming a blocker is a finding in `consistency.py`.
 
+### Examples
+
+```
+/archirules:oq
+/archirules:oq do we need multi-region before launch
+/archirules:oq resolve OQ-NN — the answer is no, because the traffic never justified it
+```
+
+Phrase it as a question rather than a topic: "do we need multi-region" can be answered,
+"multi-region" cannot. Resolving states the answer in the entry, not just a link to it.
+
 ## Registering
 
 1. **Number** — the highest plus one. Check for **duplicates and gaps** before assigning:

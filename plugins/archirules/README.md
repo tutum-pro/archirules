@@ -8,6 +8,7 @@ Metoda prowadzenia projektu wytwórczego IT jako zestaw skilli dla Claude Code.
 
 | skill | do czego |
 |---|---|
+| `/archirules:help` | czym jest ta metoda, co rozwiązuje, ile kosztuje i czego nie robi |
 | `/archirules:bootstrap` | założenie rejestrów w projekcie, wybór języka dokumentacji |
 | `/archirules:adr` | zapisanie, zastąpienie albo poprawienie decyzji |
 | `/archirules:oq` | zarejestrowanie albo zamknięcie pytania otwartego |
