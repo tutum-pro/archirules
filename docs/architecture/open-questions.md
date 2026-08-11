@@ -163,3 +163,84 @@ learns that the plugin's documentation cites things it does not ship.
 citation is either replaced by the reasoning itself, moved into the casebook where it ships, or
 dropped. The question exists to hold it visibly rather than let it pass as acceptable. Close it
 by extending the reference check to every skill and making them all pass.
+
+### OQ-09 — How does somebody with authority sanction breaking the consistency rule
+**Status:** OPEN · **Priority: high** · **Blocks:** P13 · **Touches:** [ADR-0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md)
+
+[ADR-0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md) stops work on a register
+that contradicts itself or on a phase whose blocking question is unanswered. Sometimes that stop
+is wrong — a release is time-critical, the contradiction is cosmetic, the blocking question turns
+out not to bear on the work after all. A lead, an architect or a project manager needs a way to
+say "proceed anyway" that the mechanism honours.
+
+**What is not known:** where the sanction lives so that it is both durable and hard to forge.
+Candidates, none of them evaluated yet:
+
+- **A commit trailer**, `Archirules-Override: <who> — <reason>`, in the same shape as the
+  traceability trailers. Cheap and versioned. But a trailer is typed by whoever writes the
+  commit, so it records a claim about who approved, not an approval.
+- **A signed commit or tag.** Git can verify who, cryptographically. It cannot verify that the
+  signer is entitled to override, which is OQ-10, and it requires every approver to keep a key.
+- **An entry in the register itself** — a dated record naming what was overridden and why, which
+  the gate reads. Auditable and readable, but a person who can edit the register can grant
+  themselves the override, so it protects nothing on its own.
+- **Outside the repository entirely** — a CI approval, a protected branch, a review requirement.
+  The only place where the mechanism is genuinely not the thing being overridden, and the only
+  one this plugin cannot ship.
+
+**If left unresolved:** the rule in ADR-0012 cannot ship at all. A gate with no sanctioned way
+past it is removed the first time it is wrong, and the removal takes the whole mechanism, not the
+one case that was mistaken. This is why the question blocks P13 rather than being noted as a
+future improvement.
+
+**Three properties the answer has to have**, whatever it turns out to be. They are already
+clear, so they are recorded now rather than rediscovered later:
+
+1. **The override leaves a record**, naming who, when and why — an override nobody can find
+   afterwards is indistinguishable from the rule not having existed.
+2. **It is per-occurrence, not a mode.** A switch that turns the rule off stays off.
+3. **It cannot be granted by the person it unblocks**, or it is not an override, it is a comment.
+
+**To resolve:** whether this plugin should carry it at all. The honest possibility is that
+authorisation belongs to the forge — branch protection, required reviewers — and that archirules
+should read a decision made there rather than make one. Settle it before designing a mechanism,
+because the answer decides whether there is a mechanism to design.
+
+### OQ-10 — How is the list of people who may sanction it defined and protected
+**Status:** OPEN · **Priority: high** · **Blocks:** P13 · **Depends on:** OQ-09 · **Touches:** [ADR-0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md)
+
+If an override needs authority, something has to say who has it. That list is the mechanism's
+weak point: whoever can edit it can grant themselves the right to bypass every consistency rule
+in the project.
+
+**What is not known:** where a list of approvers can live such that editing it is harder than
+the thing it guards. The tension is exact — a file in the repository is versioned, reviewable and
+readable, and can be edited by anyone who can commit, which is everybody the rule applies to.
+
+Candidates, none evaluated:
+
+- **A file in the repository** (`docs/architecture/approvers.md` or similar). Auditable, in the
+  same review flow as everything else, and self-serving to edit. Would need the forge to protect
+  that path — which puts the real protection outside the plugin again.
+- **The forge's own roles** — a GitHub team, a `CODEOWNERS` entry, branch protection. Already
+  administered, already outside a contributor's reach, and not portable: it exists only where the
+  project is hosted, and the plugin cannot read it without becoming a client of one forge.
+- **Signature keys**, with the list being "whoever holds a key in this set". Moves the problem to
+  key distribution and revocation, which is heavier than most projects will accept.
+- **No list at all** — any human approval counts, and the record of who approved is the control.
+  Weakest technically, and possibly correct: it makes the override auditable rather than
+  restricted, and social consequence does the rest.
+
+**If left unresolved:** OQ-09 has no answer either, and P13 stays blocked. This question is the
+harder of the two, because the first is about a mechanism and this one is about who guards the
+guard.
+
+**To resolve:** first, whether a protected list is needed at all. The last candidate deserves a
+serious hearing rather than dismissal: on a team where everyone can already push, a list that
+everyone can edit protects nothing, and an override that is merely **visible** may protect more.
+Answering that settles whether the remaining work is design or nothing.
+
+Also needed: whether roles belong in this method at all. Nothing in `RULES.md` mentions a lead, an
+architect or a project manager, and every artefact so far is role-blind — a decision is a decision
+whoever wrote it. Introducing authority would be the first exception, and that is a change to the
+method, not a feature of a checker.

@@ -20,6 +20,7 @@ A living document. **Updated whenever a phase completes.**
 | P10 | Updating a project to a new method version | ☑ 2026-08-11 | **a register created at an earlier version is brought to the current one, both checkers pass, and restoring the snapshot returns the registers byte-identical** — rehearsed on a copy of a real register, not on a fixture |
 | P11 | Traceability from registers to commits | ☑ 2026-08-11 | **a commit trailer naming a register entry that does not exist fails the gate**, and the generated traceability section is a faithful regeneration of git history as of the commit it records — byte-compared, not eyeballed |
 | P12 | An explanation of the method itself | ☑ 2026-08-11 | **every rule, casebook case, script and skill the text names exists**, and it names no entry from this repository's own registers — both asserted by the self-test, which goes red on an invented reference |
+| P13 | Consistency stops the work | ⛔ | **a phase whose blocking question is open cannot be closed, and a register that contradicts itself cannot have a phase opened against it** — proven both ways: the same phase closes cleanly once the question is resolved |
 
 **Hard gate at P6:** if the method cannot be applied by somebody who was not part of writing it,
 it is a private working habit and not a method. Publishing it would then be a marketing claim
@@ -33,6 +34,11 @@ does not grow vocabulary to keep a script happy.
 **Hard gate at P10:** if the snapshot cannot be restored byte-identical, the skill must
 refuse to run at all rather than offer a restore it cannot perform. An update that says it
 can be undone and cannot is worse than one that never offered.
+
+**Hard gate at P13:** if the override in OQ-09 turns out to belong outside this plugin — in
+the forge, in branch protection, in required reviewers — then this method reads an
+authorisation made elsewhere and does not make one. Building a permission system inside a
+documentation plugin would be the wrong artefact carrying the wrong responsibility.
 
 ### P2 — what was delivered
 

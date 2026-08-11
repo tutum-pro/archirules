@@ -23,6 +23,7 @@ anger rather than only against a synthetic fixture.
 | [0009](decisions/ADR-0009-updating-a-project-is-not-updating-the-plugin.md) | Updating a project's registers is separate from updating the plugin | Accepted |
 | [0010](decisions/ADR-0010-traceability-derived-from-git-trailers.md) | Traceability is derived from commit trailers, never copied into a register | Accepted |
 | [0011](decisions/ADR-0011-a-skill-that-explains-the-method.md) | The method explains itself in a skill, and every reference in it is checked | Accepted |
+| [0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md) | Work stops when the register contradicts itself or a question blocks it | Accepted, not implemented |
 
 ## Binding requirements
 
