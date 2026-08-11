@@ -22,6 +22,7 @@ anger rather than only against a synthetic fixture.
 | [0008](decisions/ADR-0008-help-comes-from-a-file-not-from-memory.md) | `--help` is routed by a sentence and answered by a file | Accepted |
 | [0009](decisions/ADR-0009-updating-a-project-is-not-updating-the-plugin.md) | Updating a project's registers is separate from updating the plugin | Accepted |
 | [0010](decisions/ADR-0010-traceability-derived-from-git-trailers.md) | Traceability is derived from commit trailers, never copied into a register | Accepted |
+| [0011](decisions/ADR-0011-a-skill-that-explains-the-method.md) | The method explains itself in a skill, and every reference in it is checked | Accepted |
 
 ## Binding requirements
 

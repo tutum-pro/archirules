@@ -138,3 +138,28 @@ phase closed after this point carries a trailer, `--strict` costs nothing to swi
 question becomes what to do about the ten historical entries: exempt them by name, or accept a
 gate that names them every run. Revisit at P5, when a CI example has to decide which command it
 runs.
+
+### OQ-08 — Skills cite this repository's own registers, which a reader of the plugin cannot resolve
+**Status:** OPEN · **Touches:** [ADR-0011](decisions/ADR-0011-a-skill-that-explains-the-method.md)
+
+`audit/SKILL.md` and `verification/SKILL.md` point at `ADR-0006`, `OQ-05`, `OQ-06` and `C-11` as
+justification for how a check behaves. Those entries live in **this** repository's registers,
+which nobody who installs the plugin has.
+
+It is a small violation of a binding requirement here — a rule must be usable without knowing
+this project's history — and the reason the casebook was split from the rules in the first
+place. The casebook references (`C-NN`) are fine: the casebook ships with the plugin. The
+register references are not.
+
+The new help skill is held to the rule mechanically and the older ones are not, because
+enforcing it everywhere would turn the self-test red today with no time to fix it properly.
+A rule enforced in one file and ignored in four is exactly the "pretends to be enforced" shape
+rule W9 warns about, so this cannot stay as it is.
+
+**If left unresolved:** a reader following a justification in a skill hits a dead reference and
+learns that the plugin's documentation cites things it does not ship.
+
+**To resolve:** nothing needs to be known — this is work, not a doubt about direction. Each
+citation is either replaced by the reasoning itself, moved into the casebook where it ships, or
+dropped. The question exists to hold it visibly rather than let it pass as acceptable. Close it
+by extending the reference check to every skill and making them all pass.

@@ -156,6 +156,24 @@ should have carried one; only `--strict` does, and it is off for the reasons in
 their commits are pushed. They are listed under their own heading in `traceability.md`, and that
 list can only shrink.
 
+## The explanation of the method
+
+**Verified.** That every casebook case, rule identifier, script and skill named in
+`/archirules:help` exists, and that the check fails on each way it can be wrong: an invented
+case, an invented rule, a renamed script, a skill that is not there, a reference to this
+repository's own registers, and the casebook removed so the check cannot run. Six shapes; the
+last prints the reason rather than passing.
+
+**Verified by counting, before the text was written:** seven rules of conduct, ten of execution,
+eleven casebook cases. The text states those numbers and they were read from the files rather
+than remembered.
+
+**Not verified, and no mechanism is claimed.** That the explanation is *true* — that the costs
+listed are the real ones, that the limits are the actual limits, that the account of how much
+evidence exists is fair. Those are the sentences that matter most in that skill and nothing
+checks them. The gate verifies that the text is not made of things that do not exist, which is a
+narrower claim, deliberately.
+
 ## Installation instructions
 
 **Verified.** That `/plugin install <name>@<marketplace>` is the documented form, by reading the

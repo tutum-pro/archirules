@@ -10,6 +10,18 @@ An entry that requires the reader to change something in their own registers car
 `### Migration` block. **An entry without one requires nothing** — that is what its absence
 means, and `/archirules:update` relies on it.
 
+## 1.5.0 — 2026-08-11
+
+**Added**
+
+- `/archirules:help` — explains the method itself: the problem it addresses, what it consists
+  of, what is mechanised and what is not, what it costs, what it does not do, and how much
+  evidence there actually is. Every casebook case, rule, script and skill it names is verified to
+  exist by the self-test
+  ([ADR-0011](../../docs/architecture/decisions/ADR-0011-a-skill-that-explains-the-method.md)).
+
+No migration. Nothing in a register changes.
+
 ## 1.4.0 — 2026-08-11
 
 **Added**

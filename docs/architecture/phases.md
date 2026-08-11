@@ -19,6 +19,7 @@ A living document. **Updated whenever a phase completes.**
 | P9 | `--help` on every skill | ☑ 2026-08-11 | every skill in `skills/` prints usage naming what it needs and what it will not do, from **one script rather than from the model's memory** — and **a skill added without one turns the self-test red** |
 | P10 | Updating a project to a new method version | ☑ 2026-08-11 | **a register created at an earlier version is brought to the current one, both checkers pass, and restoring the snapshot returns the registers byte-identical** — rehearsed on a copy of a real register, not on a fixture |
 | P11 | Traceability from registers to commits | ☑ 2026-08-11 | **a commit trailer naming a register entry that does not exist fails the gate**, and the generated traceability section is a faithful regeneration of git history as of the commit it records — byte-compared, not eyeballed |
+| P12 | An explanation of the method itself | ☑ 2026-08-11 | **every rule, casebook case, script and skill the text names exists**, and it names no entry from this repository's own registers — both asserted by the self-test, which goes red on an invented reference |
 
 **Hard gate at P6:** if the method cannot be applied by somebody who was not part of writing it,
 it is a private working habit and not a method. Publishing it would then be a marketing claim
@@ -297,3 +298,42 @@ went red on all three trailers: they existed in the script and in no skill. That
 defect ADR-0006 was written for, caught this time by the mechanism rather than by a user — which
 is the first evidence that the assertion works on something other than the case it was built
 from.
+
+### P12 — what was delivered
+
+`/archirules:help` — an explanation of the method rather than a listing of skills. Reasoning and
+four rejected alternatives in
+[ADR-0011](decisions/ADR-0011-a-skill-that-explains-the-method.md).
+
+**Closed with evidence.** The criterion had a mechanical half and it was checked by breaking it
+six ways, not by reading the text:
+
+| broken how | what the gate says |
+|---|---|
+| an invented casebook case | `names C-99, which is not in the casebook` |
+| a rule identifier that was never written | `names rule P9, which is not in RULES.en.md` |
+| a script renamed | `names conformance.py, which is not in scripts/` |
+| a skill that does not exist | `names /archirules:setup, which is not a skill` |
+| a reference to this repository's registers | `names ADR-0004 — this repository's own register` |
+| the casebook removed so the check cannot run | `unreadable: No such file or directory` |
+
+**What the gate does and does not claim.** It verifies that the text is not made of things that
+are not there. It does not verify that the text is true. The distinction matters because the
+sentences worth most in that skill — what the method costs, what it does not do, how much
+evidence exists — are prose, and prose is where an untrue explanation would actually live. Said
+in the record rather than left to be assumed.
+
+**A record was corrected, not overwritten.**
+[ADR-0008](decisions/ADR-0008-help-comes-from-a-file-not-from-memory.md) had rejected a skill of
+this name and stated flatly that none existed. The rejection still holds for what it rejected —
+a skill listing the other skills — and the sentence that stopped being true was corrected inside
+the record with the date and the reason, per rule P7. Its implementation status said "all seven
+skills" and now says seven when written, nine since.
+
+**What surfaced incidentally.** Writing the register-reference rule made it obvious that
+`audit/SKILL.md` and `verification/SKILL.md` already break it: they cite this repository's
+`ADR-0006`, `OQ-05` and `OQ-06` as justification, and nobody installing the plugin has those.
+The new skill is held to the rule and the older ones are not, which is a rule enforced in one
+file and ignored in four — the shape rule W9 warns about. Registered as
+[OQ-08](open-questions.md#oq-08--skills-cite-this-repositorys-own-registers-which-a-reader-of-the-plugin-cannot-resolve)
+rather than left as an acceptable inconsistency.

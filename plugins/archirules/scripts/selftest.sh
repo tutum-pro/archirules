@@ -203,6 +203,60 @@ else
   failed=1
 fi
 
+# The explanation claim (ADR-0011). The help skill describes the method to somebody who
+# has not read it, which is the one text here nobody can check by recognising what it
+# refers to. So every rule, case, script and skill it names must exist — and it must name
+# no entry from this repository's own registers, because a reader of the plugin does not
+# have them. Prose that cannot be verified stays prose; references are verified.
+explained=$(python3 - "$here" <<'PY'
+import os
+import re
+import sys
+
+scripts = sys.argv[1]
+root = os.path.dirname(scripts)
+path = os.path.join(root, "skills", "help", "SKILL.md")
+try:
+    with open(path, encoding="utf-8") as fh:
+        text = fh.read()
+    with open(os.path.join(root, "CASEBOOK.en.md"), encoding="utf-8") as fh:
+        casebook = fh.read()
+    with open(os.path.join(root, "RULES.en.md"), encoding="utf-8") as fh:
+        rules = fh.read()
+except OSError as exc:
+    print("unreadable: %s" % exc)
+    raise SystemExit(0)
+
+wrong = []
+for case in sorted(set(re.findall(r"\bC-\d{2}\b", text))):
+    if "## %s " % case not in casebook:
+        wrong.append("names %s, which is not in the casebook" % case)
+for rule in sorted(set(re.findall(r"\b([PW]\d{1,2})\b(?=[ .,)])", text))):
+    if "### %s." % rule not in rules:
+        wrong.append("names rule %s, which is not in RULES.en.md" % rule)
+for script in sorted(set(re.findall(r"\b([a-z-]+\.(?:py|sh))\b", text))):
+    if not os.path.isfile(os.path.join(scripts, script)):
+        wrong.append("names %s, which is not in scripts/" % script)
+for skill in sorted(set(re.findall(r"/archirules:([a-z]+)", text))):
+    if not os.path.isfile(os.path.join(root, "skills", skill, "SKILL.md")):
+        wrong.append("names /archirules:%s, which is not a skill" % skill)
+# A reader of the plugin has no access to this repository's registers, so a reference to
+# one is a rule that cannot be used without knowing somebody else's project history.
+for entry in sorted(set(re.findall(r"\b(?:ADR-\d{4}|OQ-\d{2})\b", text))):
+    wrong.append("names %s — this repository's own register, which a reader does not have"
+                 % entry)
+print("\n".join(wrong) or "EXPLANATION-OK")
+PY
+)
+case_no=$((case_no + 1))
+if [ "$explained" = "EXPLANATION-OK" ]; then
+  printf "  ok    %-46s\n" "every reference in the help text resolves"
+else
+  printf "  FAIL  %-46s\n" "the help text refers to things that do not exist:"
+  echo "${explained:-(the explanation check itself did not run)}" | sed 's/^/        /'
+  failed=1
+fi
+
 # The traceability claim (ADR-0010). trace.py needs real commits, so this builds a
 # throwaway repository rather than a fixture directory: the thing under test is what git
 # history says, and a fixture cannot have history.
