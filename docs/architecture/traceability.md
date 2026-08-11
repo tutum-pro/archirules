@@ -6,7 +6,7 @@ Derived from `Archirules-*` trailers in commit messages. **The git history is th
 truth; this file is a view of it.** A commit identifier written into a register by
 hand starts lying at the first rebase — see ADR-0010.
 
-Generated at commit `6c560eba9ac13949f22cb36b90f87ace86249d02`.
+Generated at commit `3757b947ea3a86971b8ea786bcbde02e73cd8504`.
 
 ## Phases
 
@@ -24,6 +24,7 @@ Generated at commit `6c560eba9ac13949f22cb36b90f87ace86249d02`.
 | P10 | ☑ 2026-08-11 | — |
 | P11 | ☑ 2026-08-11 | `b4dabd5` |
 | P12 | ☑ 2026-08-11 | `0e27c14` |
+| P13 | ⛔ | — |
 
 ## Decision records
 
@@ -32,6 +33,7 @@ Generated at commit `6c560eba9ac13949f22cb36b90f87ace86249d02`.
 | ADR-0008 | `6c560eb` |
 | ADR-0010 | `b4dabd5` |
 | ADR-0011 | `4ce60d4` · `0e27c14` |
+| ADR-0012 | `3757b94` |
 
 ## Open questions
 
@@ -39,6 +41,8 @@ Generated at commit `6c560eba9ac13949f22cb36b90f87ace86249d02`.
 |---|---|
 | OQ-07 | `b4dabd5` |
 | OQ-08 | `0e27c14` |
+| OQ-09 | `3757b94` |
+| OQ-10 | `3757b94` |
 
 ## Closed phases no commit claims
 
