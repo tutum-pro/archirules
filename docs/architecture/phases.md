@@ -20,6 +20,7 @@ A living document. **Updated whenever a phase completes.**
 | P10 | Updating a project to a new method version | ☑ 2026-08-11 | **a register created at an earlier version is brought to the current one, both checkers pass, and restoring the snapshot returns the registers byte-identical** — rehearsed on a copy of a real register, not on a fixture |
 | P11 | Traceability from registers to commits | ☑ 2026-08-11 | **a commit trailer naming a register entry that does not exist fails the gate**, and the generated traceability section is a faithful regeneration of git history as of the commit it records — byte-compared, not eyeballed |
 | P12 | An explanation of the method itself | ☑ 2026-08-11 | **every rule, casebook case, script and skill the text names exists**, and it names no entry from this repository's own registers — both asserted by the self-test, which goes red on an invented reference |
+| P14 | Reading which version a project stands at | ☑ 2026-08-11 | **the two versions are compared and a disagreement in either direction is a non-zero exit** — including registers newer than the installed method, which must not read as "fine" — and it answers on a dirty tree and outside a git repository, where `/archirules:update` refuses |
 | P13 | Consistency stops the work | ⛔ | **a phase whose blocking question is open cannot be closed, and a register that contradicts itself cannot have a phase opened against it** — proven both ways: the same phase closes cleanly once the question is resolved |
 
 **Hard gate at P6:** if the method cannot be applied by somebody who was not part of writing it,
@@ -343,3 +344,37 @@ The new skill is held to the rule and the older ones are not, which is a rule en
 file and ignored in four — the shape rule W9 warns about. Registered as
 [OQ-08](open-questions.md#oq-08--skills-cite-this-repositorys-own-registers-which-a-reader-of-the-plugin-cannot-resolve)
 rather than left as an acceptable inconsistency.
+
+### P14 — what was delivered
+
+`/archirules:version` and `scripts/version.py`. Reasoning and four rejected alternatives in
+[ADR-0014](decisions/ADR-0014-reading-the-version-is-not-updating.md).
+
+**Closed with evidence.** Eight self-test cases covering every outcome the script distinguishes:
+
+| state | exit |
+|---|---|
+| registers at the installed version | 0 |
+| registers **ahead** of the method | 1, named as ahead |
+| registers behind | 1 |
+| no version recorded | 1 |
+| a stamp that is not a version, or empty | 1 |
+| register directory missing | 2 |
+
+**Shown to fail under two mutations that break different subsets**, which is the part worth
+recording. With `version.py` always returning 0, the five cases expecting a finding go red. With
+the script made unimportable, those five pass *spuriously* — a dead interpreter exits 1, which is
+indistinguishable from "defect found" — and the three that go red are the agreement case, the
+usage-error case, and the one reading printed output.
+
+Neither mutation alone covers the eight. That is the argument for keeping cases that assert
+something other than "exit 1", and it is now demonstrated rather than asserted.
+
+**The case that carries the phase** is registers ahead of the method. It is not a variant of
+behind: no migration runs backwards, and printing the same advice would send somebody to
+`/archirules:update`, which would take a snapshot and find nothing to do. The self-test pins the
+word, not only the exit code, because both outcomes exit 1 and only the message separates them.
+
+**Where the requirement came from.** Reported by somebody using the method, not derived from the
+design — the author does not notice the question they never have to ask. Second time in this
+repository that a gap was found this way, and both times it was a reader rather than a checker.

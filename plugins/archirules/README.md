@@ -17,6 +17,7 @@ Metoda prowadzenia projektu wytwórczego IT jako zestaw skilli dla Claude Code.
 | `/archirules:language` | przełączenie języka dokumentacji projektu, całościowo |
 | `/archirules:verification` | dyscyplina dowodu: udowodnij, że bramka pada |
 | `/archirules:update` | dostosowanie rejestrów projektu do nowszej wersji metody |
+| `/archirules:version` | na jakiej wersji metody stoi projekt i czy zgadza się z zainstalowaną |
 
 Do każdego skilla można dopisać `--help`:
 

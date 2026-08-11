@@ -10,6 +10,18 @@ An entry that requires the reader to change something in their own registers car
 `### Migration` block. **An entry without one requires nothing** — that is what its absence
 means, and `/archirules:update` relies on it.
 
+## 1.7.0 — 2026-08-11
+
+**Added**
+
+- `/archirules:version` — reports the installed method version and the version this project's
+  registers stand at, and whether they agree. Read-only: no clean tree and no git repository
+  required, which is where `/archirules:update` refuses. Registers **ahead** of the method are a
+  distinct outcome from behind, because no migration runs backwards
+  ([ADR-0014](../../docs/architecture/decisions/ADR-0014-reading-the-version-is-not-updating.md)).
+
+No migration. Nothing in a register changes.
+
 ## 1.6.1 — 2026-08-11
 
 **Fixed**

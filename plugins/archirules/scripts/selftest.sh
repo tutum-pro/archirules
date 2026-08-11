@@ -203,6 +203,49 @@ else
   failed=1
 fi
 
+# The version-reading claim (ADR-0014). The case that carries this is "registers ahead of
+# the method": it is not a variant of "behind", no migration runs backwards, and reading it
+# as up to date would be the silent kind of wrong. Everything else here is bookkeeping.
+vreg="$tmp/version-registers"
+mkdir -p "$vreg"
+installed=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['version'])" \
+  "$(dirname "$here")/.claude-plugin/plugin.json")
+
+version_case() { # <description> <expected exit> <stamp contents, or NONE> [dir override]
+  local what="$1" want="$2" stamp="$3" dir="${4:-$vreg}"
+  if [ "$stamp" = "NONE" ]; then rm -f "$vreg/.archirules-version"
+  else printf '%s\n' "$stamp" > "$vreg/.archirules-version"; fi
+  python3 "$here/version.py" "$dir" >/dev/null 2>&1
+  local code=$?
+  case_no=$((case_no + 1))
+  if [ "$code" -eq "$want" ]; then
+    printf "  ok    %-46s exit %s\n" "version: $what" "$code"
+  else
+    printf "  FAIL  %-46s exit %s, expected %s\n" "version: $what" "$code" "$want"
+    failed=1
+  fi
+}
+
+version_case "registers at the installed version agree" 0 "$installed"
+version_case "registers ahead of the method are caught" 1 "9999.0.0"
+version_case "registers behind the method are caught" 1 "1.0.0"
+version_case "no recorded version is caught, not assumed" 1 NONE
+version_case "a stamp that is not a version is caught" 1 "yesterday"
+version_case "an empty stamp is caught" 1 ""
+version_case "a missing register directory refuses, exit 2" 2 "$installed" "$tmp/no-such-registers"
+
+# The reason, not just the code: "ahead" and "behind" must not print the same thing, or the
+# reader is told to run a migration that cannot exist.
+printf '9999.0.0\n' > "$vreg/.archirules-version"
+ahead=$(python3 "$here/version.py" "$vreg" 2>&1)
+case_no=$((case_no + 1))
+if printf '%s' "$ahead" | grep -q "AHEAD"; then
+  printf "  ok    %-46s said so\n" "version: ahead is named as ahead, not behind"
+else
+  printf "  FAIL  %-46s silent\n" "version: ahead is named as ahead, not behind"
+  failed=1
+fi
+
 # The explanation claim (ADR-0011). The help skill describes the method to somebody who
 # has not read it, which is the one text here nobody can check by recognising what it
 # refers to. So every rule, case, script and skill it names must exist — and it must name

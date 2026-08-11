@@ -25,6 +25,7 @@ anger rather than only against a synthetic fixture.
 | [0011](decisions/ADR-0011-a-skill-that-explains-the-method.md) | The method explains itself in a skill, and every reference in it is checked | Accepted |
 | [0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md) | Work stops when the register contradicts itself or a question blocks it | Accepted, not implemented |
 | [0013](decisions/ADR-0013-a-register-earns-its-existence-by-a-defect.md) | A new register earns its existence by a defect its absence caused | Accepted |
+| [0014](decisions/ADR-0014-reading-the-version-is-not-updating.md) | Reading which version a project stands at is a separate, read-only act | Accepted |
 
 ## Binding requirements
 
