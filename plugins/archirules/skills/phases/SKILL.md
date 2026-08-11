@@ -5,6 +5,27 @@ description: Manage the phase register — open a phase with its acceptance crit
 
 # The phase register
 
+**`--help`** — if `$ARGUMENTS` is `--help`, run
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/help.py phases`, show its output, and stop there.
+
+## Usage
+
+```
+/archirules:phases [--help]
+```
+
+Opens a phase with its acceptance criterion, or closes one with evidence.
+
+**Needs from you:** for opening, a criterion that can be settled without discussion — "an
+instance survives a restart and resumes", not "do persistence". For closing, the command output
+that shows the criterion met.
+
+**Will not:** close a phase because the code exists. Closing needs evidence, two consecutive
+runs of the suite, and a prose section saying what was built, what was deliberately left out,
+and under which question it is recorded.
+
+A criterion written after the work is always met, which is why it is written before.
+
 ## Opening a phase — **before** the work
 
 A row in the table: identifier, name, status `☐`, **acceptance criterion**.
@@ -35,6 +56,22 @@ work, option C was wrong"*.
    along the way, **what was deliberately left out** and under which question it is recorded.
 4. A note on what surfaced incidentally — especially defects found in your own earlier work.
    That is the most valuable part of the register and the only place it survives.
+5. **The commit carries the claim.** Add a trailer to the commit message that does the work:
+
+   ```
+   Archirules-Phase: P11
+   ```
+
+   `Archirules-ADR:` and `Archirules-OQ:` do the same for a decision record and a question, and
+   one commit may carry several. This is what makes a register entry traceable to the code that
+   implements it — and the identifier stays only in the commit, never copied into the register,
+   because a commit identifier written into a document starts lying at the first rebase.
+
+   Regenerate the view afterwards, in a commit of its own that carries **no** trailer:
+
+   ```
+   python3 ${CLAUDE_PLUGIN_ROOT}/scripts/trace.py docs/architecture --write
+   ```
 
 ## When a phase is "nearly" done
 

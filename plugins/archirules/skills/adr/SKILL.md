@@ -5,6 +5,28 @@ description: Write, supersede or amend an architecture decision record (ADR). Us
 
 # Decision records
 
+**`--help`** — if `$ARGUMENTS` is `--help`, run
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/help.py adr`, show its output, and stop there.
+
+## Usage
+
+```
+/archirules:adr [--help]
+```
+
+Writes a new decision record, supersedes an existing one, or amends one written late.
+
+**Needs from you:** the decision itself, the alternatives that were genuinely weighed, and the
+reason each fell. If you cannot name one cost of the decision, the skill will say so rather than
+write the record — an unnamed cost means the decision is not yet understood.
+
+**Will not:** invent rejected alternatives to fill the template, or decide anything for you. It
+writes down a decision that has been made.
+
+**Reversing a decision** touches two files: the new record gets `Supersedes:`, the old one gets a
+status line naming the date and **what stopped holding**. A bare pointer to the successor is a
+finding in `conform.py`.
+
 ## A new record
 
 1. **Number** — the highest existing one plus one, zero-padded (`ADR-0014`). Read the
@@ -30,9 +52,18 @@ but the result.
 When a decision is reversed:
 
 1. A new record with `Supersedes: ADR-NNNN`.
-2. The old record gets a status **at the top**: `SUPERSEDED by ADR-MMMM`, with the date and the
-   scope — often only part of it is superseded. **It stays in the register**: it documents the
-   reasoning that led to the change.
+2. The old record gets a status **at the top**, replacing the one it had:
+
+   ```
+   **Status:** SUPERSEDED by ADR-MMMM, <date> — <what stopped holding>
+   ```
+
+   The scope is not optional and not a separate section. Often only part of a decision is
+   superseded, so "which part" is the point, and it belongs in the field that would otherwise
+   still say the old thing — a correction written underneath one is not a correction (rule P7,
+   case C-04). `conform.py` requires it; a bare pointer to the successor is a finding.
+
+   **It stays in the register**: it documents the reasoning that led to the change.
 3. The row in `README.md` is updated in both places.
 4. If the record is written late, **say so in it**, including the period during which the
    register stated something untrue (rule P7).

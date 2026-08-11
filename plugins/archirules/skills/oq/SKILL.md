@@ -5,6 +5,27 @@ description: Register a new open question or resolve an existing one in the open
 
 # The open-questions register
 
+**`--help`** — if `$ARGUMENTS` is `--help`, run
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/help.py oq`, show its output, and stop there.
+
+## Usage
+
+```
+/archirules:oq [--help]
+```
+
+Registers a doubt as a numbered question, or closes one by stating the answer.
+
+**Needs from you:** the doubt, phrased as a question rather than a topic, and what would have to
+be known before it could be answered.
+
+**Will not:** answer the question. A doubt settled on the spot is a decision nobody made — that
+is what this register exists to prevent.
+
+**On closing:** state the answer in the entry. A bare link to a decision record forces every
+later reader through the whole record. If the question also declares `Blocks:`, that field goes
+— a closed question still naming a blocker is a finding in `consistency.py`.
+
 ## Registering
 
 1. **Number** — the highest plus one. Check for **duplicates and gaps** before assigning:

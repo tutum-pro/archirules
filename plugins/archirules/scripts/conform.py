@@ -33,6 +33,8 @@ MARKERS = {
         "legend": "Legenda",
         "criterion": "Kryterium akceptacji",
         "gate": "Twarda bramka",
+        "superseded": "ZASTĄPIONY",
+        "by": "przez",
     },
     "en": {
         "conseq": r"^## Consequences",
@@ -42,6 +44,8 @@ MARKERS = {
         "legend": "Legend",
         "criterion": "Acceptance criterion",
         "gate": "Hard gate",
+        "superseded": "SUPERSEDED",
+        "by": "by",
     },
 }
 
@@ -76,18 +80,50 @@ def detect_language(directory):
     return "pl", False
 
 
+def names_a_scope(status_line, marker):
+    """True when a supersession status says more than which record replaced it.
+
+    Rule P7: often only part of a decision stops holding, so the status has to say
+    which part. It belongs in the status line itself rather than in a section further
+    down — a correction sitting above a field that still lies is not a correction
+    (case C-04). That placement is why this check lives here, in the checker that
+    reads one file at a time, and not in the cross-register one (ADR-0006).
+
+    Deliberately generous: anything surviving the removal of the keyword, the
+    connector, the pointer and a date counts. This asks whether a scope is stated at
+    all, not whether it is a good one. A stricter reading would start reporting sound
+    records as broken, which costs more trust than it recovers.
+    """
+    rest = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", status_line)   # links -> their text
+    rest = rest.replace(marker["superseded"], "")
+    rest = re.sub(r"ADR-\d{4}", "", rest)
+    rest = re.sub(r"\d{4}-\d{2}-\d{2}", "", rest)
+    rest = re.sub(r"\b%s\b" % re.escape(marker["by"]), "", rest)
+    return len(re.sub(r"[\W\d_]+", "", rest)) >= 3
+
+
 def main():
     if len(sys.argv) < 2:
         print(__doc__)
         return 2
 
     directory = sys.argv[1]
-    language = "auto"
+    forced = None
     if "--lang" in sys.argv:
-        language = sys.argv[sys.argv.index("--lang") + 1]
-    confident = True
-    if language == "auto":
-        language, confident = detect_language(directory)
+        forced = sys.argv[sys.argv.index("--lang") + 1]
+    if forced == "auto":
+        forced = None
+    if forced is not None and forced not in MARKERS:
+        # Refuse rather than guess (rule W1). Exit 2, so a usage error cannot be read
+        # as a finding about the register.
+        print(
+            f"  --lang {forced}: no marker table for that language; "
+            f"supported: {', '.join(sorted(MARKERS))}",
+            file=sys.stderr,
+        )
+        return 2
+    detected, confident = detect_language(directory)
+    language = forced if forced is not None else detected
     marker = MARKERS[language]
 
     problems = []
@@ -117,6 +153,13 @@ def main():
         text = open(path, encoding="utf-8").read()
         name = os.path.basename(path)
         check(re.search(r"^\*\*Status:\*\*", text, re.M), f"{name}: no **Status:**")
+        status = re.search(r"^\*\*Status:\*\*(.*)$", text, re.M)
+        if status and marker["superseded"] in status.group(1):
+            check(
+                names_a_scope(status.group(1), marker),
+                f"{name}: status says {marker['superseded']} but names no scope — "
+                "which part of the decision stopped holding, and since when",
+            )
         check(re.search(marker["conseq"], text, re.M), f"{name}: no consequences section")
         check(re.search(marker["impl"], text, re.M), f"{name}: no implementation status section")
         check(re.search(marker["cost"], text), f"{name}: no costs section (prefix {marker['cost']})")
@@ -129,9 +172,19 @@ def main():
         check(rows == len(records), f"index lists {rows} records, decisions/ holds {len(records)}")
         check(marker["binding"] in readme, f"README: no '{marker['binding']}' section")
         check(
-            confident,
+            confident or forced is not None,
             "language could not be detected from README.md (no binding-requirements heading "
             f"in either variant); assuming {language}, so every marker below may be wrong",
+        )
+        # The language skill ends its procedure by asking a human to confirm that the
+        # language the checker detects is the target one. That is a check, so it is
+        # mechanised here (rule W9): a forced language contradicting the register's own
+        # README makes every marker miss, and a run that finds nothing then looks
+        # exactly like a run that found nothing wrong.
+        check(
+            not (forced is not None and confident and forced != detected),
+            f"--lang {forced} was given, but README.md reads as {detected}; the checks "
+            f"ran against {forced} wording and will have missed their subject",
         )
 
     # 4. Open questions: a number is a public reference, so duplicates and gaps

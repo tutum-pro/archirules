@@ -30,7 +30,17 @@ Specific to this repository, from
 [the binding requirements](docs/architecture/README.md#binding-requirements):
 
 - **The executable layer is English without exception** — skills, scripts, plugin metadata.
-- **A new check is not finished until it has been shown to fail.** Add its case to
-  `scripts/selftest.sh` in the same change.
+- **A new check is not finished until it has been shown to fail.** Add its case to the
+  self-test of the checker it belongs to — `scripts/selftest.sh` for `conform.py`,
+  `scripts/selftest-consistency.sh` for `consistency.py` — in the same change. **Every check
+  gets a case of its own**; one covered only incidentally by its neighbours turned out to be
+  incapable of firing at all.
+- **A checker keys only on wording a template or a skill produces.** A marker invented by a
+  script and honoured only by its own fixtures proves the script consistent with its test data.
+  The last case in `scripts/selftest.sh` asserts this for both checkers.
 - **A rule must be usable without knowing this project's history.** Incidents go to
   `CASEBOOK.md` and are referenced, not inlined.
+- **A commit that implements a register entry claims it in a trailer** — `Archirules-Phase:`,
+  `Archirules-ADR:`, `Archirules-OQ:`. Regenerate `traceability.md` afterwards, in a commit
+  carrying no trailer of its own. Never copy a commit identifier into a register: it stops
+  being true at the first rebase and nothing about the document looks different.

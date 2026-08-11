@@ -17,6 +17,11 @@ anger rather than only against a synthetic fixture.
 | [0003](decisions/ADR-0003-casebook-apart-from-rules.md) | The casebook is separate from the rules | Accepted |
 | [0004](decisions/ADR-0004-checker-ships-with-its-own-proof.md) | The checker ships with a proof that it fails | Accepted |
 | [0005](decisions/ADR-0005-distribution-as-a-plugin.md) | Distribution as a Claude Code plugin, not a template repository | Accepted |
+| [0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md) | A checker keys only on wording the method itself produces | Accepted |
+| [0007](decisions/ADR-0007-explicit-version-as-the-migration-anchor.md) | An explicit version is what a migration moves between | Accepted |
+| [0008](decisions/ADR-0008-help-comes-from-a-file-not-from-memory.md) | `--help` is routed by a sentence and answered by a file | Accepted |
+| [0009](decisions/ADR-0009-updating-a-project-is-not-updating-the-plugin.md) | Updating a project's registers is separate from updating the plugin | Accepted |
+| [0010](decisions/ADR-0010-traceability-derived-from-git-trailers.md) | Traceability is derived from commit trailers, never copied into a register | Accepted |
 
 ## Binding requirements
 
@@ -28,7 +33,13 @@ Decisions that bind **every** change here, not only their own area.
 - **A new gate is not finished until it has been shown to fail**
   ([ADR-0004](decisions/ADR-0004-checker-ships-with-its-own-proof.md)). This applies to the
   tooling in this repository as forcefully as to anything it checks — arguably more, since a
-  broken checker certifies broken projects.
+  broken checker certifies broken projects. Each checker carries **its own** self-test; the
+  obligation attaches to the check, not to a particular file
+  ([ADR-0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md)).
+- **A checker keys only on wording a template or a skill produces**
+  ([ADR-0006](decisions/ADR-0006-checker-speaks-the-methods-vocabulary.md)). A marker invented by
+  a script and honoured only by its own fixtures proves the script consistent with itself, which
+  was never in doubt. The self-test asserts this; it is not left to review.
 - **A rule must be usable without knowing this project's history**
   ([ADR-0003](decisions/ADR-0003-casebook-apart-from-rules.md)). Incidents belong in the
   casebook, referenced, not inlined.
@@ -38,3 +49,4 @@ Decisions that bind **every** change here, not only their own area.
 - [Open questions](open-questions.md) — what we do not know yet and what it blocks
 - [Phase register](phases.md) — what is done, what is next
 - [Verification register](verification.md) — what is verified, as opposed to asserted
+- [Traceability](traceability.md) — which commits implement which entry (generated)

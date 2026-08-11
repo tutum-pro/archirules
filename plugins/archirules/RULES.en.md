@@ -149,7 +149,8 @@ This covers **safety nets** too: a counter that watches whether a check ran at a
 looser than the check it watches. Tightened along with it, it stops watching anything.
 [C-01](CASEBOOK.en.md#c-01--a-gate-that-could-not-fail) ·
 [C-06](CASEBOOK.en.md#c-06--changing-one-punctuation-mark-switched-off-thirty-seven-checks) ·
-[C-07](CASEBOOK.en.md#c-07--tightening-the-safety-net-blinded-it)
+[C-07](CASEBOOK.en.md#c-07--tightening-the-safety-net-blinded-it) ·
+[C-11](CASEBOOK.en.md#c-11--a-check-with-no-case-of-its-own-could-not-fire)
 
 ### W5. Do not silence errors inside a gate
 
@@ -175,7 +176,8 @@ or a queue are only exposed by repetition.
 Before attributing an observation to the system, check that it does not come from the
 measurement, from a stub, or from a neighbouring test. Scope assertions to the thing under
 test, not to global state.
-[C-10](CASEBOOK.en.md#c-10--measuring-your-own-measuring-instrument)
+[C-10](CASEBOOK.en.md#c-10--measuring-your-own-measuring-instrument) ·
+[C-11](CASEBOOK.en.md#c-11--a-check-with-no-case-of-its-own-could-not-fire)
 
 ### W9. Mechanism over convention — and when you cannot, name it as a convention
 

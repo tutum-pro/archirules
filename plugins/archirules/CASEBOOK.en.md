@@ -194,3 +194,27 @@ ceiling turned out to be a delay written into the test loop.
 
 **How it surfaced:** by asking "what exactly does this measurement measure" before the number
 reached the conclusions.
+
+## C-11 — A check with no case of its own could not fire
+
+**Rule:** W4, W8
+
+The cross-register checker passed twenty-eight cases of its own self-test. One of the five
+checks it advertised could not fire under any circumstances: it looked for a marker and a
+question number **on one line**, a shape no template produces. It was also the only check
+without a case of its own, so nothing noticed.
+
+The cause ran deeper than a missing case. The checker used vocabulary it had invented — fields
+and headings absent from the templates, the skills and the rules — and the fixtures were written
+in that same vocabulary. They agreed with each other, and that agreement was the entire content
+of the proof. A register built by following the method's own instructions was reported by that
+checker as defective.
+
+**How it surfaced:** by building a register from the instructions rather than from the fixtures.
+The mechanism now guarding this is the only assertion that leaves the test files at all: the
+self-test requires **every marker a checker keys on to occur in a template or in a skill**.
+
+A footnote from the same repair: the new assertion passed when the checker it measures stopped
+importing at all. An empty result read as "nothing is missing". An assertion about a tool's
+output has to tell "I found nothing" apart from "I could not run" — a sentinel, not an empty
+string.

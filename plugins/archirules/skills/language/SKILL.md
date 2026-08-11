@@ -5,6 +5,27 @@ description: Switch a project's architecture documentation from one language to 
 
 # Switching the documentation language
 
+**`--help`** — if `$ARGUMENTS` is `--help`, run
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/help.py language`, show its output, and stop there.
+
+## Usage
+
+```
+/archirules:language <target language> [--help]
+```
+
+Switches an entire register set from one language to another: records, questions, phases,
+verification, **file names**, cross-links, and the `CLAUDE.md` fragment.
+
+**Needs from you:** the target language, and a clean git tree — file renames go through
+`git mv`, and a half-finished switch is worse than none.
+
+**Will not:** translate git history. The current state becomes one language; the past does not.
+
+**Acceptance is the checker, not the prose:** `conform.py --lang <target>` must report zero
+problems and detect the target language. A forced language contradicting the register's own
+README is itself reported.
+
 The case this exists for: a project started in one language because the team spoke it, and
 somebody joined who does not. From that moment the register has to be readable by everyone, and
 **a half-translated register is worse than an untranslated one** — nobody knows which part is

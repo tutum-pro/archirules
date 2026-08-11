@@ -193,3 +193,26 @@ opóźnieniem wpisanym w pętlę testową.
 
 **Jak wyszło:** przez pytanie „co dokładnie mierzy ten pomiar" zadane, zanim wynik trafił do
 wniosków.
+
+## C-11 — Kontrola bez własnego przypadku testowego nie potrafiła zadziałać
+
+**Reguła:** W4, W8
+
+Kontroler międzyrejestrowy przechodził dwadzieścia osiem przypadków własnego selftestu. Jedna z
+pięciu kontroli, które ogłaszał, nie potrafiła zadziałać w żadnych okolicznościach: szukała
+markera i numeru pytania **w jednej linii** — układu, którego żaden szablon nie produkuje. Była
+też jedyną kontrolą bez przypadku testowego u siebie, więc nic tego nie zauważyło.
+
+Przyczyna leżała głębiej niż brakujący przypadek. Kontroler posługiwał się słownictwem, które
+sam wymyślił — polami i nagłówkami nieobecnymi w szablonach, w skillach i w regułach — a zestaw
+testowy napisano tym samym słownictwem. Zgadzały się ze sobą i to była cała treść dowodu.
+Rejestr zbudowany dokładnie według instrukcji metody ten kontroler zgłaszał jako wadliwy.
+
+**Jak wyszło na jaw:** przez zbudowanie rejestru według instrukcji, a nie według zestawu
+testowego. Mechanizm, który tego teraz pilnuje, jako jedyny wychodzi poza pliki testowe:
+selftest wymaga, żeby **każdy marker kontrolera występował w szablonie albo w skillu**.
+
+Dopisek z tej samej naprawy: nowa asercja przeszła, kiedy kontroler, który mierzyła, przestał
+się w ogóle importować. Pusty wynik czytał się jak „niczego nie brakuje". Asercja o wyniku
+działania narzędzia musi odróżniać „nic nie znalazłem" od „nie zdołałem uruchomić" — sentynela,
+nie pusty łańcuch.
