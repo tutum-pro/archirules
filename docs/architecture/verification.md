@@ -178,6 +178,23 @@ evidence exists is fair. Those are the sentences that matter most in that skill 
 checks them. The gate verifies that the text is not made of things that do not exist, which is a
 narrower claim, deliberately.
 
+## Reading the version
+
+**Verified.** That `version.py` distinguishes six outcomes and gives each its own exit code:
+agreement (0), registers ahead, registers behind, no stamp, an unparseable or empty stamp (1),
+and a missing register directory (2).
+
+**Verified.** That "ahead" is named as ahead rather than sharing the wording of "behind" —
+asserted against the printed output, because both exit 1 and only the message tells them apart.
+
+**Verified under two mutations that fail different subsets.** Always-green kills the five cases
+expecting a finding; an unimportable script kills the other three and lets the five pass
+spuriously, because a dead interpreter also exits 1. Neither alone would have covered the set.
+
+**Not verified.** That anyone reads the distinction between "the versions match" and "the
+registers are sound". The skill states it; nothing enforces that a green line is not taken for a
+health check.
+
 ## Installation instructions
 
 **Verified.** That `/plugin install <name>@<marketplace>` is the documented form, by reading the

@@ -48,8 +48,11 @@ failure this addresses. Not planning, not estimation, not quality in general.
 
 ## What it actually is
 
-Four documents in `docs/architecture/`, versioned with the code and reviewed like code, plus
-rules about what goes in them, plus checkers that fail when the documents rot.
+Files in `docs/architecture/`, versioned with the code and reviewed like code, plus rules about
+what goes in them, plus checkers that fail when they rot.
+
+Four of them are **registers**, and each answers a different question about how well something is
+known:
 
 | file | answers |
 |---|---|
@@ -58,7 +61,14 @@ rules about what goes in them, plus checkers that fail when the documents rot.
 | the phase register | what is done, what is next, and how we will know it is finished |
 | the verification register | what is **verified**, as opposed to **asserted** |
 
-The first three are needed from day one. The verification register is started at the first
+Alongside them: `README.md`, the index, which carries what binds **every** piece of work rather
+than only its own area; and, where a choice needs weighing before it is made, an analysis file.
+
+That set is closed on purpose. A new register has to be justified by a defect its absence caused
+— not by symmetry with another methodology — because a register nobody's work depends on is the
+first one to stop being maintained, and an unmaintained register is worse than none.
+
+The first three registers are needed from day one. The verification register is started at the first
 defect caused by an unverified claim, at which point its usefulness is not in question.
 
 There is no meeting, no role, no board, no estimation ritual. The artefacts are files in the
