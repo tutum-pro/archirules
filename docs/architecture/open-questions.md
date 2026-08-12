@@ -339,3 +339,59 @@ confession of failure.
 The question is settleable by doing the work first. Draft the entry format, then see whether it
 fits inside the existing skill without turning it into two documents stapled together. If it
 does, fold it in; if it does not, that is the answer.
+
+### OQ-13 — Should a reference to a question be a link, when nothing checks that a link still lands
+**Status:** OPEN
+
+References between the registers are written three different ways, and the difference is not
+deliberate.
+
+| direction | how it is written today | how often |
+|---|---|---|
+| a question pointing at a decision (`Touches:`) | a working link | 10 of 10 |
+| a decision pointing at a question (`Resolves:`) | plain text, no link | 1 of 1 |
+| a decision pointing at a question **in its prose** | a working link | 8 |
+| a question pointing at another question (`Depends on:`) | plain text, no link | 3 of 3 |
+| what the templates prescribe | plain text, for all of them | — |
+
+So a reader can jump from a question to the decision that answered it, but not back. And the
+same file type does it both ways: a decision record writes `Resolves: OQ-02` as bare text in its
+header, and four paragraphs lower writes a full working link to a different question.
+
+**Why this is not just untidiness.** A decision record is its own file, so a link to it is stable
+— the file either exists or it does not, and the checker says which. A question is a heading
+inside one shared file, so a link to it needs an anchor built from the **wording of its title**.
+Rename the question and every link to it silently starts pointing at the top of the file
+instead.
+
+**Nothing catches that.** The structural checker deliberately drops everything after the `#`
+before testing a link, so it verifies the file and never the anchor. There are **25 anchor links
+in this register today**, and not one of them is checked.
+
+**It has already happened here.** OQ-05 was given a different title during this work, and two
+references to it had to be repaired by hand. Both checkers stayed green from beginning to end —
+before the repair as well as after.
+
+**If this stays unresolved:** three conventions keep coexisting, so nobody can tell which one is
+correct; navigation stays one-way; and every anchor link added from now on is one more thing that
+can quietly stop working.
+
+**What has to be known before it can be answered:** whether an anchor can be checked cheaply. The
+style question depends entirely on it, and in a way that reverses the answer:
+
+- **If the checker can verify that an anchor exists in the target file** — plausible: read the
+  headings, apply the same transformation the anchor uses, compare — then linking is safe, and
+  the answer is to link every direction and fix the templates to match.
+  One measurement bearing on this, taken while writing this entry: the existing link checker is
+  a regular expression and does not understand Markdown. It read an example link written inside
+  backticks in this very paragraph as a real link and reported it as broken. Whatever checks
+  anchors will need to know more about the document than the current one does.
+
+- **If it cannot be done reliably** — anchor generation differs between renderers, and a check
+  that is wrong about anchors would be worse than none — then the honest answer may be the
+  opposite: **never link a question, in either direction.** The number is already a public
+  reference, and a bare `OQ-02` cannot rot.
+
+So this is settled by building the anchor check first, or establishing that it cannot be built.
+Deciding the style before that would be choosing between two options while ignorant of the fact
+that separates them.
