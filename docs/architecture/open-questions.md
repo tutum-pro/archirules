@@ -279,3 +279,63 @@ be told why they should not.
 already unreconstructible. That is the standard ADR-0013 sets for any new artefact, and this
 question is held to it as strictly as the proposal it came from. If none can be produced, the
 first candidate wins by default and the question closes as "an OQ is enough".
+
+### OQ-12 — Nothing explains how to write in the verification register
+**Status:** OPEN
+
+The method has four registers. Three of them have a skill that explains how to keep them:
+`/archirules:adr` for decision records, `/archirules:oq` for open questions,
+`/archirules:phases` for the phase register.
+
+The fourth is the verification register — the document that separates what has actually been
+**demonstrated** from what is merely **claimed**. It has no such skill.
+
+`/archirules:verification` sounds like it would be that skill. It is not. It teaches a working
+discipline — break a check on purpose and watch it fail before you trust it — and it never
+mentions the register at all. That was checked, not assumed: the file contains no reference to
+the verification register anywhere in it.
+
+So somebody starting a verification register has nothing to follow, and invents a shape.
+
+**This has already happened here, and it can be counted.** This repository's own verification
+register holds **37 entries across 11 subjects**, written during a single working session with
+the format made up as the work went along. The labels have already drifted inside that one file:
+
+| label written | times |
+|---|---|
+| Verified. | 22 |
+| Asserted, not verified. | 7 |
+| Not verified. | 2 |
+| Not verified, and no mechanism exists. | 2 |
+| Not verified, and no mechanism is claimed. | 1 |
+| Not traceable, permanently. | 1 |
+
+Three different wordings for "not verified" in one document is not a matter of style. A reader
+cannot tell whether the three mean the same thing or three different things, and no checker can
+be written against them either.
+
+**One of those labels matters more than the others.** "Asserted, not verified" is the entry that
+says: *we believe this, we have not shown it, and we are telling you so.* It is the most useful
+line in the register and the easiest to leave out, because writing it means admitting a gap out
+loud. Nothing in the method tells a newcomer that this kind of entry exists, let alone that it is
+expected.
+
+**If this stays unresolved:** every project that starts a verification register invents its own
+shape. The registers cannot be compared with each other, nothing can ever check them, and the
+"asserted, not verified" line — the one worth having — will usually be missing, because nobody
+was told to write it.
+
+**To resolve** there is one real question and one piece of work.
+
+The question: does keeping this register belong to the existing `/archirules:verification`
+skill, or to a skill of its own? Both have a cost. Folding it in means one skill doing two jobs,
+under a name that already misleads people about which job it does. Splitting it out means an
+eleventh skill, which is one more thing to learn before finding the one you wanted.
+
+The work, needed either way: write down what an entry looks like — which labels exist, what each
+one means, and the fact that "asserted, not verified" is a normal, expected entry rather than a
+confession of failure.
+
+The question is settleable by doing the work first. Draft the entry format, then see whether it
+fits inside the existing skill without turning it into two documents stapled together. If it
+does, fold it in; if it does not, that is the answer.
