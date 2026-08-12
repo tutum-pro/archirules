@@ -1,7 +1,7 @@
 # ADR-0002 — CC BY-SA 4.0 and a reserved name
 
 **Status:** Accepted (2026-08-03)
-**Related:** ADR-0005
+**Related:** [ADR-0005](ADR-0005-distribution-as-a-plugin.md)
 
 ## Context
 

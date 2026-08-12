@@ -10,6 +10,46 @@ An entry that requires the reader to change something in their own registers car
 `### Migration` block. **An entry without one requires nothing** — that is what its absence
 means, and `/archirules:update` relies on it.
 
+## 2.0.0 — 2026-08-12
+
+**Changed — breaking**
+
+- `conform.py` now checks the **anchor** of a link, not only the file it points at. A link that
+  resolves to the right document and to no heading inside it is a finding. This is the half that
+  rots in silence: rename a heading and every link to it lands at the top of the document, with
+  the file still present and the checker still green
+  ([ADR-0015](../../docs/architecture/decisions/ADR-0015-references-are-links-and-anchors-are-checked.md)).
+- A reference to a register entry is a link, in every field and every direction. The templates
+  show the link form; they previously prescribed plain text.
+
+**Fixed**
+
+- An example link written between backticks, or inside a fenced code block, is no longer read as
+  a real link. The checker used to report a document as broken for showing what a link looks
+  like.
+
+### Migration
+
+**Run the checker first — it tells you exactly what to repair.**
+
+```
+python3 <plugin>/scripts/conform.py docs/architecture
+```
+
+Two kinds of finding are new in this release:
+
+1. **`link resolves to the file but not to a heading in it: #something`.** The heading was
+   renamed, or the anchor was abbreviated. Anchors come from the heading text: lowercase, drop
+   anything that is not a letter, digit, space, hyphen or underscore, spaces become hyphens. An
+   em dash disappears and leaves the hyphens from the spaces around it, which is why anchors to
+   `### OQ-01 — Some question` read `#oq-01--some-question`. Shortening one to `#oq-01` renders
+   as a link and lands nowhere.
+
+2. Nothing else. Existing plain-text references keep working; turning them into links is
+   recommended by the templates but is not required and is not checked.
+
+If a repair is not obvious, the finding names the file and the line.
+
 ## 1.7.0 — 2026-08-11
 
 **Added**

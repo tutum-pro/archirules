@@ -1,6 +1,6 @@
 ### OQ-NN — <a question, not a topic>
 
-**Status:** OPEN · **Depends on:** OQ-MM · **Blocks:** <phase> · **Touches:** ADR-NNNN
+**Status:** OPEN · **Depends on:** OQ-MM · **Blocks:** <phase> · **Touches:** [ADR-NNNN](decisions/ADR-NNNN-name.md)
 <!-- Add a priority ONLY when it is high or critical. A field filled in on every
      routine question becomes noise and stops meaning anything.
 
@@ -21,3 +21,10 @@ will realistically be knowable.
 and STATE THE ANSWER. A bare link forces the reader through the whole ADR.
 If the first answer was different, note that it was reversed.
 -->
+
+<!-- A reference to a register entry is a LINK, not a bare number. conform.py
+     checks the anchor as well as the file, so renaming a heading somebody links
+     to is reported instead of quietly landing at the top of the document. The
+     anchor comes from the heading: lowercase, drop anything that is not a
+     letter, digit, space, hyphen or underscore, spaces become hyphens.
+     ADR-0015. -->

@@ -1,7 +1,7 @@
 # ADR-0001 — Polish for the method, English for the executable layer
 
 **Status:** Accepted (2026-08-03)
-**Related:** ADR-0003, ADR-0005
+**Related:** [ADR-0003](ADR-0003-casebook-apart-from-rules.md), [ADR-0005](ADR-0005-distribution-as-a-plugin.md)
 
 ## Context
 

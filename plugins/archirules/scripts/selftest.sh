@@ -121,6 +121,39 @@ for lang in pl en; do
   sed -i.bak "s|^$was|$scoped|" "$d"/decisions/ADR-*.md
   expect "a supersession that names its scope passes" 0 "$d"
 
+  # A link can resolve to the right file and to nowhere inside it. That half rots in
+  # silence: rename a heading and every link to it lands at the top of the document,
+  # with the file still present and the checker still green. It happened in this
+  # repository — see ADR-0015.
+  if [ "$lang" = pl ]; then
+    heading='### OQ-01 — Czy ten zestaw wystarczy do testu kontrolera'
+    renamed='### OQ-01 — Czy ten zestaw jest wystarczający'
+  else
+    heading='### OQ-01 — Is this set enough to test the checker'
+    renamed='### OQ-01 — Is this set sufficient'
+  fi
+
+  expect "a link whose anchor matches a heading passes" 0 "$(copy_of "anchor-ok-$lang" "$set")"
+
+  d=$(copy_of "anchor-renamed-$lang" "$set")
+  sed -i.bak "s|^$heading|$renamed|" "$d/open-questions.md"
+  expect "a heading renamed under a link is caught" 1 "$d"
+  expect_says "and it says the heading is what is missing" "not to a heading" "$d"
+
+  # The shorthand people reach for: #oq-01 instead of the whole title. It renders as a
+  # link, resolves to the file, and lands nowhere. Two of these were found in this
+  # plugin's own fixtures by the measurement that led to ADR-0015.
+  d=$(copy_of "anchor-short-$lang" "$set")
+  sed -i.bak 's|open-questions.md#oq-01[^)]*|open-questions.md#oq-01|' "$d/README.md"
+  expect "a shortened anchor that renders but lands nowhere is caught" 1 "$d"
+
+  # And the opposite direction: an example link written between backticks is not a link.
+  # Reporting one is reporting a document as broken for showing what a link looks like.
+  d=$(copy_of "anchor-example-$lang" "$set")
+  printf '\nAn example of the form: `[label](open-questions.md#no-such-heading)`.\n' \
+    >> "$d/README.md"
+  expect "an example link inside backticks is not a finding" 0 "$d"
+
   # Forcing a language the register does not use makes every marker miss, so the run
   # finds nothing and looks exactly like a run that found nothing wrong. The language
   # skill asks a human to confirm the detected language; this is that check.

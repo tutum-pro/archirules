@@ -39,7 +39,7 @@ The structural half of the answer is ADR-0003. The procedural half has no mechan
 carried by OQ-03.
 
 ### OQ-03 — Nothing checks whether the prose is understandable
-**Status:** OPEN · **Priority: medium** · **Depends on:** OQ-02
+**Status:** OPEN · **Priority: medium** · **Depends on:** [OQ-02](open-questions.md#oq-02--how-do-we-learn-what-a-newcomer-cannot-understand)
 
 `conform.py` checks structure. Structure was never the problem — the six defects in OQ-02 all
 passed every mechanical check, because a document can be perfectly well-formed and still
@@ -207,7 +207,7 @@ should read a decision made there rather than make one. Settle it before designi
 because the answer decides whether there is a mechanism to design.
 
 ### OQ-10 — How is the list of people who may sanction it defined and protected
-**Status:** OPEN · **Priority: high** · **Blocks:** P13 · **Depends on:** OQ-09 · **Touches:** [ADR-0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md)
+**Status:** OPEN · **Priority: high** · **Blocks:** P13 · **Depends on:** [OQ-09](open-questions.md#oq-09--how-does-somebody-with-authority-sanction-breaking-the-consistency-rule) · **Touches:** [ADR-0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md)
 
 If an override needs authority, something has to say who has it. That list is the mechanism's
 weak point: whoever can edit it can grant themselves the right to bypass every consistency rule
@@ -279,3 +279,151 @@ be told why they should not.
 already unreconstructible. That is the standard ADR-0013 sets for any new artefact, and this
 question is held to it as strictly as the proposal it came from. If none can be produced, the
 first candidate wins by default and the question closes as "an OQ is enough".
+
+### OQ-12 — Nothing explains how to write in the verification register
+**Status:** OPEN
+
+The method has four registers. Three of them have a skill that explains how to keep them:
+`/archirules:adr` for decision records, `/archirules:oq` for open questions,
+`/archirules:phases` for the phase register.
+
+The fourth is the verification register — the document that separates what has actually been
+**demonstrated** from what is merely **claimed**. It has no such skill.
+
+`/archirules:verification` sounds like it would be that skill. It is not. It teaches a working
+discipline — break a check on purpose and watch it fail before you trust it — and it never
+mentions the register at all. That was checked, not assumed: the file contains no reference to
+the verification register anywhere in it.
+
+So somebody starting a verification register has nothing to follow, and invents a shape.
+
+**This has already happened here, and it can be counted.** This repository's own verification
+register holds **37 entries across 11 subjects**, written during a single working session with
+the format made up as the work went along. The labels have already drifted inside that one file:
+
+| label written | times |
+|---|---|
+| Verified. | 22 |
+| Asserted, not verified. | 7 |
+| Not verified. | 2 |
+| Not verified, and no mechanism exists. | 2 |
+| Not verified, and no mechanism is claimed. | 1 |
+| Not traceable, permanently. | 1 |
+
+Three different wordings for "not verified" in one document is not a matter of style. A reader
+cannot tell whether the three mean the same thing or three different things, and no checker can
+be written against them either.
+
+**One of those labels matters more than the others.** "Asserted, not verified" is the entry that
+says: *we believe this, we have not shown it, and we are telling you so.* It is the most useful
+line in the register and the easiest to leave out, because writing it means admitting a gap out
+loud. Nothing in the method tells a newcomer that this kind of entry exists, let alone that it is
+expected.
+
+**If this stays unresolved:** every project that starts a verification register invents its own
+shape. The registers cannot be compared with each other, nothing can ever check them, and the
+"asserted, not verified" line — the one worth having — will usually be missing, because nobody
+was told to write it.
+
+**To resolve** there is one real question and one piece of work.
+
+The question: does keeping this register belong to the existing `/archirules:verification`
+skill, or to a skill of its own? Both have a cost. Folding it in means one skill doing two jobs,
+under a name that already misleads people about which job it does. Splitting it out means an
+eleventh skill, which is one more thing to learn before finding the one you wanted.
+
+The work, needed either way: write down what an entry looks like — which labels exist, what each
+one means, and the fact that "asserted, not verified" is a normal, expected entry rather than a
+confession of failure.
+
+The question is settleable by doing the work first. Draft the entry format, then see whether it
+fits inside the existing skill without turning it into two documents stapled together. If it
+does, fold it in; if it does not, that is the answer.
+
+### OQ-13 — Should a reference to a question be a link, when nothing checks that a link still lands
+**Status:** RESOLVED → [ADR-0015](decisions/ADR-0015-references-are-links-and-anchors-are-checked.md), 2026-08-12
+
+**The answer is yes, link it — because the anchor turned out to be checkable.** A prototype was
+run over all 68 anchored links in this repository: 66 resolved, 0 false positives, and the 24
+Polish anchors with diacritics all resolved, which is the evidence that the rule is right rather
+than fitted to English. The two that did not resolve were genuine dead links nobody knew about.
+
+Had the measurement gone the other way, the recorded answer would have been the opposite one
+this entry held open: never link a question, because a bare number cannot rot. It is worth saying
+that the question was decided by the measurement and not by preference — the reasoning below is
+kept as written, before the result was known.
+
+References between the registers are written three different ways, and the difference is not
+deliberate.
+
+| where the reference is written | plain | linked |
+|---|---|---|
+| a question's `Touches:`, pointing at a decision | 0 | 9 |
+| a question's resolved status, pointing at a decision | 0 | 1 |
+| a decision's `Related:`, pointing at another decision | **7** | **9** |
+| a decision's `Resolves:`, pointing at a question | 1 | 0 |
+| a decision's prose, pointing at a question | 0 | 8 |
+| a question's `Depends on:`, pointing at another question | 2 | 0 |
+| what the templates prescribe | plain, in every field | — |
+
+So a reader can jump from a question to the decision that answered it, but not back. And the
+same file type does it both ways: a decision record writes `Resolves: OQ-02` as bare text in its
+header, and four paragraphs lower writes a full working link to a different question.
+
+**The `Related:` row is the sharpest, and its split is not random.** Records ADR-0001 to
+ADR-0005 write it as plain text; ADR-0006 to ADR-0014 write it as a link. The break falls exactly
+where the authorship changed: the first five follow the template, and the nine written later
+ignore it. Nobody chose that and nothing recorded it — the convention simply became whatever the
+most recent hand did.
+
+That is also why another project run with this method may show none of this. Its records were
+written in one style by one author, not because the method guided them there.
+
+<!-- Corrected 2026-08-12. The table first published here gave "10 of 10" for a question
+     pointing at a decision and "3 of 3" for one question pointing at another. Both were wrong:
+     the first conflated the `Touches:` field with the resolved-status line, and the second
+     counted a field that occurs twice, not three times. The `Related:` row was missing
+     altogether, which is the row that matters most. Rule P7 — corrected in place, with what
+     it said before. -->
+
+**Why this is not just untidiness.** A decision record is its own file, so a link to it is stable
+— the file either exists or it does not, and the checker says which. A question is a heading
+inside one shared file, so a link to it needs an anchor built from the **wording of its title**.
+Rename the question and every link to it silently starts pointing at the top of the file
+instead.
+
+**Nothing catches that.** The structural checker deliberately drops everything after the `#`
+before testing a link, so it verifies the file and never the anchor. There are **25 anchor links
+in this register today**, and not one of them is checked.
+
+Nor does anything catch the inconsistency itself. The cross-register checker looks for the
+pattern `ADR-NNNN` and finds it whether it is bare or wrapped in a link, so both forms pass every
+check, for ever, side by side.
+
+**It has already happened here.** OQ-05 was given a different title during this work, and two
+references to it had to be repaired by hand. Both checkers stayed green from beginning to end —
+before the repair as well as after.
+
+**If this stays unresolved:** three conventions keep coexisting, so nobody can tell which one is
+correct; navigation stays one-way; and every anchor link added from now on is one more thing that
+can quietly stop working.
+
+**What has to be known before it can be answered:** whether an anchor can be checked cheaply. The
+style question depends entirely on it, and in a way that reverses the answer:
+
+- **If the checker can verify that an anchor exists in the target file** — plausible: read the
+  headings, apply the same transformation the anchor uses, compare — then linking is safe, and
+  the answer is to link every direction and fix the templates to match.
+  One measurement bearing on this, taken while writing this entry: the existing link checker is
+  a regular expression and does not understand Markdown. It read an example link written inside
+  backticks in this very paragraph as a real link and reported it as broken. Whatever checks
+  anchors will need to know more about the document than the current one does.
+
+- **If it cannot be done reliably** — anchor generation differs between renderers, and a check
+  that is wrong about anchors would be worse than none — then the honest answer may be the
+  opposite: **never link a question, in either direction.** The number is already a public
+  reference, and a bare `OQ-02` cannot rot.
+
+So this is settled by building the anchor check first, or establishing that it cannot be built.
+Deciding the style before that would be choosing between two options while ignorant of the fact
+that separates them.

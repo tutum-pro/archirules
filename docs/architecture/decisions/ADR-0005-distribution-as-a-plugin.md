@@ -1,7 +1,7 @@
 # ADR-0005 — Distribution as a Claude Code plugin, not a template repository
 
 **Status:** Accepted (2026-08-03)
-**Related:** ADR-0001, ADR-0002
+**Related:** [ADR-0001](ADR-0001-language-split.md), [ADR-0002](ADR-0002-licence-and-name.md)
 
 ## Context
 
