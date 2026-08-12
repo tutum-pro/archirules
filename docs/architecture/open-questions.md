@@ -346,17 +346,35 @@ does, fold it in; if it does not, that is the answer.
 References between the registers are written three different ways, and the difference is not
 deliberate.
 
-| direction | how it is written today | how often |
+| where the reference is written | plain | linked |
 |---|---|---|
-| a question pointing at a decision (`Touches:`) | a working link | 10 of 10 |
-| a decision pointing at a question (`Resolves:`) | plain text, no link | 1 of 1 |
-| a decision pointing at a question **in its prose** | a working link | 8 |
-| a question pointing at another question (`Depends on:`) | plain text, no link | 3 of 3 |
-| what the templates prescribe | plain text, for all of them | — |
+| a question's `Touches:`, pointing at a decision | 0 | 9 |
+| a question's resolved status, pointing at a decision | 0 | 1 |
+| a decision's `Related:`, pointing at another decision | **7** | **9** |
+| a decision's `Resolves:`, pointing at a question | 1 | 0 |
+| a decision's prose, pointing at a question | 0 | 8 |
+| a question's `Depends on:`, pointing at another question | 2 | 0 |
+| what the templates prescribe | plain, in every field | — |
 
 So a reader can jump from a question to the decision that answered it, but not back. And the
 same file type does it both ways: a decision record writes `Resolves: OQ-02` as bare text in its
 header, and four paragraphs lower writes a full working link to a different question.
+
+**The `Related:` row is the sharpest, and its split is not random.** Records ADR-0001 to
+ADR-0005 write it as plain text; ADR-0006 to ADR-0014 write it as a link. The break falls exactly
+where the authorship changed: the first five follow the template, and the nine written later
+ignore it. Nobody chose that and nothing recorded it — the convention simply became whatever the
+most recent hand did.
+
+That is also why another project run with this method may show none of this. Its records were
+written in one style by one author, not because the method guided them there.
+
+<!-- Corrected 2026-08-12. The table first published here gave "10 of 10" for a question
+     pointing at a decision and "3 of 3" for one question pointing at another. Both were wrong:
+     the first conflated the `Touches:` field with the resolved-status line, and the second
+     counted a field that occurs twice, not three times. The `Related:` row was missing
+     altogether, which is the row that matters most. Rule P7 — corrected in place, with what
+     it said before. -->
 
 **Why this is not just untidiness.** A decision record is its own file, so a link to it is stable
 — the file either exists or it does not, and the checker says which. A question is a heading
@@ -367,6 +385,10 @@ instead.
 **Nothing catches that.** The structural checker deliberately drops everything after the `#`
 before testing a link, so it verifies the file and never the anchor. There are **25 anchor links
 in this register today**, and not one of them is checked.
+
+Nor does anything catch the inconsistency itself. The cross-register checker looks for the
+pattern `ADR-NNNN` and finds it whether it is bare or wrapped in a link, so both forms pass every
+check, for ever, side by side.
 
 **It has already happened here.** OQ-05 was given a different title during this work, and two
 references to it had to be repaired by hand. Both checkers stayed green from beginning to end —
