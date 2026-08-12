@@ -125,6 +125,27 @@ instead of being caught by chance. Two dead links were found and fixed on the fi
   the work is bounded, but it is no longer free.
 - **Anchors are long and unpleasant to read in the source.** A reference now occupies most of a
   line where it used to occupy nine characters.
+- **The rule itself is not enforced, only the anchors are.** Nothing checks that a reference *is*
+  a link. A register full of bare `ADR-0004` passes every check, so decision 1 is a convention —
+  the shape rule W9 names as the worst kind of rule, because nobody watches it and everybody
+  assumes somebody else does. It is stated here rather than left to be discovered, and the
+  reason for accepting it is below.
+- **Converting an existing register is nobody's job yet.** The ten references here were converted
+  by a throwaway script that ships nowhere, so this repository did something a user of the method
+  cannot. The 2.0.0 migration therefore asks only for dangling anchors to be repaired and says
+  plainly that conversion is optional — an instruction to convert, with no tool and no check,
+  would be work handed over without means.
+
+<!-- Added 2026-08-12, after the record was first written. The question "will the update skill
+     link my references?" made both omissions obvious: the record described what was decided and
+     not what was left unguarded. Rule P7 — added in place, with the date and the reason. -->
+
+**Why the unenforced half is accepted for now.** Requiring links would be a second breaking
+release in a day, forcing every existing register to convert before it could pass again — and
+the tool that would do the converting does not exist. Enforcement without that tool is a rule
+that punishes people for lacking something the method never gave them. What is enforced today is
+the half that fails silently; the half that fails visibly, by simply not being a link, can wait
+for the means to fix it.
 
 ## Implementation status
 
