@@ -195,6 +195,33 @@ spuriously, because a dead interpreter also exits 1. Neither alone would have co
 registers are sound". The skill states it; nothing enforces that a green line is not taken for a
 health check.
 
+## Links between the registers
+
+**Verified by measurement, before the decision was made.** A prototype anchor checker was run
+over every anchored link in this repository: 68 examined, 66 resolved, **0 false positives**. The
+24 Polish anchors carrying diacritics all resolved — written by hand in the canonical Polish
+files by somebody not thinking about this check, which is the strongest available evidence that
+the rule is right rather than fitted to English.
+
+**Verified.** That the check catches the failure that actually occurred here: a question's
+heading was reworded during this work and two links to it were repaired by hand, with both
+checkers green before and after. With the check in place, that rename is reported.
+
+**Verified.** That it finds defects nobody knew about: two abbreviated anchors in the plugin's
+own fixtures, rendering as links and landing nowhere.
+
+**Verified.** That it fails in both directions — a renamed heading and an abbreviated anchor are
+findings; an example link written between backticks is **not**. Eight self-test cases across both
+languages.
+
+**Asserted, not verified.** That the anchor rule matches every renderer. It was checked against
+68 links in two languages, but the rule belongs to the tools that render Markdown, not to this
+plugin, and one that normalises differently would produce false positives.
+
+**Asserted, not verified.** The handling of repeated headings, where renderers append `-1`, `-2`.
+It is implemented from documented behaviour; this repository has no duplicate headings to measure
+it against.
+
 ## Installation instructions
 
 **Verified.** That `/plugin install <name>@<marketplace>` is the documented form, by reading the

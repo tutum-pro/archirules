@@ -8,4 +8,4 @@
 
 Brak.
 
-Patrz [rejestr faz](fazy-realizacji.md).
+Patrz [rejestr faz](fazy-realizacji.md) i [pierwsze pytanie](open-questions.md#oq-01--czy-ten-zestaw-wystarczy-do-testu-kontrolera).

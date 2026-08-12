@@ -1,7 +1,7 @@
 # ADR-0004 — The checker ships with a proof that it fails
 
 **Status:** Accepted (2026-08-03)
-**Related:** ADR-0005
+**Related:** [ADR-0005](ADR-0005-distribution-as-a-plugin.md)
 
 ## Context
 

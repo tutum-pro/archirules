@@ -12,6 +12,6 @@
 | phase | blocker |
 |---|---|
 | X1 | — nothing |
-| X2 | [OQ-01](open-questions.md#oq-01) — while it is open, the phase does not start |
+| X2 | [OQ-01](open-questions.md#oq-01--is-the-blocker-table-kept-together-with-the-phase-table) — while it is open, the phase does not start |
 
 **Hard gate:** if this set stops passing, the checker has changed its behaviour.

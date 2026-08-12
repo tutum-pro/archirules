@@ -23,6 +23,7 @@ import glob
 import os
 import re
 import sys
+import unicodedata
 
 MARKERS = {
     "pl": {
@@ -78,6 +79,53 @@ def detect_language(directory):
         if MARKERS["en"]["binding"] in text:
             return "en", True
     return "pl", False
+
+
+def slug(heading):
+    """A heading's anchor, by the rule the renderers use.
+
+    Lowercase; drop every character that is not a letter, a digit, a space, a hyphen
+    or an underscore; turn spaces into hyphens. Letters outside ASCII survive, which
+    is what makes Polish headings work. An em dash is punctuation, so it disappears
+    and leaves behind the hyphens made from the spaces on either side of it — that is
+    where the doubled hyphen in these anchors comes from.
+    """
+    kept = []
+    for ch in heading.strip().lower():
+        if ch.isalnum() or ch in " -_" or unicodedata.category(ch).startswith("M"):
+            kept.append(ch)
+    return "".join(kept).replace(" ", "-")
+
+
+def anchors_of(path, _cache={}):
+    """Every anchor a document offers, or None when it cannot be read.
+
+    Headings inside fenced code blocks are not headings. Repeated headings get the
+    renderers' `-1`, `-2` suffixes.
+    """
+    if path in _cache:
+        return _cache[path]
+    try:
+        text = open(path, encoding="utf-8").read()
+    except OSError:
+        _cache[path] = None
+        return None
+    seen, out, fenced = {}, set(), False
+    for line in text.split("\n"):
+        if line.lstrip().startswith("```"):
+            fenced = not fenced
+            continue
+        if fenced:
+            continue
+        heading = re.match(r"^#{1,6}\s+(.*?)\s*$", line)
+        if not heading:
+            continue
+        base = slug(heading.group(1))
+        count = seen.get(base, 0)
+        seen[base] = count + 1
+        out.add(base if count == 0 else "%s-%d" % (base, count))
+    _cache[path] = out
+    return out
 
 
 def names_a_scope(status_line, marker):
@@ -230,14 +278,41 @@ def main():
     for path in glob.glob(f"{directory}/**/*.md", recursive=True):
         text = open(path, encoding="utf-8").read()
         base = os.path.dirname(path)
-        for target in re.findall(r"\]\(([^)]+)\)", text):
-            target = target.split("#", 1)[0].strip()
-            if not target or target.startswith(("http://", "https://", "mailto:")):
+        shown = os.path.relpath(path, directory)
+        fenced = False
+        for lineno, line in enumerate(text.split("\n"), 1):
+            if line.lstrip().startswith("```"):
+                fenced = not fenced
                 continue
-            check(
-                os.path.exists(os.path.join(base, target)),
-                f"{os.path.relpath(path, directory)}: link points nowhere: {target}",
-            )
+            # A link written as an example, in a code fence or between backticks, is not
+            # a link. Reading one as real reports a document as broken for showing what a
+            # link looks like — which this checker did, in this repository's own register.
+            if fenced:
+                continue
+            for target in re.findall(r"\]\(([^)]+)\)", re.sub(r"`[^`]*`", "", line)):
+                if target.startswith(("http://", "https://", "mailto:")):
+                    continue
+                file_part, _, anchor = target.partition("#")
+                file_part, anchor = file_part.strip(), anchor.strip()
+                destination = os.path.join(base, file_part) if file_part else path
+                if file_part:
+                    check(
+                        os.path.exists(destination),
+                        f"{shown}:{lineno}: link points nowhere: {file_part}",
+                    )
+                if not anchor:
+                    continue
+                # The anchor is the half that rots in silence: renaming a heading leaves
+                # every link to it resolving to a file that exists and a place in it that
+                # does not.
+                offered = anchors_of(destination)
+                if offered is None:
+                    continue                      # the missing file is already reported
+                check(
+                    anchor in offered,
+                    f"{shown}:{lineno}: link resolves to the file but not to a heading "
+                    f"in it: #{anchor}",
+                )
 
     # 6. Phase register.
     if phases:

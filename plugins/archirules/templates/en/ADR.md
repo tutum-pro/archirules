@@ -1,7 +1,7 @@
 # ADR-NNNN — <the decision in one sentence, indicative mood>
 
 **Status:** Accepted (decided by <who>, <date>)
-**Resolves:** OQ-NN · **Unblocks:** <phase> · **Related:** ADR-MMMM
+**Resolves:** [OQ-NN](../open-questions.md#oq-nn--the-heading-in-full) · **Unblocks:** <phase> · **Related:** [ADR-MMMM](ADR-MMMM-name.md)
 <!-- when reversing an earlier decision: **Supersedes:** ADR-MMMM
 
      and the record being reversed gets, in place of its own status:
@@ -46,3 +46,10 @@ Rejected because <reason>. Without this section somebody will propose it again.
 
 What is built, what is verified, and **by what**. Results, not claims.
 What is deliberately not done, and under which OQ it is recorded.
+
+<!-- A reference to a register entry is a LINK, not a bare number. conform.py
+     checks the anchor as well as the file, so renaming a heading somebody links
+     to is reported instead of quietly landing at the top of the document. The
+     anchor comes from the heading: lowercase, drop anything that is not a
+     letter, digit, space, hyphen or underscore, spaces become hyphens.
+     ADR-0015. -->

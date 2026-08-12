@@ -8,4 +8,4 @@
 
 None.
 
-See the [phase register](phases.md).
+See the [phase register](phases.md) and [the first question](open-questions.md#oq-01--is-this-set-enough-to-test-the-checker).

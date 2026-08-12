@@ -39,7 +39,7 @@ The structural half of the answer is ADR-0003. The procedural half has no mechan
 carried by OQ-03.
 
 ### OQ-03 — Nothing checks whether the prose is understandable
-**Status:** OPEN · **Priority: medium** · **Depends on:** OQ-02
+**Status:** OPEN · **Priority: medium** · **Depends on:** [OQ-02](open-questions.md#oq-02--how-do-we-learn-what-a-newcomer-cannot-understand)
 
 `conform.py` checks structure. Structure was never the problem — the six defects in OQ-02 all
 passed every mechanical check, because a document can be perfectly well-formed and still
@@ -207,7 +207,7 @@ should read a decision made there rather than make one. Settle it before designi
 because the answer decides whether there is a mechanism to design.
 
 ### OQ-10 — How is the list of people who may sanction it defined and protected
-**Status:** OPEN · **Priority: high** · **Blocks:** P13 · **Depends on:** OQ-09 · **Touches:** [ADR-0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md)
+**Status:** OPEN · **Priority: high** · **Blocks:** P13 · **Depends on:** [OQ-09](open-questions.md#oq-09--how-does-somebody-with-authority-sanction-breaking-the-consistency-rule) · **Touches:** [ADR-0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md)
 
 If an override needs authority, something has to say who has it. That list is the mechanism's
 weak point: whoever can edit it can grant themselves the right to bypass every consistency rule
@@ -341,7 +341,17 @@ fits inside the existing skill without turning it into two documents stapled tog
 does, fold it in; if it does not, that is the answer.
 
 ### OQ-13 — Should a reference to a question be a link, when nothing checks that a link still lands
-**Status:** OPEN
+**Status:** RESOLVED → [ADR-0015](decisions/ADR-0015-references-are-links-and-anchors-are-checked.md), 2026-08-12
+
+**The answer is yes, link it — because the anchor turned out to be checkable.** A prototype was
+run over all 68 anchored links in this repository: 66 resolved, 0 false positives, and the 24
+Polish anchors with diacritics all resolved, which is the evidence that the rule is right rather
+than fitted to English. The two that did not resolve were genuine dead links nobody knew about.
+
+Had the measurement gone the other way, the recorded answer would have been the opposite one
+this entry held open: never link a question, because a bare number cannot rot. It is worth saying
+that the question was decided by the measurement and not by preference — the reasoning below is
+kept as written, before the result was known.
 
 References between the registers are written three different ways, and the difference is not
 deliberate.

@@ -1,7 +1,7 @@
 # ADR-0003 — The casebook is separate from the rules
 
 **Status:** Accepted (2026-08-03)
-**Resolves:** OQ-02 · **Related:** ADR-0001
+**Resolves:** [OQ-02](../open-questions.md#oq-02--how-do-we-learn-what-a-newcomer-cannot-understand) · **Related:** [ADR-0001](ADR-0001-language-split.md)
 
 ## Context
 

@@ -1,7 +1,7 @@
 # ADR-NNNN — <decyzja jednym zdaniem, w trybie oznajmującym>
 
 **Status:** Przyjęty (decyzja <kto>, <data>)
-**Rozstrzyga:** OQ-NN · **Odblokowuje:** <faza> · **Powiązane:** ADR-MMMM
+**Rozstrzyga:** [OQ-NN](../open-questions.md#oq-nn--pełne-brzmienie-nagłówka) · **Odblokowuje:** <faza> · **Powiązane:** [ADR-MMMM](ADR-MMMM-nazwa.md)
 <!-- przy odwróceniu wcześniejszej decyzji: **Zastępuje:** ADR-MMMM
 
      a rekord odwracany dostaje w miejsce swojego statusu:
@@ -46,3 +46,10 @@ Odrzucone, bo <powód>. Bez tej sekcji ktoś zaproponuje ją ponownie.
 
 Co zbudowane, co zweryfikowane i **czym** zweryfikowane. Wynik, nie deklaracja.
 Co świadomie niezrealizowane i pod jakim OQ zapisane.
+
+<!-- Odniesienie do wpisu rejestru jest LINKIEM, nie gołym numerem. conform.py
+     sprawdza także kotwicę (część po #), więc zmiana tytułu pytania, do którego
+     ktoś linkuje, zostanie zgłoszona zamiast po cichu prowadzić na początek
+     pliku. Kotwica powstaje z brzmienia nagłówka: małe litery, znaki inne niż
+     litera, cyfra, spacja, myślnik i podkreślnik znikają, spacje stają się
+     myślnikami. ADR-0015. -->
