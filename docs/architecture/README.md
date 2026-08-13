@@ -28,6 +28,7 @@ anger rather than only against a synthetic fixture.
 | [0014](decisions/ADR-0014-reading-the-version-is-not-updating.md) | Reading which version a project stands at is a separate, read-only act | Accepted |
 | [0015](decisions/ADR-0015-references-are-links-and-anchors-are-checked.md) | A reference to a register entry is a link, and the anchor is checked | Accepted |
 | [0016](decisions/ADR-0016-the-converter-covers-header-fields-only.md) | The converter covers header fields, and the narrowing is the decision | Accepted |
+| [0017](decisions/ADR-0017-the-digest-is-a-command-not-a-file.md) | The digest is a command, not a file | Accepted |
 
 ## Binding requirements
 

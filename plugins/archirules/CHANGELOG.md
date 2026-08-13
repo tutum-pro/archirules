@@ -10,6 +10,17 @@ An entry that requires the reader to change something in their own registers car
 `### Migration` block. **An entry without one requires nothing** — that is what its absence
 means, and `/archirules:update` relies on it.
 
+## 2.2.0 — 2026-08-13
+
+**Added**
+
+- `scripts/digest.py` — one line per entry across all four registers: identifier, state, subject.
+  About 1 000 tokens where reading the registers costs tens of thousands. It **prints**; there is
+  no generated file, so there is nothing to keep current and nothing to check
+  ([ADR-0017](../../docs/architecture/decisions/ADR-0017-the-digest-is-a-command-not-a-file.md)).
+
+No migration. Nothing in a register changes.
+
 ## 2.1.0 — 2026-08-13
 
 **Added**

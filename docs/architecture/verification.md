@@ -242,6 +242,25 @@ earned its place by catching it.
 **Asserted, not verified.** That the tool behaves on somebody else's register. It has nothing to
 do in this one, so its evidence is fixtures and a reconstructed pre-2.0.0 copy.
 
+## The digest
+
+**Verified by coverage accounting**, not by checking that it runs: the number of entries printed
+against the number the register holds, for decisions and questions, in both languages. A summary
+that quietly omits is worse than none, because the reader believes they have seen everything.
+
+**Verified.** That an entry added to a register appears in the next run — without this, coverage
+accounting would pass for a digest that had been correct once and stopped being.
+
+**Verified under two mutations.** One that silently drops the last entry of each register reports
+`0/1 ADR, 0/1 OQ` and turns four cases red. One that does not import fails the same four. The two
+cases asserting a refusal survive both, which is why they are counted separately.
+
+**Measured.** 1 075 tokens for the digest against roughly 48 000 for the registers it summarises.
+
+**Asserted, not verified.** That one line per entry is enough to choose what to open. Coverage
+accounting proves nothing is missing and says nothing about whether the subject line is
+informative.
+
 ## Installation instructions
 
 **Verified.** That `/plugin install <name>@<marketplace>` is the documented form, by reading the
