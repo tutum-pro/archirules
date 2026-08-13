@@ -236,6 +236,131 @@ else
   failed=1
 fi
 
+# The digest (ADR-0017). A summary exists so that reading the registers becomes a choice,
+# which means the one thing it must never do is leave something out. A digest that quietly
+# omits an entry is worse than none: the reader believes they have seen everything. So the
+# case that carries this is coverage accounting — what it printed against what the register
+# holds — and not whether it runs.
+digest_covers() { # <set> -> prints "adr oq phase" counts printed vs held
+python3 - "$here" "$1" <<'PY'
+import glob, os, re, subprocess, sys
+here, name = sys.argv[1], sys.argv[2]
+reg = os.path.join(here, "testdata", name)
+out = subprocess.run([sys.executable, os.path.join(here, "digest.py"), reg],
+                     capture_output=True, text=True)
+printed_adr = len(re.findall(r"^\s+ADR-\d{4}\s", out.stdout, flags=re.M))
+printed_oq = len(re.findall(r"^\s+OQ-\d+\s", out.stdout, flags=re.M))
+held_adr = len(glob.glob(os.path.join(reg, "decisions", "ADR-*.md")))
+oqfile = os.path.join(reg, "open-questions.md")
+held_oq = len(re.findall(r"^### OQ-\d+\s+[—–-]\s", open(oqfile, encoding="utf-8").read(),
+                         flags=re.M)) if os.path.isfile(oqfile) else 0
+print("%d %d %d %d %d" % (printed_adr, held_adr, printed_oq, held_oq, out.returncode))
+PY
+}
+
+for lang in pl en; do
+  read -r pa ha po ho code <<<"$(digest_covers "valid-$lang")"
+  case_no=$((case_no + 1))
+  if [ "$code" -eq 0 ] && [ "$pa" -eq "$ha" ] && [ "$po" -eq "$ho" ] && [ "$ha" -gt 0 ]; then
+    printf "  ok    %-46s %s/%s ADR, %s/%s OQ\n" "digest: prints every entry [$lang]" \
+      "$pa" "$ha" "$po" "$ho"
+  else
+    printf "  FAIL  %-46s %s/%s ADR, %s/%s OQ, exit %s\n" "digest: omits entries [$lang]" \
+      "$pa" "$ha" "$po" "$ho" "$code"
+    failed=1
+  fi
+
+  # An entry added to the register must appear. Without this, coverage accounting would
+  # pass for a digest that had been correct once and stopped being.
+  d=$(copy_of "digest-added-$lang" "valid-$lang")
+  printf '\n### OQ-02 — Another question entirely\n**Status:** OPEN\n\nText.\n' \
+    >> "$d/open-questions.md"
+  case_no=$((case_no + 1))
+  if python3 "$here/digest.py" "$d" | grep -q "OQ-02"; then
+    printf "  ok    %-46s\n" "digest: a newly added question appears [$lang]"
+  else
+    printf "  FAIL  %-46s\n" "digest: a newly added question is missing [$lang]"
+    failed=1
+  fi
+done
+
+case_no=$((case_no + 1))
+if python3 "$here/digest.py" "$tmp" >/dev/null 2>&1; then
+  printf "  FAIL  %-46s\n" "digest: a directory with no registers refuses"
+  failed=1
+else
+  printf "  ok    %-46s exit 2\n" "digest: a directory with no registers refuses"
+fi
+
+case_no=$((case_no + 1))
+python3 "$here/digest.py" "$here/testdata/valid-en" --nonsense >/dev/null 2>&1
+if [ $? -eq 2 ]; then
+  printf "  ok    %-46s exit 2\n" "digest: an unknown option refuses"
+else
+  printf "  FAIL  %-46s\n" "digest: an unknown option refuses"
+  failed=1
+fi
+
+# The converter (ADR-0016). It exists so that the rule "a reference is a link" can later be
+# enforced without handing people work and no means to do it. Its scope is the narrow part:
+# header fields only. The case that pins that is the one asserting prose is left alone —
+# without it the tool would quietly grow into a reformatter of whole documents.
+relinked() { python3 "$here/relink.py" "$@" >/dev/null 2>&1; echo $?; }
+relink_case() { # <description> <expected exit> [args...]
+  local what="$1" want="$2"; shift 2
+  local code; code=$(relinked "$@")
+  case_no=$((case_no + 1))
+  if [ "$code" -eq "$want" ]; then
+    printf "  ok    %-46s exit %s\n" "relink: $what" "$code"
+  else
+    printf "  FAIL  %-46s exit %s, expected %s\n" "relink: $what" "$code" "$want"
+    failed=1
+  fi
+}
+
+for lang in pl en; do
+  rl=$(copy_of "relink-$lang" "valid-$lang")
+  # a bare reference in a header field, and the same reference in prose
+  perl -0pi -e 's/(\*\*Status:\*\* (?:OPEN|OTWARTE))/$1 · **Touches:** ADR-0001/' \
+    "$rl/open-questions.md"
+  printf '\nSee ADR-0001 for the reasoning, and ADR-0001 again here.\n' >> "$rl/open-questions.md"
+
+  relink_case "a bare header field is reported by a dry run [$lang]" 1 "$rl"
+  relink_case "and converting it succeeds [$lang]" 0 "$rl" --write
+  expect "the converted register still passes the checker [$lang]" 0 "$rl"
+  relink_case "a second run finds nothing left to do [$lang]" 0 "$rl"
+
+  # The narrowing, asserted rather than assumed: prose keeps its bare references, and the
+  # header field is now a link. Both halves in one check, because either alone would pass
+  # for a tool that did nothing at all.
+  case_no=$((case_no + 1))
+  if grep -q '^\*\*Status:\*\*.*\[ADR-0001\](' "$rl/open-questions.md" \
+     && grep -q '^See ADR-0001 for the reasoning, and ADR-0001 again here\.$' "$rl/open-questions.md"
+  then
+    printf "  ok    %-46s\n" "relink: prose untouched, header field linked [$lang]"
+  else
+    printf "  FAIL  %-46s\n" "relink: prose untouched, header field linked [$lang]"
+    failed=1
+  fi
+
+  # A reference to a record that does not exist is left alone: the cross-register checker
+  # already reports it, and inventing a link to a missing file would turn one finding into
+  # two, the second of them wrong.
+  d=$(copy_of "relink-missing-$lang" "valid-$lang")
+  perl -0pi -e 's/(\*\*Status:\*\* (?:OPEN|OTWARTE))/$1 · **Touches:** ADR-0099/' \
+    "$d/open-questions.md"
+  relink_case "a reference with no target is left alone [$lang]" 0 "$d"
+  case_no=$((case_no + 1))
+  if grep -q '\*\*Touches:\*\* ADR-0099$' "$d/open-questions.md"; then
+    printf "  ok    %-46s\n" "relink: and it stays bare, not invented [$lang]"
+  else
+    printf "  FAIL  %-46s\n" "relink: and it stays bare, not invented [$lang]"
+    failed=1
+  fi
+done
+
+relink_case "an unknown option refuses, exit 2" 2 "$here/testdata/valid-en" --nonsense
+
 # The version-reading claim (ADR-0014). The case that carries this is "registers ahead of
 # the method": it is not a variant of "behind", no migration runs backwards, and reading it
 # as up to date would be the silent kind of wrong. Everything else here is bookkeeping.

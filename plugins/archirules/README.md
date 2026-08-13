@@ -39,6 +39,8 @@ bash    scripts/selftest-consistency.sh           # dowód, że powyższy potraf
 python3 scripts/migrations.py --from 1.0.0        # co zmieniło się w rejestrach od wersji
 python3 scripts/help.py                           # lista skilli
 python3 scripts/trace.py docs/architecture        # rejestry wobec commitów
+python3 scripts/digest.py docs/architecture       # co jest w rejestrach, w jednym ekranie
+python3 scripts/relink.py docs/architecture       # gołe odniesienia w polach nagłówka
 ```
 
 Dwa kontrolery, bo mają różne osie. `conform.py` czyta jeden plik naraz: sekcje rekordu decyzji,

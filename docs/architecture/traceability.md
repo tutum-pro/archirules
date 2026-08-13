@@ -6,7 +6,7 @@ Derived from `Archirules-*` trailers in commit messages. **The git history is th
 truth; this file is a view of it.** A commit identifier written into a register by
 hand starts lying at the first rebase — see ADR-0010.
 
-Generated at commit `f5c7805bb06e96acd0adb5df297794b39e507e41`.
+Generated at commit `ce4391a05b0e0377275ef4673b5b78eaad38ad13`.
 
 ## Phases
 
@@ -24,8 +24,8 @@ Generated at commit `f5c7805bb06e96acd0adb5df297794b39e507e41`.
 | P10 | ☑ 2026-08-11 | — |
 | P11 | ☑ 2026-08-11 | `b4dabd5` |
 | P12 | ☑ 2026-08-11 | `0e27c14` |
-| P14 | ☑ 2026-08-11 | `013fc9f` |
 | P13 | ⛔ | — |
+| P14 | ☑ 2026-08-11 | `013fc9f` |
 
 ## Decision records
 
@@ -38,6 +38,8 @@ Generated at commit `f5c7805bb06e96acd0adb5df297794b39e507e41`.
 | ADR-0013 | `c43249d` |
 | ADR-0014 | `013fc9f` |
 | ADR-0015 | `f5c7805` · `570ccd9` |
+| ADR-0016 | `efc046e` |
+| ADR-0017 | `ce4391a` |
 
 ## Open questions
 
@@ -50,6 +52,8 @@ Generated at commit `f5c7805bb06e96acd0adb5df297794b39e507e41`.
 | OQ-11 | `c43249d` |
 | OQ-12 | `a2c3c4a` |
 | OQ-13 | `570ccd9` · `542357a` · `750b921` |
+| OQ-14 | `efc046e` |
+| OQ-15 | `ce4391a` |
 
 ## Closed phases no commit claims
 

@@ -10,6 +10,42 @@ An entry that requires the reader to change something in their own registers car
 `### Migration` block. **An entry without one requires nothing** — that is what its absence
 means, and `/archirules:update` relies on it.
 
+## 2.2.0 — 2026-08-13
+
+**Added**
+
+- `scripts/digest.py` — one line per entry across all four registers: identifier, state, subject.
+  About 1 000 tokens where reading the registers costs tens of thousands. It **prints**; there is
+  no generated file, so there is nothing to keep current and nothing to check
+  ([ADR-0017](../../docs/architecture/decisions/ADR-0017-the-digest-is-a-command-not-a-file.md)).
+
+No migration. Nothing in a register changes.
+
+## 2.1.0 — 2026-08-13
+
+**Added**
+
+- `scripts/relink.py` — turns bare `ADR-NNNN` and `OQ-NN` references in **header fields** into
+  links. A dry run reports and changes nothing; `--write` applies. Prose is deliberately out of
+  scope
+  ([ADR-0016](../../docs/architecture/decisions/ADR-0016-the-converter-covers-header-fields-only.md)).
+
+### Migration
+
+**Optional in this release, and worth doing before the next major one.**
+
+A future major version will require references in header fields to be links. This release ships
+the tool for it first, on purpose: a requirement that arrives with no means to satisfy it is a
+gate that punishes people for lacking something the method never gave them.
+
+```
+python3 <plugin>/scripts/relink.py docs/architecture           # shows what it would change
+python3 <plugin>/scripts/relink.py docs/architecture --write   # applies it
+```
+
+Read the diff before committing — `--write` edits many files at once. Nothing breaks if you
+skip this: bare references still pass every check today.
+
 ## 2.0.0 — 2026-08-12
 
 **Changed — breaking**

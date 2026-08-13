@@ -39,7 +39,7 @@ The structural half of the answer is ADR-0003. The procedural half has no mechan
 carried by OQ-03.
 
 ### OQ-03 — Nothing checks whether the prose is understandable
-**Status:** OPEN · **Priority: medium** · **Depends on:** [OQ-02](open-questions.md#oq-02--how-do-we-learn-what-a-newcomer-cannot-understand)
+**Status:** OPEN · **Priority: medium** · **Depends on:** [OQ-02](#oq-02--how-do-we-learn-what-a-newcomer-cannot-understand)
 
 `conform.py` checks structure. Structure was never the problem — the six defects in OQ-02 all
 passed every mechanical check, because a document can be perfectly well-formed and still
@@ -207,7 +207,7 @@ should read a decision made there rather than make one. Settle it before designi
 because the answer decides whether there is a mechanism to design.
 
 ### OQ-10 — How is the list of people who may sanction it defined and protected
-**Status:** OPEN · **Priority: high** · **Blocks:** P13 · **Depends on:** [OQ-09](open-questions.md#oq-09--how-does-somebody-with-authority-sanction-breaking-the-consistency-rule) · **Touches:** [ADR-0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md)
+**Status:** OPEN · **Priority: high** · **Blocks:** P13 · **Depends on:** [OQ-09](#oq-09--how-does-somebody-with-authority-sanction-breaking-the-consistency-rule) · **Touches:** [ADR-0012](decisions/ADR-0012-work-stops-on-a-contradicted-register.md)
 
 If an override needs authority, something has to say who has it. That list is the mechanism's
 weak point: whoever can edit it can grant themselves the right to bypass every consistency rule
@@ -427,3 +427,79 @@ style question depends entirely on it, and in a way that reverses the answer:
 So this is settled by building the anchor check first, or establishing that it cannot be built.
 Deciding the style before that would be choosing between two options while ignorant of the fact
 that separates them.
+
+### OQ-14 — Should a reference in prose be a link too
+**Status:** OPEN · **Touches:** [ADR-0016](decisions/ADR-0016-the-converter-covers-header-fields-only.md)
+
+[ADR-0016](decisions/ADR-0016-the-converter-covers-header-fields-only.md) scoped the converter,
+and the rule it prepares, to header fields. Prose was left as it is: **76 bare references against
+44 linked** in this register, which is a visible inconsistency the method has chosen not to
+resolve rather than one it has not noticed.
+
+The reason for stopping there is not that prose links are worthless. It is that no rule about
+them can be checked. "Link every mention" makes a paragraph naming a record three times carry
+three long links; "link the first mention in each document" reads well and contains a judgement,
+and a judgement inside a gate is the thing this method refuses.
+
+**What is not known:** whether readers navigate from prose at all. If they arrive at a record
+through the header fields and the index, prose links are decoration bought at the cost of
+readability. If prose is where people actually follow a reference, the current state is failing
+them 76 times.
+
+**If left unresolved:** prose stays mixed. New records will keep being written both ways,
+because nothing prescribes either — which is precisely how the header fields came to be split
+between plain and linked in the first place, along the line where the authorship changed.
+
+**To resolve:** watch where a reference is actually followed from. That needs a reader who is not
+the author, which makes this the same kind of question as OQ-02 and dependent on the same thing:
+somebody outside using these registers. Until then, leaving it open is honest and inventing a
+rule is not.
+
+An intermediate answer worth testing first, because it is cheap: link a prose reference only when
+the record is not already linked from a header field in the same document. That is checkable —
+it needs no judgement about which mention is "first" — and it would leave most prose alone.
+
+### OQ-15 — What tells a record that carries its reasoning from one that is merely long
+**Status:** OPEN · **Touches:** [ADR-0003](decisions/ADR-0003-casebook-apart-from-rules.md)
+
+Reading these registers costs about 48 000 tokens, and the decision records are 27 500 of it.
+That is the price of every question somebody asks an assistant about this project.
+
+Measured by authorship, the split is uncomfortable:
+
+| | records | average | together |
+|---|---|---|---|
+| ADR-0001 to ADR-0005 | 5 | **762 tokens** | 3 800 |
+| ADR-0006 to ADR-0016 | 11 | **2 155 tokens** | **23 700** |
+
+**The later records are 2.8 times longer than the earlier ones**, and eleven of them account for
+23 700 of the 27 500. The earlier five carry rejected alternatives and named costs — everything
+the method requires — in a third of the space. So length is not something the method imposes. It
+is something the writing habit added.
+
+**What is not known:** what rule, if any, separates the two. "Write shorter" is not usable as
+guidance, and it has a specific failure mode: the first things a shortening pass removes are the
+rejected alternatives and the costs, because they read like padding to anyone who already knows
+the decision. Those two sections are the entire reason a decision record exists. A discipline
+that shortens records by cutting them is worse than long records.
+
+Candidates, none tested:
+
+- **A budget** — a record over some length is a finding. Mechanical, and crude: some decisions
+  genuinely need the room, and a budget cannot tell which.
+- **A structural limit** — one paragraph per rejected alternative, one line per cost. Checkable,
+  and it constrains the padding rather than the content.
+- **Nothing mechanical, a review convention instead** — with the warning sign named: prose that
+  restates the decision in different words, which is what most of the excess here is.
+- **Nothing at all.** Length may simply be the price of the reasoning being present, and the
+  comparison above may be measuring two writers rather than two qualities.
+
+**If left unresolved:** records keep growing, and each one is read by everybody who asks anything
+about the project. The cost is real but it is also gradual, which is why nobody notices it until
+somebody counts.
+
+**To resolve:** take one of the long records and rewrite it to the length of the early ones
+**without removing a rejected alternative or a cost**. If that is possible, the excess was
+padding and a convention will do. If it is not, the length is the reasoning and this question
+closes with "leave them alone". One experiment answers it, and until somebody runs it every
+answer here is a preference.

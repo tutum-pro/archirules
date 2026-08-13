@@ -222,6 +222,45 @@ plugin, and one that normalises differently would produce false positives.
 It is implemented from documented behaviour; this repository has no duplicate headings to measure
 it against.
 
+## Converting references
+
+**Verified.** That `relink.py` converts a bare header field, that the result passes the checker,
+and that a second run finds nothing left — fifteen cases across both languages.
+
+**Verified — the narrowing itself.** That prose keeps its bare references while the header field
+becomes a link, asserted in one check because either half alone would pass for a tool that did
+nothing at all.
+
+**Verified.** That a reference whose target does not exist stays bare rather than being given an
+invented link.
+
+**Verified under two mutations.** A converter that does nothing fails four cases. The naive guard
+written first — a lookbehind for `[`, which misses the reference inside a link's own target path
+and double-wraps the register — is caught by the idempotency case, which exists for that bug and
+earned its place by catching it.
+
+**Asserted, not verified.** That the tool behaves on somebody else's register. It has nothing to
+do in this one, so its evidence is fixtures and a reconstructed pre-2.0.0 copy.
+
+## The digest
+
+**Verified by coverage accounting**, not by checking that it runs: the number of entries printed
+against the number the register holds, for decisions and questions, in both languages. A summary
+that quietly omits is worse than none, because the reader believes they have seen everything.
+
+**Verified.** That an entry added to a register appears in the next run — without this, coverage
+accounting would pass for a digest that had been correct once and stopped being.
+
+**Verified under two mutations.** One that silently drops the last entry of each register reports
+`0/1 ADR, 0/1 OQ` and turns four cases red. One that does not import fails the same four. The two
+cases asserting a refusal survive both, which is why they are counted separately.
+
+**Measured.** 1 075 tokens for the digest against roughly 48 000 for the registers it summarises.
+
+**Asserted, not verified.** That one line per entry is enough to choose what to open. Coverage
+accounting proves nothing is missing and says nothing about whether the subject line is
+informative.
+
 ## Installation instructions
 
 **Verified.** That `/plugin install <name>@<marketplace>` is the documented form, by reading the
