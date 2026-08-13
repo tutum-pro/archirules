@@ -222,6 +222,26 @@ plugin, and one that normalises differently would produce false positives.
 It is implemented from documented behaviour; this repository has no duplicate headings to measure
 it against.
 
+## Converting references
+
+**Verified.** That `relink.py` converts a bare header field, that the result passes the checker,
+and that a second run finds nothing left — fifteen cases across both languages.
+
+**Verified — the narrowing itself.** That prose keeps its bare references while the header field
+becomes a link, asserted in one check because either half alone would pass for a tool that did
+nothing at all.
+
+**Verified.** That a reference whose target does not exist stays bare rather than being given an
+invented link.
+
+**Verified under two mutations.** A converter that does nothing fails four cases. The naive guard
+written first — a lookbehind for `[`, which misses the reference inside a link's own target path
+and double-wraps the register — is caught by the idempotency case, which exists for that bug and
+earned its place by catching it.
+
+**Asserted, not verified.** That the tool behaves on somebody else's register. It has nothing to
+do in this one, so its evidence is fixtures and a reconstructed pre-2.0.0 copy.
+
 ## Installation instructions
 
 **Verified.** That `/plugin install <name>@<marketplace>` is the documented form, by reading the

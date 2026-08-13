@@ -27,6 +27,7 @@ anger rather than only against a synthetic fixture.
 | [0013](decisions/ADR-0013-a-register-earns-its-existence-by-a-defect.md) | A new register earns its existence by a defect its absence caused | Accepted |
 | [0014](decisions/ADR-0014-reading-the-version-is-not-updating.md) | Reading which version a project stands at is a separate, read-only act | Accepted |
 | [0015](decisions/ADR-0015-references-are-links-and-anchors-are-checked.md) | A reference to a register entry is a link, and the anchor is checked | Accepted |
+| [0016](decisions/ADR-0016-the-converter-covers-header-fields-only.md) | The converter covers header fields, and the narrowing is the decision | Accepted |
 
 ## Binding requirements
 
