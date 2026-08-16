@@ -69,6 +69,8 @@ for lang in pl en; do
     heading='### Co blokuje'           ; heading_full='### Co blokuje fazy ścieżki X'
     heading_alt='### Co blokuje fazy sciezki X (inaczej)' ; heading_gone='### Zależności'
     current=ADR-0004                   ; superseded_ref=ADR-0002
+    resolved_status='\*\*Status:\*\* ROZSTRZYGNIĘTE' ; reopened='**Status:** OTWARTE'
+    resolved_line='**Status:** ROZSTRZYGNIĘTE → [ADR-0009](decisions/ADR-0009-nieistotny.md), 2026-08-11 — nie wraca'
   else
     phases=phases.md                  ; blocks_field='**Blocks:** X1'
     blocks='\*\*Blocks:\*\*'          ; superseded='\*\*Status:\*\* SUPERSEDED'
@@ -77,6 +79,8 @@ for lang in pl en; do
     heading='### What blocks'          ; heading_full='### What blocks the phases of path X'
     heading_alt='### What blocks path X phases (reworded)' ; heading_gone='### Dependencies'
     current=ADR-0004                   ; superseded_ref=ADR-0002
+    resolved_status='\*\*Status:\*\* RESOLVED' ; reopened='**Status:** OPEN'
+    resolved_line='**Status:** RESOLVED → [ADR-0009](decisions/ADR-0009-irrelevant.md), 2026-08-11 — it does not'
   fi
 
   expect "a conforming set passes" 0 "$(copy_of "clean-$lang" "$set")"
@@ -129,6 +133,25 @@ for lang in pl en; do
   d="$(copy_of "c10-$lang" "$set")"
   sed -i.bak "s|^$accepted|$accepted_plus|" "$d"/decisions/ADR-0004-*.md
   expect "two records resolve one question, no link between them" 1 "$d"
+
+  # A decision that settles a question, against a question that still calls itself
+  # open. Neither file reveals it alone: the decision reads as final, the question
+  # reads as unanswered, and each is internally consistent. Found in a live register.
+  d="$(copy_of "c10a-$lang" "$set")"
+  sed -i.bak "s|^$resolved_status.*|$reopened|" "$d/open-questions.md"
+  expect "record resolves a question that still calls itself open" 1 "$d"
+
+  # The other direction: the question is closed, but by a different record than the
+  # one claiming to have closed it. A one-way link, and the reader of either file is
+  # told something true about that file and false about the pair.
+  d="$(copy_of "c10b-$lang" "$set")"
+  sed -i.bak "s|^$resolved_status.*|$resolved_line|" "$d/open-questions.md"
+  expect "question is closed by a record other than the one claiming it" 1 "$d"
+
+  # A SUPERSEDED record keeps its original "resolves" line — that is its history. The
+  # question rightly names the record in force, so this must NOT be reported.
+  d="$(copy_of "c10c-$lang" "$set")"
+  expect "superseded record keeping its resolves line is not a finding" 0 "$d"
 
   # --- guards against the checker's own past defects -------------------------
   # A reworded heading is not a deviation: the prefix must still match, so the correct

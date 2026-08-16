@@ -503,3 +503,68 @@ somebody counts.
 padding and a convention will do. If it is not, the length is the reasoning and this question
 closes with "leave them alone". One experiment answers it, and until somebody runs it every
 answer here is a preference.
+
+### OQ-16 — Would the cross-register rules be better expressed as rules than as code
+**Status:** OPEN · **Touches:** [ADR-0013](decisions/ADR-0013-a-register-earns-its-existence-by-a-defect.md)
+
+Raised as a broader idea — using formal logic, and proof by contradiction, to check decision
+records automatically. The narrow part of it is worth keeping; the broad part is worth writing
+down as rejected, so that it does not have to be re-argued.
+
+**What is actually true today.** `consistency.py` already holds a small set of rules, but they
+are written as code rather than as rules. In plain terms it knows things like *a phase is blocked
+when some open question says it blocks it*, and *a record is superseded when some other record
+says it supersedes it*.
+
+There are five such checks, and **each one looks at a pair**: a question against a phase, a
+record against another record. None of them can see a contradiction that only appears when three
+or more entries are taken together. Writing the rules down as rules, over facts extracted from
+the registers, would make that possible and would let a new rule be added without writing new
+traversal code.
+
+**Why this is not obviously worth doing.** No such contradiction has ever been found here.
+Sixteen decisions, sixteen questions and fourteen phases make a small graph, and the five checks
+cover it. By the rule this register set for itself, a new mechanism has to name the defect its
+absence caused — and this one cannot yet.
+
+**Why the broader idea is not the answer.** Formalising the *content* of decisions, and having a
+prover look for contradictions between them, fails for reasons worth recording:
+
+- **A decision is not a statement with a truth value.** "The casebook is separate from the rules"
+  is not something a prover can evaluate. Someone would have to write a formal version by hand,
+  and that version becomes a second document that can disagree with the record — with the formal
+  one being what the machine believes and the prose being what people read.
+- **The formalisable part is the least valuable part.** What makes a decision record worth having
+  is the alternatives that were rejected and the costs that were accepted. Neither is a
+  proposition. A prover would be working on what is left over.
+- **Proof by contradiction needs a closed world.** A contradiction can only be derived when the
+  assumptions are complete. Architectural decisions are made under incompleteness — that is what
+  this very register is for. Add the assumptions needed to close the world, and the prover starts
+  finding contradictions that exist only in those assumptions.
+- **Consistency is not the property anybody wants.** Two decisions can be perfectly consistent
+  and both wrong. Two can be formally contradictory and both right, because one supersedes the
+  other in a scope written in prose — which is exactly how supersession works here.
+
+**The decisive objection is the failure mode.** A prover reports "no contradiction found". That
+does not mean the registers are sound; it means none could be derived from the fragment it was
+given. Shown as a green line it is indistinguishable from a check that works — and more
+persuasive than any other green line here, because it arrives with the authority of formal
+logic. That is the shape recorded as C-01 in the casebook, in its most convincing disguise.
+
+**Worth noticing:** this method already uses the shape of that argument, and uses it where it
+pays. Every gate here is required to be shown failing before it is trusted — assume the check
+works, build an input on which it must fire, watch it not fire, discard the assumption. That is
+how a check incapable of firing at all was found (C-11). The technique is already in use, on the
+tools rather than on the decisions.
+
+**If left unresolved:** nothing breaks. The five checks keep doing what they do, and a
+contradiction spanning three entries would go unnoticed — which has not happened.
+
+**To resolve:** produce one. A real contradiction between register entries that the five current
+checks cannot see. If it can be produced, the declarative version earns its place and the shape
+of the rules is already known. If nobody can produce one after the method has been used by
+somebody else, the answer is that the code is enough.
+
+**One condition to carry into any implementation, whatever is decided:** it must report what it
+did **not** cover. "Examined 12 of 16 records; four could not be expressed" is useful. "No
+contradictions found" is dangerous.

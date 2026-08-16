@@ -10,6 +10,33 @@ An entry that requires the reader to change something in their own registers car
 `### Migration` block. **An entry without one requires nothing** — that is what its absence
 means, and `/archirules:update` relies on it.
 
+## 2.3.0 — 2026-08-16
+
+**Added**
+
+- `consistency.py` — a decision that claims to settle a question is now checked **against
+  that question**. Three ways it can be wrong are reported: the question does not exist, the
+  question still calls itself open, or the question is closed by a different record than the
+  one claiming to have closed it.
+
+  Neither register reveals this alone. Each file is internally consistent; only the pair is
+  wrong — the decision reads as final, the question reads as unanswered, and whoever opens one
+  of them is told something true about that file and false about the pair.
+
+  Found in a live register, where a decision settled a choice in its §4 while the question both
+  called itself open **and** named that same decision as blocked by it. Nobody writes a cycle on
+  purpose; it came from drafting the decision and the question in parallel.
+
+  A **superseded** record is exempt: it keeps its original resolves line, that line is its
+  history, and the question rightly names the record in force instead. Demanding a back-link
+  there would report correct bookkeeping as a defect — this exemption has a case of its own in
+  `selftest-consistency.sh`, alongside the two failure cases, in both languages.
+
+### Migration
+
+None required. Registers that already agree pass unchanged; the check adds findings only where
+two files already contradicted each other.
+
 ## 2.2.0 — 2026-08-13
 
 **Added**
