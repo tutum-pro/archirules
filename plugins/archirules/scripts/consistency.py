@@ -147,6 +147,12 @@ def questions(text, m):
     return out
 
 
+def field_of_status(block):
+    """The Status paragraph of a question — everything up to the first blank line."""
+    match = re.search(r"\*\*Status:\*\*(.*?)(?:\n\s*\n|\Z)", block, re.S)
+    return match.group(1) if match else ""
+
+
 def phases(text):
     """{id: status} taken from the first column of the phase table — any identifier."""
     out = {}
@@ -346,6 +352,43 @@ def main(directory, forced=None):
                         "%s supersedes %s, but the status of %s does not say so "
                         "(one-way link)" % (num, target, target)
                     )
+        # An ADR that claims to settle a question, against a question that does not
+        # say it was settled.
+        #
+        # The two registers can drift apart in either direction and neither file
+        # reveals it alone: the decision reads as final, the question reads as open,
+        # and whoever opens one of them is told something true about that file and
+        # false about the pair. Found in a real register, where ADR-0022 settled the
+        # choice in its §4 while OQ-68 still called itself open AND named that same
+        # ADR as blocked by it — a cycle nobody would write on purpose.
+        for num, rec in sorted(adrs.items()):
+            # A superseded record keeps its original "resolves" line — that is its
+            # history, and rewriting it would erase what was decided at the time.
+            # The question rightly names the record in force instead, so demanding a
+            # back-link here would report correct bookkeeping as a defect.
+            if m["superseded"] in rec["status"]:
+                continue
+            for question in sorted(rec["resolves"]):
+                checks += 1
+                if question not in qs:
+                    problems.append(
+                        "%s says it resolves %s, which does not exist" % (num, question)
+                    )
+                    continue
+                status, block = qs[question]
+                if status == m["open"]:
+                    problems.append(
+                        "%s says it resolves %s, but %s still calls itself %s"
+                        % (num, question, question, status)
+                    )
+                    continue
+                checks += 1
+                if num not in re.findall(r"ADR-\d+", field_of_status(block)):
+                    problems.append(
+                        "%s says it resolves %s, but %s does not name %s in its status "
+                        "(one-way link)" % (num, question, question, num)
+                    )
+
         by_question = defaultdict(list)
         for num, rec in sorted(adrs.items()):
             for question in rec["resolves"]:

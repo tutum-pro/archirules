@@ -77,4 +77,13 @@ Three special cases:
 - **The answer was reversed** — say that the first one was different and why. That matters more
   than swapping the link.
 - **The question stopped existing** — say so plainly instead of dressing it up as a resolution.
-- **Partially closed** — leave it open and move the body onto what remains.
+- **Partially closed** — leave it open and move the body onto what remains. The record that
+  settled the part must then say `Touches`, **not** `Resolves`: `Resolves` means the question is
+  closed, and a record claiming it against a question that stays open is a contradiction between
+  two files, each of which reads correctly on its own.
+
+**Both halves or neither.** Closing a question and naming the record that closed it is one edit
+in two files: the question's status names the record, and the record's `Resolves` names the
+question. `consistency.py` checks the pair — it was added after a live register held a decision
+that settled a choice while the question both called itself open and named that same decision as
+blocked by it.
